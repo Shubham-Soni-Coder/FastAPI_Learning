@@ -1,0 +1,6 @@
+Fast api init 
+A form where name , phone no and address 
+a button to submit the form 
+on submit the form should be stored in a database : sqlite
+a port where a table that show the data 
+
