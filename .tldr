@@ -36,24 +36,32 @@
 		{
 			"id": "pointer:pointer",
 			"typeName": "pointer",
-			"x": 215.6322918594972,
-			"y": -559.7007024307645,
-			"lastActivityTimestamp": 1765202837858,
+			"x": -18.15352316167707,
+			"y": -678.2415655804655,
+			"lastActivityTimestamp": 1765206898158,
 			"meta": {}
 		},
 		{
-			"x": 159.95585183832293,
-			"y": -567.9368780804655,
+			"x": 303.1535231616771,
+			"y": 980.2415655804655,
+			"z": 1,
+			"meta": {},
+			"id": "camera:page:page",
+			"typeName": "camera"
+		},
+		{
+			"x": -224.15352316167707,
+			"y": -906.4368780804655,
 			"rotation": 0,
 			"isLocked": false,
 			"opacity": 1,
 			"meta": {},
-			"id": "shape:Vdk-DHlwEUTkokXwgqIHc",
+			"id": "shape:lAsoh75PG_MUKwsNuvSC1",
 			"type": "text",
 			"props": {
 				"color": "black",
 				"size": "m",
-				"w": 97.78125,
+				"w": 461.109375,
 				"font": "draw",
 				"textAlign": "start",
 				"autoSize": true,
@@ -69,32 +77,96 @@
 							"content": [
 								{
 									"type": "text",
-									"text": "fast  ap"
+									"text": "email + password "
 								}
 							]
+						},
+						{
+							"type": "paragraph",
+							"attrs": {
+								"dir": "auto"
+							},
+							"content": [
+								{
+									"type": "text",
+									"text": "extrach -> python show ,"
+								}
+							]
+						},
+						{
+							"type": "paragraph",
+							"attrs": {
+								"dir": "auto"
+							},
+							"content": [
+								{
+									"type": "text",
+									"text": "jb hum swqlite database usma store "
+								}
+							]
+						},
+						{
+							"type": "paragraph",
+							"attrs": {
+								"dir": "auto"
+							},
+							"content": [
+								{
+									"type": "text",
+									"text": "ussa "
+								}
+							]
+						},
+						{
+							"type": "paragraph",
+							"attrs": {
+								"dir": "auto"
+							},
+							"content": [
+								{
+									"type": "text",
+									"text": "email -> @gmail.com -> js "
+								}
+							]
+						},
+						{
+							"type": "paragraph",
+							"attrs": {
+								"dir": "auto"
+							},
+							"content": [
+								{
+									"type": "text",
+									"text": "otp -> given gmail -> otp -> valid "
+								}
+							]
+						},
+						{
+							"type": "paragraph",
+							"attrs": {
+								"dir": "auto"
+							}
+						},
+						{
+							"type": "paragraph",
+							"attrs": {
+								"dir": "auto"
+							}
 						}
 					]
 				}
 			},
 			"parentId": "page:page",
-			"index": "a1ZtOCMV",
+			"index": "a15TbqcV",
 			"typeName": "shape"
 		},
 		{
-			"x": -82.6802090866062,
-			"y": 786.03579572271,
-			"z": 0.6318065745798729,
-			"meta": {},
-			"id": "camera:page:page",
-			"typeName": "camera"
-		},
-		{
-			"editingShapeId": "shape:Vdk-DHlwEUTkokXwgqIHc",
+			"editingShapeId": null,
 			"croppingShapeId": null,
 			"selectedShapeIds": [
-				"shape:Vdk-DHlwEUTkokXwgqIHc"
+				"shape:lAsoh75PG_MUKwsNuvSC1"
 			],
-			"hoveredShapeId": "shape:Vdk-DHlwEUTkokXwgqIHc",
+			"hoveredShapeId": "shape:lAsoh75PG_MUKwsNuvSC1",
 			"erasingShapeIds": [],
 			"hintingShapeIds": [],
 			"focusedGroupId": null,
@@ -134,7 +206,7 @@
 			"screenBounds": {
 				"x": 0,
 				"y": 0,
-				"w": 512,
+				"w": 724,
 				"h": 657
 			},
 			"insets": [
