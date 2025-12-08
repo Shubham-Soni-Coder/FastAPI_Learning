@@ -30,7 +30,7 @@ html {
 .main {
   /* Dark overlay to make text pop */
   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("./images/login_image.webp");
+    url("../images/login_image.webp");
   background-size: cover;
   background-position: center;
   height: 100vh;
