@@ -11,3 +11,9 @@ wheels/
 
 # drawing file 
 .tldr
+
+# test file 
+try.py
+
+# database 
+test.db
