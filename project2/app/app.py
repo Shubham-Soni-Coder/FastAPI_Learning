@@ -5,9 +5,10 @@ from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
-app.mount("/styles", StaticFiles(directory="styles"), name="styles")
-app.mount("/images", StaticFiles(directory="images"), name="images")
-app.mount("/templates", StaticFiles(directory="templates"), name="templates")
+# Static folder
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
 # Templates
 templates = Jinja2Templates(directory="templates")
 
