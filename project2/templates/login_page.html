@@ -14,7 +14,7 @@
 
     <div class="main">
         <div class="boxes">
-            <form action="/login" method="post">
+            <form action="{{ url_for('login_success') }}" method="post">
                 <h1>Login</h1>
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Enter your username" autocomplete="username" required>
