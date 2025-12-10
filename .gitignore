@@ -17,3 +17,6 @@ try.py
 
 # database 
 test.db
+
+# api key file 
+.env

