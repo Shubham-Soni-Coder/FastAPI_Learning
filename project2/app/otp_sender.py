@@ -5,8 +5,9 @@ import secrets
 import resend
 
 load_dotenv()
-
 resend_api_key = os.getenv("RESEND_API_KEY")
+
+resend.api_key = resend_api_key
 
 if not resend_api_key:
     raise "Plz add resend api key from resend website"
@@ -22,7 +23,7 @@ def send_otp(email: str) -> str:
 
     resend.Emails.send(
         {
-            "from": "OTP Sender <onboarding@resend.dev>",
+            "from": "onboarding@resend.dev",
             "to": email,
             "subject": "Your OTP is here!",
             "html": f"<p>Your OTP is: <strong>{otp}</strong></p>",
@@ -31,4 +32,4 @@ def send_otp(email: str) -> str:
 
 
 if __name__ == "__main__":
-    generate_otp()
+    send_otp("sonishubham2888@gmail.com")

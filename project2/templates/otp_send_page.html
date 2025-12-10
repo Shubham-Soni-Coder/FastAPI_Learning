@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/styles/style.css">
+    <title>Verify OTP</title>
+</head>
+<body>
+    <div class="main">
+        <div class="boxes">
+            <form action="/verify_otp" method="post">
+                <h1>Verify OTP</h1>
+                <p style="margin-bottom: 25px; text-align: center; font-size: 0.9rem; opacity: 0.9;">
+                    We have sent a verification code to your email address.
+                </p> 
+
+                <label for="otp">One-Time Password</label>
+                <input type="text" id="otp" name="otp" placeholder="Enter 6-digit code" required pattern="\d{6}" maxlength="6" title="Please enter the 6-digit code" style="text-align: center; letter-spacing: 0.2rem; font-weight: 500;">
+                
+                <button type="submit">Verify Code</button>
+                
+                <div class="signup-text" style="margin-top: 20px; text-align: center;">
+                    Didn't receive code? <a href="#">Resend</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

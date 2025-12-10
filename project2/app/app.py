@@ -32,8 +32,10 @@ def show_login_success(
     return templates.TemplateResponse("login_success.html", {"request": request})
 
 
-@app.post("otp_send", name="otp_send")
+@app.post("/otp_send", name="otp_send")
 def otp_sender(request: Request, usergmail: str = Form(...), password: str = Form(...)):
-    from otp_sender import send_otp
+
+    from .otp_sender import send_otp
 
     send_otp(usergmail)
+    return templates.TemplateResponse("otp_send_page.html", {"request": request})
