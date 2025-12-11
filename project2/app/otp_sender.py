@@ -13,12 +13,12 @@ if not resend_api_key:
     raise "Plz add resend api key from resend website"
 
 
-def generate_otp(length=4):
+def generate_otp(length=4) -> str:
     digits = string.digits
     return "".join(secrets.choice(digits) for _ in range(length))
 
 
-def send_otp(email: str) -> str:
+def send_otp(email: str) -> None:
     otp = generate_otp()
 
     resend.Emails.send(

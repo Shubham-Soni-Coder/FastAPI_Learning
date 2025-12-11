@@ -1,6 +1,6 @@
 # schemas.py
 from pydantic import BaseModel
-from datatime import datatime
+from datetime import datetime
 
 
 class Usermodel(BaseModel):
@@ -8,9 +8,9 @@ class Usermodel(BaseModel):
     username: str
     gmail_id: str
     password: str
-    created_at: datatime
+    created_at: datetime
 
-    class config:
+    class Config:
         orm_mode = True
 
 

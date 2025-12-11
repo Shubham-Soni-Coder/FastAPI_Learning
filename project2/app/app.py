@@ -2,6 +2,12 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from app.schemas import UserCreate, Usermodel
+from sqlalchemy.orm import Session
+from fastapi import Depends
+from app.database import get_db, Base, engine
+from app.models import User
+from passlib.context import CryptContext
 
 app = FastAPI()
 
@@ -13,6 +19,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
+@app.on_event("startup")
+def startup():
+    Base.metadata.create_all(bind=engine)
+
+
 @app.get("/", name="login")
 def show_form(request: Request):
     return templates.TemplateResponse("login_page.html", {"request": request})
@@ -21,6 +32,49 @@ def show_form(request: Request):
 @app.get("/register", name="register")
 def show_register_form(request: Request):
     return templates.TemplateResponse("register_page.html", {"request": request})
+
+
+@app.post("/register", name="register")
+def register_user(
+    request: Request,
+    usergmail: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    from .otp_sender import send_otp
+
+    user_data = UserCreate(
+        username="Defalut",
+        gmail_id=usergmail,
+        password=password,
+    )
+
+    # check existing gmail
+    existing = db.query(User).filter(User.gmail_id == usergmail).first()
+
+    if existing:
+        return templates.TemplateResponse(
+            "register_page.html", {"request": request, "error": "Email already in use"}
+        )
+
+    # create a hash method
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+    # hash password
+    hashed_password = pwd_context.hash(user_data.password)
+
+    new_user = User(
+        username=user_data.username,
+        gmail_id=user_data.gmail_id,
+        password=hashed_password,
+    )
+
+    db.add(new_user)
+    db.commit()
+    print("User registered successfully")
+
+    send_otp(usergmail)
+    return templates.TemplateResponse("otp_send_page.html", {"request": request})
 
 
 @app.post("/login_success", name="login_success")
