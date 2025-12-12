@@ -47,6 +47,7 @@ def register_user(
     existing = db.query(User).filter(User.gmail_id == usergmail).first()
 
     if existing:
+        # delete data just for testing
         print("data is already exist")
         return templates.TemplateResponse(
             "register_page.html", {"request": request, "error": "Email already in use"}
@@ -97,37 +98,3 @@ def check_otp(
     # Check if we need to register the user or if they are already registered
     # For now, we assume success
     return templates.TemplateResponse("login_success.html", {"request": request})
-
-
-def register_gmail(
-    request: Request,
-    usergmail: str = Form(...),
-    password: str = Form(...),
-    db: Session = Depends(get_db),
-):
-
-    from .otp_sender import send_otp
-
-    user_data = UserCreate(
-        username="Defalut",
-        gmail_id=usergmail,
-        password=password,
-    )
-
-    # create a hash method
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-    # hash password
-    hashed_password = pwd_context.hash(user_data.password)
-
-    new_user = User(
-        username=user_data.username,
-        gmail_id=user_data.gmail_id,
-        password=hashed_password,
-    )
-
-    db.add(new_user)
-    db.commit()
-    print("User registered successfully")
-
-    send_otp(usergmail)

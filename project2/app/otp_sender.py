@@ -5,8 +5,8 @@ import secrets
 import resend
 from datetime import datetime, timedelta
 import hashlib
-from models import OTP
-from database import engine, Base, get_db, session
+from app.models import OTP
+from app.database import engine, Base, get_db, session
 
 
 load_dotenv()
@@ -55,7 +55,6 @@ def store_otp(email: str, otp: str) -> None:
     db_otp = OTP(gmail_id=email, otp_hash=otp_hash, expires_at=expires_at)
     db.add(db_otp)
     db.commit()
-    print("User registered successfully")
     db.close()
 
 
