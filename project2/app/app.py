@@ -6,8 +6,10 @@ from app.schemas import UserCreate, Usermodel
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from app.database import get_db, Base, engine
-from app.models import User
+from app.models import User, OTP
 from passlib.context import CryptContext
+import hashlib
+from datetime import datetime, timedelta
 
 app = FastAPI()
 
@@ -38,42 +40,22 @@ def show_register_form(request: Request):
 def register_user(
     request: Request,
     usergmail: str = Form(...),
-    password: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    from .otp_sender import send_otp
-
-    user_data = UserCreate(
-        username="Defalut",
-        gmail_id=usergmail,
-        password=password,
-    )
 
     # check existing gmail
     existing = db.query(User).filter(User.gmail_id == usergmail).first()
 
     if existing:
+        print("data is already exist")
         return templates.TemplateResponse(
             "register_page.html", {"request": request, "error": "Email already in use"}
         )
 
-    # create a hash method
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-    # hash password
-    hashed_password = pwd_context.hash(user_data.password)
-
-    new_user = User(
-        username=user_data.username,
-        gmail_id=user_data.gmail_id,
-        password=hashed_password,
-    )
-
-    db.add(new_user)
-    db.commit()
-    print("User registered successfully")
+    from .otp_sender import send_otp
 
     send_otp(usergmail)
+
     return templates.TemplateResponse("otp_send_page.html", {"request": request})
 
 
@@ -93,3 +75,59 @@ def otp_sender(request: Request, usergmail: str = Form(...), password: str = For
 
     send_otp(usergmail)
     return templates.TemplateResponse("otp_send_page.html", {"request": request})
+
+
+@app.post("/check_otp", name="check_otp")
+def check_otp(
+    request: Request,
+    usergmail: str = Form(...),
+    otp: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    from .otp_sender import check_otp as verify_otp
+
+    is_valid = verify_otp(usergmail, otp)
+
+    if not is_valid:
+        return templates.TemplateResponse(
+            "otp_send_page.html",
+            {"request": request, "error": "Invalid or expired OTP"},
+        )
+
+    # Check if we need to register the user or if they are already registered
+    # For now, we assume success
+    return templates.TemplateResponse("login_success.html", {"request": request})
+
+
+def register_gmail(
+    request: Request,
+    usergmail: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db),
+):
+
+    from .otp_sender import send_otp
+
+    user_data = UserCreate(
+        username="Defalut",
+        gmail_id=usergmail,
+        password=password,
+    )
+
+    # create a hash method
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+    # hash password
+    hashed_password = pwd_context.hash(user_data.password)
+
+    new_user = User(
+        username=user_data.username,
+        gmail_id=user_data.gmail_id,
+        password=hashed_password,
+    )
+
+    db.add(new_user)
+    db.commit()
+    print("User registered successfully")
+
+    send_otp(usergmail)

@@ -159,3 +159,15 @@ button:active {
     font-size: 1.8rem;
   }
 }
+
+.error-message {
+  color: #ff6b6b; /* Soft red */
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff6b6b;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  width: 100%;
+}

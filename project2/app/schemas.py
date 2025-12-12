@@ -19,3 +19,9 @@ class UserCreate(BaseModel):
     gmail_id: str
     password: str
     is_admin: bool = False
+
+
+class OTP(BaseModel):
+    gmail_id: str
+    otp_hash: str
+    expires_at: datetime
