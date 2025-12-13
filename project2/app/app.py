@@ -24,6 +24,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Templates
 templates = Jinja2Templates(directory="templates")
 
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+
 app.add_middleware(
     SessionMiddleware,
     secret_key="CHANGE_THIS_TO_A_LONG_RANDOM_SECRET",
@@ -37,7 +39,7 @@ def startup():
     Base.metadata.create_all(bind=engine)
 
 
-@app.get("/", name="login")
+@app.get("/", name="login_page")
 def show_form(request: Request):
     return templates.TemplateResponse("login_page.html", {"request": request})
 
@@ -51,14 +53,14 @@ def show_register_form(request: Request):
 def register_user(
     request: Request,
     usergmail: str = Form(...),
-    password: str = Form(...),
+    userpassword: str = Form(...),
     db: Session = Depends(get_db),
 ):
 
     # hash the password
-    pwd_context = CryptContext(schemes=["argon2"])
+    # pwd_context is now global
 
-    hashed_password = pwd_context.hash(password)
+    hashed_password = pwd_context.hash(userpassword)
 
     # check existing gmail
     existing = db.query(User).filter(User.gmail_id == usergmail).first()
@@ -83,10 +85,8 @@ def register_user(
 
 @app.post("/login_success", name="login_success")
 def show_login_success(
-    request: Request, username: str = Form(...), password: str = Form(...)
+    request: Request,
 ):
-    with open("data.txt", "w") as f:
-        f.write(f"Username: {username}\nPassword: {password}")
     return templates.TemplateResponse("login_success.html", {"request": request})
 
 
@@ -127,12 +127,36 @@ def verify_otp_code(
             {"request": request, "error": "Invalid or expired OTP"},
         )
 
-    # store userdata in database
-    # Just for tasking we give username = "Default"
-    # secure the password
-
-    user = User(username="Default", gmail_id=gmail, password=password)
+    user = User(gmail_id=gmail, password=password)
     db.add(user)
     db.commit()
     print("Data sucessful added")
+    return templates.TemplateResponse("login_success.html", {"request": request})
+
+
+@app.post("/login", name="login")
+def login(
+    request: Request,
+    usergmail: str = Form(...),
+    userpassword: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    # check for existing user
+    user = db.query(User).filter(User.gmail_id == usergmail).first()
+
+    if not user:
+        print("User not found")
+        return templates.TemplateResponse(
+            "login_page.html",
+            {"request": request, "error": "Email address is not found"},
+        )
+
+    # verify password
+    if not pwd_context.verify(userpassword, user.password):
+        print("Password is incorrect")
+        return templates.TemplateResponse(
+            "login_page.html",
+            {"request": request, "error": "Invalid password"},
+        )
+
     return templates.TemplateResponse("login_success.html", {"request": request})

@@ -15,7 +15,7 @@ db = session()
 def show_data():
     data = db.query(User).all()
     for i, user in enumerate(data):
-        print(i, user.username, user.gmail_id, user.password, user.created_at)
+        print(i, user.gmail_id, user.password, user.created_at)
     db.close()
 
 
