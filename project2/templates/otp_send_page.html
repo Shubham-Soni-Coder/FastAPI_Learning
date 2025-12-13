@@ -11,7 +11,7 @@
 <body>
     <div class="main">
         <div class="boxes">
-            <form action="/verify_otp" method="post">
+            <form action="{{ url_for('verify_otp') }}" method="post">
                 <h1>Verify OTP</h1>
                 <p style="margin-bottom: 25px; text-align: center; font-size: 0.9rem; opacity: 0.9;">
                     We have sent a verification code to your email address.
@@ -19,6 +19,8 @@
 
                 <label for="otp">One-Time Password</label>
                 <input type="text" id="otp" name="otp" placeholder="Enter 6-digit code" required pattern="\d{6}" maxlength="6" title="Please enter the 6-digit code" style="text-align: center; letter-spacing: 0.2rem; font-weight: 500;">
+                
+                <!-- <input type="hidden" name="usergmail" value="{{ usergmail }}"> -->
                 
                 <button type="submit">Verify Code</button>
                 

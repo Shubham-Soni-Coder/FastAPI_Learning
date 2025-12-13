@@ -35,7 +35,7 @@ def delete_data():
 
 
 def send_otp(email: str) -> None:
-    otp = generate_otp()
+    otp = generate_otp(length=6)
 
     resend.Emails.send(
         {
@@ -64,7 +64,7 @@ def show_data():
         print(i, user.gmail_id, user.otp_hash, user.expires_at)
 
 
-def check_otp(email: str, otp: str) -> bool:
+def verify_otp(email: str, otp: str) -> bool:
     stored_otp = (
         db.query(OTP).filter(OTP.gmail_id == email).order_by(OTP.id.desc()).first()
     )
@@ -80,7 +80,8 @@ def check_otp(email: str, otp: str) -> bool:
 
 
 if __name__ == "__main__":
-    send_otp("sonishubham2888@gmail.com")
-    user_otp = input("Enter your otp : ")
-    user_otp = str(user_otp)
-    print(check_otp("sonishubham2888@gmail.com", user_otp))
+    # send_otp("sonishubham2888@gmail.com")
+    # user_otp = input("Enter your otp : ")
+    # user_otp = str(user_otp)
+    # print(verify_otp("sonishubham2888@gmail.com", user_otp))
+    show_data()

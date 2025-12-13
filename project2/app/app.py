@@ -10,6 +10,9 @@ from app.models import User, OTP
 from passlib.context import CryptContext
 import hashlib
 from datetime import datetime, timedelta
+from app.otp_sender import send_otp, verify_otp
+from starlette.middleware.sessions import SessionMiddleware
+
 
 app = FastAPI()
 
@@ -19,6 +22,13 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Templates
 templates = Jinja2Templates(directory="templates")
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key="CHANGE_THIS_TO_A_LONG_RANDOM_SECRET",
+    same_site="lax",
+    https_only=False,  # True in production
+)
 
 
 @app.on_event("startup")
@@ -40,6 +50,7 @@ def show_register_form(request: Request):
 def register_user(
     request: Request,
     usergmail: str = Form(...),
+    password: str = Form(...),
     db: Session = Depends(get_db),
 ):
 
@@ -53,11 +64,14 @@ def register_user(
             "register_page.html", {"request": request, "error": "Email already in use"}
         )
 
-    from .otp_sender import send_otp
-
     send_otp(usergmail)
+    request.session["gmail"] = usergmail
+    request.session["password"] = password
+    request.session["time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    return templates.TemplateResponse("otp_send_page.html", {"request": request})
+    return templates.TemplateResponse(
+        "otp_send_page.html", {"request": request, "usergmail": usergmail}
+    )
 
 
 @app.post("/login_success", name="login_success")
@@ -72,29 +86,40 @@ def show_login_success(
 @app.post("/otp_send", name="otp_send")
 def otp_sender(request: Request, usergmail: str = Form(...), password: str = Form(...)):
 
-    from .otp_sender import send_otp
-
     send_otp(usergmail)
+
+    request.session["gmail"] = usergmail  # This is a cookie for brower
+
     return templates.TemplateResponse("otp_send_page.html", {"request": request})
 
 
-@app.post("/check_otp", name="check_otp")
-def check_otp(
+@app.post("/verify-otp", name="verify_otp")
+def verify_otp_code(
     request: Request,
-    usergmail: str = Form(...),
     otp: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    from .otp_sender import check_otp as verify_otp
 
-    is_valid = verify_otp(usergmail, otp)
+    gmail = request.session.get("gmail")
+    password = request.session.get("password")
+    timestamp = request.session.get("time")
+
+    if not gmail:
+        print("Session expried error")
+        return templates.TemplateResponse(
+            "otp_send_page.html",
+            {"request": request, "error": "Session expired. Try again."},
+        )
+
+    is_valid = verify_otp(gmail, otp)
 
     if not is_valid:
+        print("Otp not match")
         return templates.TemplateResponse(
             "otp_send_page.html",
             {"request": request, "error": "Invalid or expired OTP"},
         )
 
-    # Check if we need to register the user or if they are already registered
-    # For now, we assume success
+    # store userdata in database
+
     return templates.TemplateResponse("login_success.html", {"request": request})

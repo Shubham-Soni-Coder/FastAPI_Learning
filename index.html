@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Gesture Particle System</title>
+<style>
+  body { margin: 0; overflow: hidden; background: black; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+
+<!-- Three.js -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+
+<!-- MediaPipe Hands -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+<script>
+/* ============================
+   BASIC THREE.JS SETUP
+============================ */
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.z = 5;
+
+let renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+/* ============================
+   PARTICLES
+============================ */
+const COUNT = 5000;
+const geometry = new THREE.BufferGeometry();
+const positions = new Float32Array(COUNT * 3);
+const targets = new Float32Array(COUNT * 3);
+const colors = new Float32Array(COUNT * 3);
+
+for (let i = 0; i < COUNT; i++) {
+  positions[i*3] = (Math.random()-0.5)*3;
+  positions[i*3+1] = (Math.random()-0.5)*3;
+  positions[i*3+2] = (Math.random()-0.5)*3;
+
+  colors[i*3] = 1;
+  colors[i*3+1] = 1;
+  colors[i*3+2] = 1;
+}
+
+geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+geometry.setAttribute("target", new THREE.BufferAttribute(targets, 3));
+geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+const material = new THREE.PointsMaterial({
+  size: 0.03,
+  vertexColors: true
+});
+
+const particles = new THREE.Points(geometry, material);
+scene.add(particles);
+
+/* ============================
+   SHAPES
+============================ */
+let shapes = [];
+let shapeIndex = 0;
+
+function sphereShape() {
+  let pts = [];
+  for (let i=0;i<COUNT;i++){
+    let r = Math.random()*1.5;
+    let theta = Math.random()*Math.PI*2;
+    let phi = Math.acos(2*Math.random()-1);
+    pts.push({
+      x: r*Math.sin(phi)*Math.cos(theta),
+      y: r*Math.sin(phi)*Math.sin(theta),
+      z: r*Math.cos(phi)
+    });
+  }
+  return pts;
+}
+
+function heartShape() {
+  let pts = [];
+  for (let i=0;i<COUNT;i++){
+    let t = Math.random()*Math.PI*2;
+    let x = 16*Math.pow(Math.sin(t),3);
+    let y = 13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+    pts.push({ x:x*0.03, y:y*0.03, z:(Math.random()-0.5)*0.5 });
+  }
+  return pts;
+}
+
+function flowerShape() {
+  let pts = [];
+  for (let i=0;i<COUNT;i++){
+    let a = Math.random()*Math.PI*2;
+    let r = Math.sin(5*a);
+    pts.push({
+      x: r*Math.cos(a),
+      y: r*Math.sin(a),
+      z: (Math.random()-0.5)
+    });
+  }
+  return pts;
+}
+
+function fireworkShape() {
+  let pts = [];
+  for (let i=0;i<COUNT;i++){
+    let a = Math.random()*Math.PI*2;
+    let e = Math.random()*Math.PI;
+    let r = Math.random()*2;
+    pts.push({
+      x: r*Math.sin(e)*Math.cos(a),
+      y: r*Math.sin(e)*Math.sin(a),
+      z: r*Math.cos(e)
+    });
+  }
+  return pts;
+}
+
+shapes.push(sphereShape(), heartShape(), flowerShape(), fireworkShape());
+
+function applyShape(shape) {
+  for (let i=0;i<COUNT;i++){
+    targets[i*3] = shape[i].x;
+    targets[i*3+1] = shape[i].y;
+    targets[i*3+2] = shape[i].z;
+  }
+  geometry.attributes.target.needsUpdate = true;
+}
+
+applyShape(shapes[0]);
+
+/* ============================
+   HAND TRACKING
+============================ */
+let gesture = { spread:0, pinch:false, lastPinch:false };
+
+const hands = new Hands({
+  locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
+});
+
+hands.setOptions({
+  maxNumHands:1,
+  minDetectionConfidence:0.7,
+  minTrackingConfidence:0.7
+});
+
+hands.onResults(res=>{
+  if(!res.multiHandLandmarks[0]) return;
+
+  let lm = res.multiHandLandmarks[0];
+  let dx = lm[4].x - lm[8].x;
+  let dy = lm[4].y - lm[8].y;
+  gesture.spread = Math.sqrt(dx*dx + dy*dy);
+  gesture.pinch = gesture.spread < 0.05;
+
+  if(gesture.pinch && !gesture.lastPinch){
+    shapeIndex = (shapeIndex+1)%shapes.length;
+    applyShape(shapes[shapeIndex]);
+
+    for(let i=0;i<COUNT;i++){
+      colors[i*3] = Math.random();
+      colors[i*3+1] = Math.random();
+      colors[i*3+2] = Math.random();
+    }
+    geometry.attributes.color.needsUpdate = true;
+  }
+  gesture.lastPinch = gesture.pinch;
+});
+
+const video = document.createElement("video");
+navigator.mediaDevices.getUserMedia({ video:true }).then(stream=>{
+  video.srcObject = stream;
+  video.play();
+  const cam = new Camera(video,{
+    onFrame: async ()=>hands.send({image:video}),
+    width:640, height:480
+  });
+  cam.start();
+});
+
+/* ============================
+   ANIMATION LOOP
+============================ */
+function animate(){
+  requestAnimationFrame(animate);
+  const pos = geometry.attributes.position.array;
+  const tar = geometry.attributes.target.array;
+
+  for(let i=0;i<COUNT;i++){
+    pos[i*3] += (tar[i*3] - pos[i*3]) * 0.08;
+    pos[i*3+1] += (tar[i*3+1] - pos[i*3+1]) * 0.08;
+    pos[i*3+2] += (tar[i*3+2] - pos[i*3+2]) * 0.08;
+
+    let s = 1 + gesture.spread * 0.3;
+    pos[i*3] *= s;
+    pos[i*3+1] *= s;
+  }
+
+  geometry.attributes.position.needsUpdate = true;
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener("resize",()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+
+</body>
+</html>
