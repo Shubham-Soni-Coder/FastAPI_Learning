@@ -1,5 +1,4 @@
 const emailinput =  document.getElementById("usergmail");
-const passwordinput = document.getElementById("password");
 
 
 // Check for valid gmail 

@@ -12,6 +12,7 @@ import hashlib
 from datetime import datetime, timedelta
 from app.otp_sender import send_otp, verify_otp
 from starlette.middleware.sessions import SessionMiddleware
+from passlib.context import CryptContext
 
 
 app = FastAPI()
@@ -54,19 +55,25 @@ def register_user(
     db: Session = Depends(get_db),
 ):
 
+    # hash the password
+    pwd_context = CryptContext(schemes=["argon2"])
+
+    hashed_password = pwd_context.hash(password)
+
     # check existing gmail
     existing = db.query(User).filter(User.gmail_id == usergmail).first()
 
     if existing:
         # delete data just for testing
         print("data is already exist")
+        hashed_password = None
         return templates.TemplateResponse(
             "register_page.html", {"request": request, "error": "Email already in use"}
         )
 
     send_otp(usergmail)
     request.session["gmail"] = usergmail
-    request.session["password"] = password
+    request.session["password"] = hashed_password
     request.session["time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     return templates.TemplateResponse(
@@ -121,5 +128,11 @@ def verify_otp_code(
         )
 
     # store userdata in database
+    # Just for tasking we give username = "Default"
+    # secure the password
 
+    user = User(username="Default", gmail_id=gmail, password=password)
+    db.add(user)
+    db.commit()
+    print("Data sucessful added")
     return templates.TemplateResponse("login_success.html", {"request": request})
