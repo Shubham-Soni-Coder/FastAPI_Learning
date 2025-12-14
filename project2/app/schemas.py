@@ -1,6 +1,7 @@
 # schemas.py
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional, List
 
 
 class Usermodel(BaseModel):
@@ -23,3 +24,35 @@ class OTP(BaseModel):
     gmail_id: str
     otp_hash: str
     expires_at: datetime
+
+
+class ClassCreate(BaseModel):
+    class_name: str
+    stream: Optional[str] = None
+
+
+class StudentCreate(BaseModel):
+    name: str
+    class_id: int
+
+
+class SubjectCreate(BaseModel):
+    name: str
+
+
+class ClassSubjectCreate(BaseModel):
+    class_id: int
+    subject_id: int
+
+
+class StudentSubjectSelect(BaseModel):
+    subjects_id = List[int]
+
+
+class StudentRespone(BaseModel):
+    id: int
+    name: str
+    class_id: int
+
+    class Config:
+        from_attributes = True
