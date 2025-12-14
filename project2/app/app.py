@@ -87,7 +87,7 @@ def register_user(
 def show_login_success(
     request: Request,
 ):
-    return templates.TemplateResponse("login_success.html", {"request": request})
+    return templates.TemplateResponse("dashboard.html", {"request": request})
 
 
 @app.post("/otp_send", name="otp_send")
@@ -131,7 +131,7 @@ def verify_otp_code(
     db.add(user)
     db.commit()
     print("Data sucessful added")
-    return templates.TemplateResponse("login_success.html", {"request": request})
+    return templates.TemplateResponse("dashboard.html", {"request": request})
 
 
 @app.post("/login", name="login")
@@ -159,4 +159,4 @@ def login(
             {"request": request, "error": "Invalid password"},
         )
 
-    return templates.TemplateResponse("login_success.html", {"request": request})
+    return templates.TemplateResponse("dashboard.html", {"request": request})
