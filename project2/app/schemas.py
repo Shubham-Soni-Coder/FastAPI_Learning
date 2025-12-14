@@ -46,7 +46,7 @@ class ClassSubjectCreate(BaseModel):
 
 
 class StudentSubjectSelect(BaseModel):
-    subjects_id = List[int]
+    subjects_id: List[int]
 
 
 class StudentRespone(BaseModel):
