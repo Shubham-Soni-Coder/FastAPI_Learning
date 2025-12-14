@@ -42,10 +42,39 @@ def create_class():
     db.commit()
 
 
+def create_student():
+    student_name = [
+        "Rahul",
+        "Neha",
+        "Amit",
+        "Pooja",
+        "Ravi",
+        "Karan",
+        "Anjali",
+        "Vikas",
+        "Simran",
+        "Arjun",
+        "Priya",
+        "Nitin",
+        "Sneha",
+        "Rohit",
+        "Kavya",
+    ]
+
+    classes = db.query(Class).all()
+
+    for i, name in enumerate(student_name):
+        class_obj = classes[i % len(classes)]  # roation with %
+        schems = StudentCreate(name=name, class_id=class_obj.id)
+        model = Student(**schems.model_dump())
+        db.add(model)
+    db.commit()
+
+
 def show_data():
-    data = db.query(Class).all()
+    data = db.query(Student).all()
     for i, user in enumerate(data):
-        print(i, user.class_name, user.stream)
+        print(i, user.name, user.class_id)
     db.close()
 
 
@@ -57,6 +86,6 @@ def drop_table():
 
 
 if __name__ == "__main__":
-    create_class()
+    create_student()
     show_data()
     # drop_table()
