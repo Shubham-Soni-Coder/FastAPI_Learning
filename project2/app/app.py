@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, Form, status
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from app.schemas import UserCreate, Usermodel
@@ -41,12 +41,24 @@ def startup():
 
 @app.get("/", name="login_page")
 def show_form(request: Request):
+    # Check if already logged in (optional but good UX)
+    if "gmail" in request.session:
+        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
     return templates.TemplateResponse("login_page.html", {"request": request})
 
 
 @app.get("/register", name="register")
 def show_register_form(request: Request):
     return templates.TemplateResponse("register_page.html", {"request": request})
+
+
+@app.get("/dashboard", name="dashboard")
+def show_dashboard(request: Request):
+    # Security check: exist session
+    if "gmail" not in request.session:
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse("dashboard.html", {"request": request})
 
 
 @app.post("/register", name="register")
@@ -87,7 +99,7 @@ def register_user(
 def show_login_success(
     request: Request,
 ):
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+    return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @app.post("/otp_send", name="otp_send")
@@ -131,7 +143,7 @@ def verify_otp_code(
     db.add(user)
     db.commit()
     print("Data sucessful added")
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+    return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @app.post("/login", name="login")
@@ -159,4 +171,7 @@ def login(
             {"request": request, "error": "Invalid password"},
         )
 
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+    # Store user in session
+    request.session["gmail"] = usergmail
+
+    return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
