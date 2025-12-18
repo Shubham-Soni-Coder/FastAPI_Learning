@@ -42,6 +42,8 @@ class Student(Base):
     __tablename__ = "students"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), nullable=False)
+    email = Column(String(50), nullable=False, unique=True, index=True)
+    hashed_password = Column(String(500), nullable=False)
     class_id = Column(Integer, ForeignKey("classes.id"), nullable=False)
     class_ = relationship("Class", backref="students")
 

@@ -20,3 +20,9 @@ test.db
 
 # api key file 
 .env
+
+# test data 
+demo.json
+
+#test file 
+test.py

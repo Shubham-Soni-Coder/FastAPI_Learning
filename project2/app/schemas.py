@@ -33,6 +33,8 @@ class ClassCreate(BaseModel):
 
 class StudentCreate(BaseModel):
     name: str
+    email: str
+    hashed_password: str
     class_id: int
 
 

@@ -13,6 +13,7 @@ from app.schemas import (
     SubjectCreate,
     StudentCreate,
 )
+import json
 
 # store in database
 Base.metadata.create_all(bind=engine)
@@ -43,29 +44,20 @@ def create_class():
 
 
 def create_student():
-    student_name = [
-        "Rahul",
-        "Neha",
-        "Amit",
-        "Pooja",
-        "Ravi",
-        "Karan",
-        "Anjali",
-        "Vikas",
-        "Simran",
-        "Arjun",
-        "Priya",
-        "Nitin",
-        "Sneha",
-        "Rohit",
-        "Kavya",
-    ]
+
+    with open("demo.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
 
     classes = db.query(Class).all()
 
-    for i, name in enumerate(student_name):
+    for i, (gmail, user) in enumerate(data.items()):
         class_obj = classes[i % len(classes)]  # roation with %
-        schems = StudentCreate(name=name, class_id=class_obj.id)
+        schems = StudentCreate(
+            name=user["name"],
+            email=gmail,
+            hashed_password=user["password"],
+            class_id=class_obj.id,
+        )
         model = Student(**schems.model_dump())
         db.add(model)
     db.commit()
@@ -81,7 +73,7 @@ def show_data():
 def drop_table():
     from sqlalchemy import text
 
-    db.execute(text("DROP TABLE IF EXISTS classes"))
+    db.execute(text("DROP TABLE IF EXISTS students"))
     db.commit()
 
 
