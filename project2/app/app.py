@@ -61,6 +61,91 @@ def show_dashboard(request: Request):
     return templates.TemplateResponse("dashboard.html", {"request": request})
 
 
+@app.get("/teacher-dashboard", name="teacher_dashboard")
+def show_teacher_dashboard(request: Request):
+    # Security check: exist session
+    if "gmail" not in request.session:
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse("teacher_dashboard.html", {"request": request})
+
+    return templates.TemplateResponse("teacher_dashboard.html", {"request": request})
+
+
+@app.get("/teacher/students", name="teacher_students")
+def show_teacher_students(request: Request):
+    if "gmail" not in request.session:
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Mock Data for student list
+    students_data = [
+        {
+            "roll_no": "101",
+            "name": "Alice Johnson",
+            "parent": "Robert Johnson",
+            "fees_paid": True,
+            "attendance": 90,
+            "days_present": 28,
+            "total_days": 31,
+            "initials": "AJ",
+        },
+        {
+            "roll_no": "102",
+            "name": "Bob Smith",
+            "parent": "James Smith",
+            "fees_paid": False,
+            "attendance": 74,
+            "days_present": 23,
+            "total_days": 31,
+            "initials": "BS",
+        },
+        {
+            "roll_no": "103",
+            "name": "Charlie Brown",
+            "parent": "David Brown",
+            "fees_paid": True,
+            "attendance": 93,
+            "days_present": 29,
+            "total_days": 31,
+            "initials": "CB",
+        },
+        {
+            "roll_no": "104",
+            "name": "Diana Ross",
+            "parent": "Michael Ross",
+            "fees_paid": False,
+            "attendance": 67,
+            "days_present": 21,
+            "total_days": 31,
+            "initials": "DR",
+        },
+        {
+            "roll_no": "105",
+            "name": "Edward Norton",
+            "parent": "Chris Norton",
+            "fees_paid": True,
+            "attendance": 87,
+            "days_present": 27,
+            "total_days": 31,
+            "initials": "EN",
+        },
+        {
+            "roll_no": "106",
+            "name": "Frank Ocean",
+            "parent": "Leon Ocean",
+            "fees_paid": True,
+            "attendance": 90,
+            "days_present": 28,
+            "total_days": 31,
+            "initials": "FO",
+        },
+    ]
+
+    return templates.TemplateResponse(
+        "teacher_students.html", {"request": request, "students": students_data}
+    )
+
+
 @app.post("/register", name="register")
 def register_user(
     request: Request,

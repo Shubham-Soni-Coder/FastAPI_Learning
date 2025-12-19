@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - StudentSys</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', path='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='styles/teacher_dashboard.css') }}">
+</head>
+
+<body>
+    <!-- Background -->
+    <div class="main" style="position: fixed; z-index: -1;"></div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <span>TeacherHub</span>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="/teacher-dashboard"><i class="fa-solid fa-grid-2"></i> Dashboard</a></li>
+                <li><a href="/teacher/students"><i class="fa-solid fa-users"></i> Students</a></li>
+                <li><a href="#"><i class="fa-solid fa-book-open"></i> Classes</a></li>
+                <li><a href="#"><i class="fa-solid fa-file-pen"></i> Homework</a></li>
+                <li><a href="#"><i class="fa-solid fa-chart-line"></i> Report Cards</a></li>
+                <li><a href="#"><i class="fa-solid fa-calendar-alt"></i> Timetable</a></li>
+            </ul>
+
+            <a href="/" class="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <section class="main-content">
+            <header>
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search for students, classes...">
+                </div>
+
+                <div class="user-profile">
+                    <button class="notification-btn">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
+
+                    <div class="profile-section">
+                        <div class="user-info">
+                            <span>Mrs. Anderson</span>
+                            <small>Math Teacher</small>
+                        </div>
+                        <div class="user-avatar">
+                            MA
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="welcome-banner">
+                    <div class="banner-content">
+                        <h1>Good Morning, Teacher!</h1>
+                        <p>You have classes with Grade 9 & 10 today and 12 homework submissions to review.</p>
+                    </div>
+                    <a href="#" class="add-class-btn">
+                        <i class="fa-solid fa-plus"></i> Create Class
+                    </a>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>142</h3>
+                            <p>Total Students</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #00b894, #55efc4);">
+                            <i class="fa-solid fa-chalkboard"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>8</h3>
+                            <p>Active Classes</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #ff7675, #fab1a0);">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>12</h3>
+                            <p>Pending Review</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #fdcb6e, #ffeaa7);">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>4.8</h3>
+                            <p>Average Rating</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Classes -->
+                <div class="section-header">
+                    <h2>Active Classes</h2>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+
+                <div class="classes-grid">
+                    <!-- Class 1 -->
+                    <div class="class-card">
+                        <div class="class-header">
+                            <span class="class-badge">Grade 10-A</span>
+                        </div>
+                        <div class="class-body">
+                            <h3 class="class-title">Mathematics</h3>
+                            <div class="class-meta">
+                                <span><i class="fa-solid fa-clock"></i> 09:00 AM</span>
+                                <span><i class="fa-solid fa-user-group"></i> 32 Students</span>
+                            </div>
+                            <div class="class-actions">
+                                <a href="#" class="action-btn primary">Start Class</a>
+                                <a href="#" class="action-btn">Attendance</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Class 2 -->
+                    <div class="class-card">
+                        <div class="class-header" style="background: linear-gradient(135deg, #ff7675, #fab1a0);">
+                            <span class="class-badge">Grade 9-B</span>
+                        </div>
+                        <div class="class-body">
+                            <h3 class="class-title">Physics</h3>
+                            <div class="class-meta">
+                                <span><i class="fa-solid fa-clock"></i> 11:30 AM</span>
+                                <span><i class="fa-solid fa-user-group"></i> 28 Students</span>
+                            </div>
+                            <div class="class-actions">
+                                <a href="#" class="action-btn primary">Start Class</a>
+                                <a href="#" class="action-btn">Attendance</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Class 3 -->
+                    <div class="class-card">
+                        <div class="class-header" style="background: linear-gradient(135deg, #00b894, #55efc4);">
+                            <span class="class-badge">Grade 10-C</span>
+                        </div>
+                        <div class="class-body">
+                            <h3 class="class-title">Geometry</h3>
+                            <div class="class-meta">
+                                <span><i class="fa-solid fa-clock"></i> 02:00 PM</span>
+                                <span><i class="fa-solid fa-user-group"></i> 30 Students</span>
+                            </div>
+                            <div class="class-actions">
+                                <a href="#" class="action-btn primary">Start Class</a>
+                                <a href="#" class="action-btn">Attendance</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+
+</html>
