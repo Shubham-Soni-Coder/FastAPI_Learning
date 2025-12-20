@@ -32,10 +32,14 @@ class ClassCreate(BaseModel):
 
 
 class StudentCreate(BaseModel):
+    roll_no: str
     name: str
+    father_name: str
+    mother_name: str
     email: str
     hashed_password: str
     class_id: int
+    is_active: bool
 
 
 class SubjectCreate(BaseModel):

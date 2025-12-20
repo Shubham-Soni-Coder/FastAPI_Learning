@@ -6,16 +6,20 @@ from app.schemas import UserCreate, Usermodel
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from app.database import get_db, Base, engine
-from app.models import User, OTP
+from app.models import User, OTP, Student
 from passlib.context import CryptContext
 import hashlib
 from datetime import datetime, timedelta
 from app.otp_sender import send_otp, verify_otp
 from starlette.middleware.sessions import SessionMiddleware
 from passlib.context import CryptContext
+from app.database import session
 
 
 app = FastAPI()
+
+# make database
+db = session()
 
 # Static folder
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -78,68 +82,25 @@ def show_teacher_students(request: Request):
         return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
     # Mock Data for student list
-    students_data = [
-        {
-            "roll_no": "101",
-            "name": "Alice Johnson",
-            "parent": "Robert Johnson",
-            "fees_paid": True,
-            "attendance": 90,
-            "days_present": 28,
-            "total_days": 31,
-            "initials": "AJ",
-        },
-        {
-            "roll_no": "102",
-            "name": "Bob Smith",
-            "parent": "James Smith",
-            "fees_paid": False,
-            "attendance": 74,
-            "days_present": 23,
-            "total_days": 31,
-            "initials": "BS",
-        },
-        {
-            "roll_no": "103",
-            "name": "Charlie Brown",
-            "parent": "David Brown",
-            "fees_paid": True,
-            "attendance": 93,
-            "days_present": 29,
-            "total_days": 31,
-            "initials": "CB",
-        },
-        {
-            "roll_no": "104",
-            "name": "Diana Ross",
-            "parent": "Michael Ross",
-            "fees_paid": False,
-            "attendance": 67,
-            "days_present": 21,
-            "total_days": 31,
-            "initials": "DR",
-        },
-        {
-            "roll_no": "105",
-            "name": "Edward Norton",
-            "parent": "Chris Norton",
-            "fees_paid": True,
-            "attendance": 87,
-            "days_present": 27,
-            "total_days": 31,
-            "initials": "EN",
-        },
-        {
-            "roll_no": "106",
-            "name": "Frank Ocean",
-            "parent": "Leon Ocean",
-            "fees_paid": True,
-            "attendance": 90,
-            "days_present": 28,
-            "total_days": 31,
-            "initials": "FO",
-        },
-    ]
+    data = db.query(Student).all()
+    students_data = []
+    for user in data:
+        parts = user.name.strip().split()
+        initials = (
+            parts[0][0] if len(parts) == 1 else parts[0][0] + parts[-1][0]
+        ).upper()
+        students_data.append(
+            {
+                "roll_no": user.roll_no,
+                "name": user.name,
+                "parent": user.father_name,
+                "fees_paid": True,
+                "attendance": 90,
+                "days_present": 28,
+                "total_days": 31,
+                "initials": initials,
+            }
+        )
 
     return templates.TemplateResponse(
         "teacher_students.html", {"request": request, "students": students_data}

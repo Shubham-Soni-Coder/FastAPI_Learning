@@ -50,12 +50,16 @@ def create_student():
 
     classes = db.query(Class).all()
 
-    for i, (gmail, user) in enumerate(data.items()):
+    for i, (gmail, user) in enumerate(data["students"].items()):
         class_obj = classes[i % len(classes)]  # roation with %
         schems = StudentCreate(
+            roll_no=user["roll_no"],
             name=user["name"],
+            father_name=user["father_name"],
+            mother_name=user["mother_name"],
             email=gmail,
-            hashed_password=user["password"],
+            hashed_password=user["hashed_password"],
+            is_active=user["is_active"],
             class_id=class_obj.id,
         )
         model = Student(**schems.model_dump())
@@ -78,6 +82,6 @@ def drop_table():
 
 
 if __name__ == "__main__":
-    create_student()
+    # create_student()
     show_data()
     # drop_table()
