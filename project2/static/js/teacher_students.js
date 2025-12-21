@@ -3,13 +3,22 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.progress-bar-fill[data-width]').forEach(bar => {
         bar.style.width = bar.dataset.width + '%';
     });
-
     // Month Selector Logic
     const months = document.querySelectorAll('.month-item');
+    const attendanceEl = document.querySelector('.Attendance');
+    if (!months.length) {
+        return;
+    }
+    if (!attendanceEl) {
+        return;
+    }
     months.forEach(month => {
         month.addEventListener('click', () => {
             months.forEach(m => m.classList.remove('active'));
             month.classList.add('active');
+
+            const SelectMonth = month.textContent.trim();
+            attendanceEl.innerHTML = `Attendance (${SelectMonth})`;
         });
     });
 
