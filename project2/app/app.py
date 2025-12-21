@@ -43,6 +43,11 @@ def startup():
     Base.metadata.create_all(bind=engine)
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return RedirectResponse(url="/static/images/favicon.ico")
+
+
 @app.get("/", name="login_page")
 def show_form(request: Request):
     # Check if already logged in (optional but good UX)
