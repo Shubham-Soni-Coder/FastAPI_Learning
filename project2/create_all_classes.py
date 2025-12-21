@@ -68,9 +68,9 @@ def create_student():
 
 
 def show_data():
-    data = db.query(Student).all()
+    data = db.query(Class).all()
     for i, user in enumerate(data):
-        print(i, user.name, user.class_id)
+        print(user.id, user.class_name, user.stream)
     db.close()
 
 

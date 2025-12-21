@@ -62,3 +62,17 @@ class StudentRespone(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class fees_structure(BaseModel):
+    id: int
+    class_id: int
+    academic_year: str
+    is_active: bool
+
+
+class FeesComponent(BaseModel):
+    id: int
+    fees_structure_id: int
+    compound_name: str
+    amount: int

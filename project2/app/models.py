@@ -80,3 +80,36 @@ class StudentSubject(Base):
     )
     student = relationship("Student", backref="student_subjects")
     subject = relationship("Subject")
+
+
+class FeesStructure(Base):
+    __tablename__ = "fees_structure"
+    id = Column(Integer, primary_key=True, index=True)
+    class_id = Column(Integer, ForeignKey("classes.id"), nullable=False)
+    academic_year = Column(String(50), nullable=False)
+    is_active = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    components = relationship(
+        "FeesComponent", back_populates="fees_structure", cascade="all, delete-orphan"
+    )
+
+    __table_args__ = (
+        UniqueConstraint("class_id", "academic_year", name="uq_class_year"),
+    )
+
+
+class FeesComponent(Base):
+    __tablename__ = "fees_components"
+    id = Column(Integer, primary_key=True, index=True)
+    fees_structure_id = Column(Integer, ForeignKey("fees_structure.id"), nullable=False)
+    compound_name = Column(String(50), nullable=False)
+    amount = Column(Integer, nullable=False)
+
+    fees_structure = relationship("FeesStructure", back_populates="components")
+
+    __table_args__ = (
+        UniqueConstraint(
+            "fees_structure_id", "component_name", name="uq_structure_component"
+        ),
+    )

@@ -39,8 +39,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Templates
 templates = Jinja2Templates(directory="templates")
 
+# hashed password add
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
+# add security
 app.add_middleware(
     SessionMiddleware,
     secret_key=secret_key,
@@ -61,7 +63,7 @@ def favicon():
 
 @app.get("/", name="login_page")
 def show_form(request: Request):
-    # Check if already logged in (optional but good UX)
+    # Security check: exist session
     if "gmail" in request.session:
         return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
     return templates.TemplateResponse("login_page.html", {"request": request})
