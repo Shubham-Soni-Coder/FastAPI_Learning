@@ -14,7 +14,18 @@ from app.otp_sender import send_otp, verify_otp
 from starlette.middleware.sessions import SessionMiddleware
 from passlib.context import CryptContext
 from app.database import session
+import os
+from dotenv import load_dotenv
 
+# load the env
+load_dotenv()
+
+# load the sercet key
+secret_key = os.getenv("SECRET_KEY")
+
+# Safety check: Stop the app if the key is missing
+if secret_key is None:
+    raise ValueError("No SECRET_KEY found in .env file!")
 
 app = FastAPI()
 
@@ -32,7 +43,7 @@ pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 app.add_middleware(
     SessionMiddleware,
-    secret_key="CHANGE_THIS_TO_A_LONG_RANDOM_SECRET",
+    secret_key=secret_key,
     same_site="lax",
     https_only=False,  # True in production
 )
