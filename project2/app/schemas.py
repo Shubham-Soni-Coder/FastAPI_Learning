@@ -64,15 +64,13 @@ class StudentRespone(BaseModel):
         from_attributes = True
 
 
-class fees_structure(BaseModel):
-    id: int
+class FeesStructureCreate(BaseModel):
     class_id: int
     academic_year: str
     is_active: bool
 
 
-class FeesComponent(BaseModel):
-    id: int
+class FeesComponentCreate(BaseModel):
     fees_structure_id: int
     compound_name: str
     amount: int

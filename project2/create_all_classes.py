@@ -7,11 +7,15 @@ from app.models import (
     ClassSubject,
     Student,
     StudentSubject,
+    FeesStructure,
+    FeesComponent,
 )
 from app.schemas import (
     ClassCreate,
     SubjectCreate,
     StudentCreate,
+    FeesStructureCreate,
+    FeesComponentCreate,
 )
 import json
 
@@ -67,10 +71,23 @@ def create_student():
     db.commit()
 
 
+def create_fees_structure():
+    classes = db.query(Class).all()
+    number = len(classes)
+    academic_year = "2025-26"
+    for cls in classes:
+        schems = FeesStructureCreate(
+            class_id=cls.id, academic_year=academic_year, is_active=True
+        )
+        model = FeesStructure(**schems.model_dump())
+        db.add(model)
+    db.commit()
+
+
 def show_data():
-    data = db.query(Class).all()
+    data = db.query(FeesStructure).all()
     for i, user in enumerate(data):
-        print(user.id, user.class_name, user.stream)
+        print(user.id, user.class_id, user.academic_year, user.is_active)
     db.close()
 
 
@@ -82,6 +99,6 @@ def drop_table():
 
 
 if __name__ == "__main__":
-    # create_student()
+    # create_fees_structure()
     show_data()
     # drop_table()

@@ -103,7 +103,7 @@ class FeesComponent(Base):
     __tablename__ = "fees_components"
     id = Column(Integer, primary_key=True, index=True)
     fees_structure_id = Column(Integer, ForeignKey("fees_structure.id"), nullable=False)
-    compound_name = Column(String(50), nullable=False)
+    component_name = Column(String(50), nullable=False)
     amount = Column(Integer, nullable=False)
 
     fees_structure = relationship("FeesStructure", back_populates="components")
