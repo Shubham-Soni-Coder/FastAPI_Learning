@@ -72,5 +72,5 @@ class FeesStructureCreate(BaseModel):
 
 class FeesComponentCreate(BaseModel):
     fees_structure_id: int
-    compound_name: str
+    component_name: str
     amount: int

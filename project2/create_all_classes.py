@@ -84,17 +84,37 @@ def create_fees_structure():
     db.commit()
 
 
+def create_fees_component():
+    with open("demo.json", "r") as f:
+        data = json.load(f)
+        data = data["fees_by_class"]
+
+    class_data = list(data.keys())
+    fees_data = db.query(FeesStructure).all()
+
+    for i, key in zip(class_data, fees_data):
+        for fees in data[i]:
+            schems = FeesComponentCreate(
+                fees_structure_id=key.id,
+                component_name=fees["component_name"],
+                amount=fees["amount"],
+            )
+            model = FeesComponent(**schems.model_dump())
+            db.add(model)
+    db.commit()
+
+
 def show_data():
-    data = db.query(FeesStructure).all()
+    data = db.query(FeesComponent).all()
     for i, user in enumerate(data):
-        print(user.id, user.class_id, user.academic_year, user.is_active)
+        print(user.id, user.fees_structure_id, user.component_name, user.amount)
     db.close()
 
 
 def drop_table():
     from sqlalchemy import text
 
-    db.execute(text("DROP TABLE IF EXISTS students"))
+    db.execute(text("DROP TABLE IF EXISTS fees_components"))
     db.commit()
 
 
@@ -102,3 +122,4 @@ if __name__ == "__main__":
     # create_fees_structure()
     show_data()
     # drop_table()
+    # create_fees_component()
