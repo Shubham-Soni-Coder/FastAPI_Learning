@@ -10,6 +10,7 @@ from datetime import datetime
 from sqlalchemy import (
     Column,
     Integer,
+    Float,
     String,
     Boolean,
     DateTime,
@@ -121,3 +122,35 @@ class FeesComponent(Base):
             "fees_structure_id", "component_name", name="uq_structure_component"
         ),
     )
+
+
+class StudetnFeesDue(Base):
+    __tablename__ = "student_fes_due"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("students.id"), nullable=False)
+    month = Column(Integer, nullable=False)
+    year = Column(Integer, nullable=False)
+    total_amount = Column(Float, nullable=False)
+    status = Column(String, default="pending")
+    created_at = Column(DataTime, default=datetime.utcnow)
+
+    _table_args = UniqueConstraint(
+        "student_id", "month", "year", name="uq_student_month_year"
+    )
+
+
+class FeesPayment(Base):
+    _tablename_ = "fee_payments"
+    id = Column(Integer, primary_key=True)
+
+    due_id = Column(Integer, ForeignKey("student_fes_due.id"), nullable=False)
+
+    amount_paid = Column(Float, nullable=False)
+    payment_data = Column(DateTime, default=datetime.utcnow)
+
+    discount_amount = Column(Float, default=0)
+    fine_amount = Column(Float, default=0)
+    method = Column(String, nullable=True)
+
+    is_late = Column(Boolean, default=False)
