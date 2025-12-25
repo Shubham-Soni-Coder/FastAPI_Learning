@@ -124,7 +124,7 @@ class FeesComponent(Base):
     )
 
 
-class StudetnFeesDue(Base):
+class StudentFeesDue(Base):
     __tablename__ = "student_fes_due"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -133,15 +133,15 @@ class StudetnFeesDue(Base):
     year = Column(Integer, nullable=False)
     total_amount = Column(Float, nullable=False)
     status = Column(String, default="pending")
-    created_at = Column(DataTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
-    _table_args = UniqueConstraint(
-        "student_id", "month", "year", name="uq_student_month_year"
+    __table_args__ = (
+        UniqueConstraint("student_id", "month", "year", name="uq_student_month_year"),
     )
 
 
 class FeesPayment(Base):
-    _tablename_ = "fee_payments"
+    __tablename__ = "fee_payments"
     id = Column(Integer, primary_key=True)
 
     due_id = Column(Integer, ForeignKey("student_fes_due.id"), nullable=False)
