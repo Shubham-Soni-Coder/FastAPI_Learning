@@ -114,8 +114,16 @@ def create_fees_component():
 
 def show_data():
     data = db.query(FeesComponent).all()
-    for i, user in enumerate(data):
-        print(user.id, user.fees_structure_id, user.component_name, user.amount)
+    i = 1
+    all_class_sum = {}
+    for user in data:
+        if i == user.fees_structure_id:
+            all_class_sum[user.fees_structure_id] = user.amount
+            i += 1
+        else:
+            all_class_sum[user.fees_structure_id] += user.amount
+        # print(user.fees_structure_id, user.component_name, user.amount)
+    print(all_class_sum)
     db.close()
 
 
