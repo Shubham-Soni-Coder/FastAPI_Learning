@@ -1,3 +1,11 @@
+"""
+Models Module
+=============
+
+This module defines the database models for the application using SQLAlchemy.
+It includes models for Users, OTPs, Students, Classes, Subjects, and Fee Structures.
+"""
+
 from datetime import datetime
 from sqlalchemy import (
     Column,

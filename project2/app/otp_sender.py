@@ -1,3 +1,11 @@
+"""
+OTP Sender Module
+=================
+
+This module handles the generation, sending, and verification of One-Time Passwords (OTPs) via email.
+It uses the Resend API for sending emails and stores OTP hashes in the database for verification.
+"""
+
 from dotenv import load_dotenv
 import os
 import string

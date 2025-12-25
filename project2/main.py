@@ -1,3 +1,11 @@
+"""
+Entry Point
+===========
+
+This script serves as the entry point for the application.
+It uses Uvicorn to run the FastAPI app defined in `app.app`.
+"""
+
 import uvicorn
 
 if __name__ == "__main__":

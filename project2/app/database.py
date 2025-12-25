@@ -1,4 +1,11 @@
-# database.py
+"""
+Database Module
+===============
+
+This module handles the database connection and session management.
+It creates the SQLAlchemy engine and provides a dependency for getting a database session.
+"""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 

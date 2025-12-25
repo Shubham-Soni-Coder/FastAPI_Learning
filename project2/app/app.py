@@ -1,3 +1,11 @@
+"""
+Main Application Module
+=======================
+
+This module initializes the FastAPI application and defines the route handlers.
+It includes routes for authentication (login, register), dashboard views, and teacher functionalities.
+"""
+
 from fastapi import FastAPI, Request, Form, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates

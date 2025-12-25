@@ -1,3 +1,11 @@
+"""
+Database Seeding Script
+=======================
+
+This script is used to populate the database with initial data.
+It includes functions to create classes, students, and fee structures from a JSON source.
+"""
+
 from app.database import engine, Base, get_db, session
 from app.models import (
     Base,

@@ -1,4 +1,11 @@
-# schemas.py
+"""
+Schemas Module
+==============
+
+This module defines Pydantic models (schemas) for data validation and serialization.
+It includes schemas for User creation, OTP verification, Student data, and Fee structures.
+"""
+
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List
