@@ -17,6 +17,8 @@ from app.models import (
     StudentSubject,
     FeesStructure,
     FeesComponent,
+    StudentFeesDue,
+    FeesPayment,
 )
 from app.schemas import (
     ClassCreate,
@@ -24,6 +26,7 @@ from app.schemas import (
     StudentCreate,
     FeesStructureCreate,
     FeesComponentCreate,
+    StudentFeesDueCreate,
 )
 import json
 
@@ -112,19 +115,33 @@ def create_fees_component():
     db.commit()
 
 
+def create_student_fees_due():
+    students = db.query(Student).all()
+    for student in students:
+        schems = StudentFeesDueCreate(
+            student_id=student.id,
+            month=1,
+            year=2025,
+            total_amount=0,
+            status="pending",
+        )
+        model = StudentFeesDue(**schems.model_dump())
+        db.add(model)
+    db.commit()
+
+
 def show_data():
-    data = db.query(FeesComponent).all()
-    i = 1
-    all_class_sum = {}
-    for user in data:
-        if i == user.fees_structure_id:
-            all_class_sum[user.fees_structure_id] = user.amount
-            i += 1
-        else:
-            all_class_sum[user.fees_structure_id] += user.amount
-        # print(user.fees_structure_id, user.component_name, user.amount)
-    print(all_class_sum)
-    db.close()
+    students = db.query(Student).all()
+    for student in students:
+        print(student.id, student.name, student.roll_no)
+
+    print("")
+    print("")
+    print("")
+
+    datas = db.query(StudentFeesDue).all()
+    for data in datas:
+        print(data.student_id, data.month, data.year, data.total_amount, data.status)
 
 
 def drop_table():
@@ -136,6 +153,7 @@ def drop_table():
 
 if __name__ == "__main__":
     # create_fees_structure()
+    # create_student_fees_due()
     show_data()
     # drop_table()
     # create_fees_component()
