@@ -29,3 +29,6 @@ test.py
 
 # locally test 
 local_llm.py
+
+# git push 
+gitpush.sh
