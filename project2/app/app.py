@@ -14,7 +14,7 @@ from app.schemas import UserCreate, Usermodel
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from app.database import get_db, Base, engine
-from app.models import User, OTP, Student
+from app.models import User, OTP, Student, StudentFeesDue, Class
 from passlib.context import CryptContext
 import hashlib
 from datetime import datetime, timedelta
@@ -25,7 +25,7 @@ from app.database import session
 import os
 from dotenv import load_dotenv
 
-# load the env
+# load the data
 load_dotenv()
 
 # load the sercet key
@@ -108,20 +108,26 @@ def show_teacher_students(request: Request):
         return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
     # Mock Data for student list
-    data = db.query(Student).all()
-    fees_data = db.query(FeesPayment).all()
+    results = (
+        db.query(Student, StudentFeesDue)
+        .join(Class, Student.class_id == Class.id)
+        .join(StudentFeesDue, Student.id == StudentFeesDue.student_id)
+        .filter(Class.id == 1)
+        .all()
+    )
+
     students_data = []
-    for user in data:
-        parts = user.name.strip().split()
+    for student, fees in results:
+        parts = student.name.strip().split()
         initials = (
             parts[0][0] if len(parts) == 1 else parts[0][0] + parts[-1][0]
         ).upper()
         students_data.append(
             {
-                "roll_no": user.roll_no,
-                "name": user.name,
-                "parent": user.father_name,
-                "fees_paid": True,
+                "roll_no": student.roll_no,
+                "name": student.name,
+                "parent": student.father_name,
+                "fees_paid": fees.status,
                 "attendance": 90,
                 "days_present": 28,
                 "total_days": 31,
