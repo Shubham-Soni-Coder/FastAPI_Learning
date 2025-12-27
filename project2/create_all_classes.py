@@ -66,14 +66,13 @@ def create_student():
 
     classes = db.query(Class).all()
 
-    for i, (gmail, user) in enumerate(data["students"].items()):
+    for i, user in enumerate(data["students"]):
         class_obj = classes[i % len(classes)]  # roation with %
         schems = StudentCreate(
-            roll_no=user["roll_no"],
             name=user["name"],
             father_name=user["father_name"],
             mother_name=user["mother_name"],
-            email=gmail,
+            email=user["email"],
             hashed_password=user["hashed_password"],
             is_active=user["is_active"],
             class_id=class_obj.id,
@@ -160,6 +159,10 @@ def update_status():
     db.commit()
 
 
+def add_data():
+    students = db.query(Student).all()
+
+
 def show_data():
     # feesdata = db.query(FeesPayment).all()
     # for data in feesdata:
@@ -186,14 +189,15 @@ def show_data():
 def drop_table():
     from sqlalchemy import text
 
-    db.execute(text("DROP TABLE IF EXISTS fee_payments"))
+    db.execute(text("DROP TABLE IF EXISTS students"))
     db.commit()
 
 
 if __name__ == "__main__":
+    create_student()
     # create_fees_structure()
     # create_student_fees_due()
     # update_status()
-    show_data()
+    # show_data()
     # drop_table()
     # create_fees_payment()

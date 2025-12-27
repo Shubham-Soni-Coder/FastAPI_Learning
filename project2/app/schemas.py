@@ -39,7 +39,8 @@ class ClassCreate(BaseModel):
 
 
 class StudentCreate(BaseModel):
-    roll_no: str
+    roll_no: Optional[str] = None
+
     name: str
     father_name: str
     mother_name: str
