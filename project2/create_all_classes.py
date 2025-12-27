@@ -27,6 +27,7 @@ from app.schemas import (
     FeesStructureCreate,
     FeesComponentCreate,
     StudentFeesDueCreate,
+    FeesPaymentCreate,
 )
 import json
 
@@ -122,7 +123,7 @@ def create_student_fees_due():
             student_id=student.id,
             month=1,
             year=2025,
-            total_amount=0,
+            total_amount=4000,
             status="pending",
         )
         model = StudentFeesDue(**schems.model_dump())
@@ -130,24 +131,49 @@ def create_student_fees_due():
     db.commit()
 
 
+def create_fees_payment():
+    due_id = db.query(StudentFeesDue).all()
+    for due in due_id:
+        schems = FeesPaymentCreate(
+            due_id=due.id,
+            amount_paid=4000,
+            discount_amount=0,
+            fine_amount=0,
+            method="online",
+            is_late=False,
+        )
+        model = FeesPayment(**schems.model_dump())
+        db.add(model)
+    db.commit()
+
+
 def show_data():
-    students = db.query(Student).all()
-    for student in students:
-        print(student.id, student.name, student.roll_no)
-
-    print("")
-    print("")
-    print("")
-
-    datas = db.query(StudentFeesDue).all()
-    for data in datas:
-        print(data.student_id, data.month, data.year, data.total_amount, data.status)
+    feesdata = db.query(FeesPayment).all()
+    for data in feesdata:
+        print(
+            data.due_id,
+            data.amount_paid,
+            data.discount_amount,
+            data.fine_amount,
+            data.method,
+            data.is_late,
+        )
+    # datas = db.query(StudentFeesDue).all()
+    # for data in datas:
+    #     print(
+    #         data.id,
+    #         data.student_id,
+    #         data.month,
+    #         data.year,
+    #         data.total_amount,
+    #         data.status,
+    #     )
 
 
 def drop_table():
     from sqlalchemy import text
 
-    db.execute(text("DROP TABLE IF EXISTS fees_components"))
+    db.execute(text("DROP TABLE IF EXISTS fee_payments"))
     db.commit()
 
 
@@ -156,4 +182,4 @@ if __name__ == "__main__":
     # create_student_fees_due()
     show_data()
     # drop_table()
-    # create_fees_component()
+    # create_fees_payment()

@@ -91,9 +91,10 @@ class StudentFeesDueCreate(BaseModel):
     status: str
 
 
-class StudentFeesDueUpdate(BaseModel):
-    student_id: int
-    month: int
-    year: int
-    total_amount: float
-    status: str
+class FeesPaymentCreate(BaseModel):
+    due_id: int
+    amount_paid: float
+    discount_amount: float
+    fine_amount: float
+    method: str
+    is_late: bool

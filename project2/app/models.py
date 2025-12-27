@@ -142,7 +142,7 @@ class StudentFeesDue(Base):
 
 class FeesPayment(Base):
     __tablename__ = "fee_payments"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
 
     due_id = Column(Integer, ForeignKey("student_fes_due.id"), nullable=False)
 
