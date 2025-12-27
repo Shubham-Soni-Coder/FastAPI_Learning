@@ -4,3 +4,4 @@ python-dotenv
 imagekitio
 aiosqlite
 sqlmodel
+pydantic
