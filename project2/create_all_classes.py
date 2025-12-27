@@ -147,27 +147,40 @@ def create_fees_payment():
     db.commit()
 
 
+def update_status():
+    """In this function we update the data acc. to the payment data
+    if amount_paid == total_amount then status = 'paid'"""
+
+    due_id = db.query(StudentFeesDue).all()
+    for due in due_id:
+        payment = db.query(FeesPayment).filter(FeesPayment.due_id == due.id).first()
+        if payment.amount_paid == due.total_amount:
+            due.status = "paid"
+            db.add(due)
+    db.commit()
+
+
 def show_data():
-    feesdata = db.query(FeesPayment).all()
-    for data in feesdata:
-        print(
-            data.due_id,
-            data.amount_paid,
-            data.discount_amount,
-            data.fine_amount,
-            data.method,
-            data.is_late,
-        )
-    # datas = db.query(StudentFeesDue).all()
-    # for data in datas:
+    # feesdata = db.query(FeesPayment).all()
+    # for data in feesdata:
     #     print(
-    #         data.id,
-    #         data.student_id,
-    #         data.month,
-    #         data.year,
-    #         data.total_amount,
-    #         data.status,
+    #         data.due_id,
+    #         data.amount_paid,
+    #         data.discount_amount,
+    #         data.fine_amount,
+    #         data.method,
+    #         data.is_late,
     #     )
+    datas = db.query(StudentFeesDue).all()
+    for data in datas:
+        print(
+            data.id,
+            data.student_id,
+            data.month,
+            data.year,
+            data.total_amount,
+            data.status,
+        )
 
 
 def drop_table():
@@ -180,6 +193,7 @@ def drop_table():
 if __name__ == "__main__":
     # create_fees_structure()
     # create_student_fees_due()
+    # update_status()
     show_data()
     # drop_table()
     # create_fees_payment()

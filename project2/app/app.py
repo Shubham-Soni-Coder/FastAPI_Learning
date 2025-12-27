@@ -109,6 +109,7 @@ def show_teacher_students(request: Request):
 
     # Mock Data for student list
     data = db.query(Student).all()
+    fees_data = db.query(FeesPayment).all()
     students_data = []
     for user in data:
         parts = user.name.strip().split()
