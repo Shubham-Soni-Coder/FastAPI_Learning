@@ -189,15 +189,16 @@ def show_data():
 def drop_table():
     from sqlalchemy import text
 
-    db.execute(text("DROP TABLE IF EXISTS students"))
+    db.execute(text("DROP TABLE IF EXISTS fee_payments"))
     db.commit()
 
 
 if __name__ == "__main__":
-    create_student()
+    # create_fees_component()
+    # create_student()
     # create_fees_structure()
     # create_student_fees_due()
     # update_status()
     # show_data()
     # drop_table()
-    # create_fees_payment()
+    create_fees_payment()

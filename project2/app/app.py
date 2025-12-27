@@ -112,19 +112,20 @@ def show_teacher_students(request: Request):
         db.query(Student, StudentFeesDue)
         .join(Class, Student.class_id == Class.id)
         .join(StudentFeesDue, Student.id == StudentFeesDue.student_id)
-        .filter(Class.id == 1)
+        .filter(Class.id == 2)
+        .order_by(Student.name.asc())
         .all()
     )
 
     students_data = []
-    for student, fees in results:
+    for i, (student, fees) in enumerate(results):
         parts = student.name.strip().split()
         initials = (
             parts[0][0] if len(parts) == 1 else parts[0][0] + parts[-1][0]
         ).upper()
         students_data.append(
             {
-                "roll_no": student.roll_no,
+                "roll_no": i + 1,
                 "name": student.name,
                 "parent": student.father_name,
                 "fees_paid": fees.status,
