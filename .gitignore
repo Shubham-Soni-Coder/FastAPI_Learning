@@ -24,6 +24,7 @@ test.db
 # test data 
 demo.json
 testfile.json
+commits.txt
 
 
 #test file 
