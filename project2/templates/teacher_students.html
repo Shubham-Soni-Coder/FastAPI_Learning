@@ -102,7 +102,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="student-table-body">
                             {% for student in students %}
                             <tr>
                                 <td>#{{ student.roll_no }}</td>
@@ -111,7 +111,8 @@
                                         <div class="table-avatar">{{ student.initials }}</div>
                                         <div>
                                             <span style="font-weight: 600; display: block;">{{ student.name }}</span>
-                                            <span style="font-size: 0.8rem; color: var(--text-muted);">{{ student.parent
+                                            <span style="font-size: 0.8rem; color: var(--text-muted);">{{
+                                                student.father_name
                                                 }}</span>
                                         </div>
                                     </div>
@@ -136,7 +137,8 @@
                                 <td>
                                     <button class="table-action-btn view-btn" title="View Profile"
                                         data-name="{{ student.name }}" data-roll="{{ student.roll_no }}"
-                                        data-parent="{{ student.parent }}" data-attendance="{{ student.attendance }}"
+                                        data-parent="{{ student.father_name }}"
+                                        data-attendance="{{ student.attendance }}"
                                         data-initials="{{ student.initials }}">
                                         <i class="fa-solid fa-eye"></i>
                                     </button>

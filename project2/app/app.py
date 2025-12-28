@@ -23,6 +23,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from passlib.context import CryptContext
 from app.database import session
 import os
+import json
 from dotenv import load_dotenv
 
 # load the data
@@ -100,6 +101,24 @@ def show_teacher_dashboard(request: Request):
     return templates.TemplateResponse("teacher_dashboard.html", {"request": request})
 
     return templates.TemplateResponse("teacher_dashboard.html", {"request": request})
+
+
+@app.get("/teacher/students/data", name="get_student_data")
+def get_student_data(request: Request, month: str):
+    if "gmail" not in request.session:
+        return {"error": "Unauthorized"}
+
+    try:
+        with open("testfile.json", "r") as f:
+            data = json.load(f)
+            # Default to empty list if month not found
+            return data.get(month, [])
+    except FileNotFoundError:
+        print("testfile.json not found")
+        return []
+    except json.JSONDecodeError:
+        print("Error decoding JSON")
+        return []
 
 
 @app.get("/teacher/students", name="teacher_students")
