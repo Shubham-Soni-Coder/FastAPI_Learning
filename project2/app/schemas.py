@@ -7,7 +7,7 @@ It includes schemas for User creation, OTP verification, Student data, and Fee s
 """
 
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional, List
 
 
@@ -99,3 +99,16 @@ class FeesPaymentCreate(BaseModel):
     fine_amount: float
     method: str
     is_late: bool
+
+
+class AttendanceSessionCreate(BaseModel):
+    class_id: int
+    date: date
+    session_name: str
+
+
+class AttendanceRecordCreate(BaseModel):
+    session_id: int
+    student_id: int
+    status: str
+    remark: Optional[str] = None
