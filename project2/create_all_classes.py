@@ -163,12 +163,17 @@ def create_attendance_session():
 def create_attendance_record():
     class_id = 11
     session_id = 1
-    ids = [i[0] for i in db.query(Student.id).filter(Student.id == class_id).all()]
+    ids = [
+        i[0] for i in db.query(Student.id).filter(Student.class_id == class_id).all()
+    ]
     status = "present"
 
-    schems = AttendanceRecordCreate(session_id=1, student_id=ids[0], status=status)
-    model = AttendanceRecord(**schems.model_dump())
-    db.add(model)
+    for id in ids[1:]:
+        schems = AttendanceRecordCreate(
+            session_id=session_id, student_id=id, status=status
+        )
+        model = AttendanceRecord(**schems.model_dump())
+        db.add(model)
     db.commit()
 
 
@@ -186,7 +191,23 @@ def update_status():
 
 
 def add_data():
-    students = db.query(Student).all()
+    with open("demo.json", encoding="utf-8") as f:
+        data = json.load(f)
+    student_load = data["students"][-5:]
+    class_id = 11
+    for user in student_load:
+        schems = StudentCreate(
+            name=user["name"],
+            father_name=user["father_name"],
+            mother_name=user["mother_name"],
+            email=user["email"],
+            hashed_password=user["hashed_password"],
+            is_active=user["is_active"],
+            class_id=class_id,
+        )
+        model = Student(**schems.model_dump())
+        db.add(model)
+    db.commit()
 
 
 def show_data():
@@ -230,3 +251,4 @@ if __name__ == "__main__":
     # create_fees_payment()
     # create_attendance_session()
     create_attendance_record()
+    # add_data()
