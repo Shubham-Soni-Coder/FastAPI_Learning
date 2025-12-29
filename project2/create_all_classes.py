@@ -120,10 +120,13 @@ def create_fees_component():
 
 
 def create_student_fees_due():
-    students = db.query(Student).all()
-    for student in students:
+    class_id = 11
+    ids = [
+        i[0] for i in db.query(Student.id).filter(Student.class_id == class_id).all()
+    ]
+    for id in ids:
         schems = StudentFeesDueCreate(
-            student_id=student.id,
+            student_id=id,
             month=1,
             year=2025,
             total_amount=4000,
@@ -135,10 +138,19 @@ def create_student_fees_due():
 
 
 def create_fees_payment():
-    due_id = db.query(StudentFeesDue).all()
-    for due in due_id:
+
+    Student_ids = [21, 22, 23, 24, 25]
+
+    due_id = [
+        i[0]
+        for i in db.query(StudentFeesDue.id)
+        .filter(StudentFeesDue.student_id.in_(Student_ids))
+        .all()
+    ]
+
+    for id in due_id:
         schems = FeesPaymentCreate(
-            due_id=due.id,
+            due_id=id,
             amount_paid=4000,
             discount_amount=0,
             fine_amount=0,
@@ -191,23 +203,7 @@ def update_status():
 
 
 def add_data():
-    with open("demo.json", encoding="utf-8") as f:
-        data = json.load(f)
-    student_load = data["students"][-5:]
-    class_id = 11
-    for user in student_load:
-        schems = StudentCreate(
-            name=user["name"],
-            father_name=user["father_name"],
-            mother_name=user["mother_name"],
-            email=user["email"],
-            hashed_password=user["hashed_password"],
-            is_active=user["is_active"],
-            class_id=class_id,
-        )
-        model = Student(**schems.model_dump())
-        db.add(model)
-    db.commit()
+    pass
 
 
 def show_data():
@@ -248,7 +244,7 @@ if __name__ == "__main__":
     # update_status()
     # show_data()
     # drop_table()
-    # create_fees_payment()
+    create_fees_payment()
     # create_attendance_session()
-    create_attendance_record()
+    # create_attendance_record()
     # add_data()

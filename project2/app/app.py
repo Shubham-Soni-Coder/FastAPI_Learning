@@ -125,13 +125,14 @@ def get_student_data(request: Request, month: str):
 def show_teacher_students(request: Request):
     if "gmail" not in request.session:
         return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    class_id = 11
 
     # Mock Data for student list
     results = (
         db.query(Student, StudentFeesDue)
         .join(Class, Student.class_id == Class.id)
         .join(StudentFeesDue, Student.id == StudentFeesDue.student_id)
-        .filter(Class.id == 2)
+        .filter(Class.id == class_id)
         .order_by(Student.name.asc())
         .all()
     )
