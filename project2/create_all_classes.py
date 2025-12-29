@@ -19,6 +19,8 @@ from app.models import (
     FeesComponent,
     StudentFeesDue,
     FeesPayment,
+    AttendanceSession,
+    AttendanceRecord,
 )
 from app.schemas import (
     ClassCreate,
@@ -28,6 +30,8 @@ from app.schemas import (
     FeesComponentCreate,
     StudentFeesDueCreate,
     FeesPaymentCreate,
+    AttendanceSessionCreate,
+    AttendanceRecordCreate,
 )
 import json
 
@@ -146,6 +150,28 @@ def create_fees_payment():
     db.commit()
 
 
+def create_attendance_session():
+
+    schems = AttendanceSessionCreate(
+        class_id=11, date="2025-12-29", session_name="Morning"
+    )
+    model = AttendanceSession(**schems.model_dump())
+    db.add(model)
+    db.commit()
+
+
+def create_attendance_record():
+    class_id = 11
+    session_id = 1
+    ids = [i[0] for i in db.query(Student.id).filter(Student.id == class_id).all()]
+    status = "present"
+
+    schems = AttendanceRecordCreate(session_id=1, student_id=ids[0], status=status)
+    model = AttendanceRecord(**schems.model_dump())
+    db.add(model)
+    db.commit()
+
+
 def update_status():
     """In this function we update the data acc. to the payment data
     if amount_paid == total_amount then status = 'paid'"""
@@ -201,4 +227,6 @@ if __name__ == "__main__":
     # update_status()
     # show_data()
     # drop_table()
-    create_fees_payment()
+    # create_fees_payment()
+    # create_attendance_session()
+    create_attendance_record()
