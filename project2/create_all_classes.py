@@ -34,8 +34,9 @@ from app.schemas import (
     AttendanceRecordCreate,
 )
 import json
-from datetime import datetime
+from datetime import datetime, date
 import random
+import calendar
 
 # store in database
 Base.metadata.create_all(bind=engine)
@@ -166,28 +167,51 @@ def create_fees_payment():
 
 def create_attendance_session():
 
-    schems = AttendanceSessionCreate(
-        class_id=11, date="2025-12-29", session_name="Morning"
-    )
-    model = AttendanceSession(**schems.model_dump())
-    db.add(model)
+    sessions = []
+    class_id = 11
+    session_name = "Morning"
+    year = 2025
+
+    for month in range(4, 13):  # april to december
+        days_in_month = calendar.monthrange(2025, month)[1]
+
+        for day in range(1, days_in_month + 1):
+            schems = AttendanceSessionCreate(
+                class_id=class_id,
+                date=date(year, month, day),  # proper date object
+                session_name=session_name,
+            )
+            model = AttendanceSession(**schems.model_dump())
+            sessions.append(model)
+
+    db.add_all(sessions)
     db.commit()
 
 
 def create_attendance_record():
     class_id = 11
-    session_id = 1
-    ids = [
+    session_ids = [
+        i[0]
+        for i in db.query(AttendanceSession.id)
+        .filter(AttendanceSession.class_id == class_id)
+        .all()
+    ]
+    student_ids = [
         i[0] for i in db.query(Student.id).filter(Student.class_id == class_id).all()
     ]
-    status = "present"
 
-    for id in ids[1:]:
-        schems = AttendanceRecordCreate(
-            session_id=session_id, student_id=id, status=status
-        )
-        model = AttendanceRecord(**schems.model_dump())
-        db.add(model)
+    records = []
+
+    for session_id in session_ids:
+        for student_id in student_ids:
+            schems = AttendanceRecordCreate(
+                session_id=session_id,
+                student_id=student_id,
+                status=random.choice(["present", "absent"]),
+            )
+            model = AttendanceRecord(**schems.model_dump())
+            records.append(model)
+    db.add_all(records)
     db.commit()
 
 
@@ -276,5 +300,5 @@ if __name__ == "__main__":
     # drop_table()
     # create_fees_payment()
     # create_attendance_session()
-    # create_attendance_record()
-    add_data()
+    create_attendance_record()
+    # add_data()
