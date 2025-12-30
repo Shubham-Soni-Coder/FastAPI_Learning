@@ -16,6 +16,7 @@ import hashlib
 from passlib.context import CryptContext
 from starlette.middleware.sessions import SessionMiddleware
 from datetime import datetime, timedelta
+import calendar
 from app.schemas import UserCreate, Usermodel
 import os
 import json
@@ -104,21 +105,64 @@ def show_teacher_dashboard(request: Request):
 
 
 @app.get("/teacher/students/data", name="get_student_data")
-def get_student_data(request: Request, month: str):
+def get_student_data(request: Request, month: str, db: Session = Depends(get_db)):
     if "gmail" not in request.session:
         return {"error": "Unauthorized"}
 
     try:
-        with open("testfile.json", "r") as f:
-            data = json.load(f)
-            # Default to empty list if month not found
-            return data.get(month, [])
-    except FileNotFoundError:
-        print("testfile.json not found")
+        # Convert month name to number (e.g., "January" -> 1)
+        month_obj = datetime.strptime(month, "%B")
+        month_num = month_obj.month
+    except ValueError:
         return []
-    except json.JSONDecodeError:
-        print("Error decoding JSON")
-        return []
+
+    class_id = 11
+    year = 2025  # Using current context year
+
+    # Get total days in the selected month
+    _, total_days_in_month = calendar.monthrange(year, month_num)
+
+    # Query Students
+    results = (
+        db.query(Student, StudentFeesDue)
+        .join(Class, Student.class_id == Class.id)
+        .join(StudentFeesDue, Student.id == StudentFeesDue.student_id)
+        .filter(Class.id == class_id)
+        .order_by(Student.name.asc())
+        .all()
+    )
+
+    students_data = []
+
+    for i, (student, fees) in enumerate(results):
+        days_present = count_student_present_day(db, student.id, year, month_num)
+
+        # Calculate attendance percentage
+        attendance_percentage = (
+            round((days_present / total_days_in_month) * 100)
+            if total_days_in_month > 0
+            else 0
+        )
+
+        parts = student.name.strip().split()
+        initials = (
+            parts[0][0] if len(parts) == 1 else parts[0][0] + parts[-1][0]
+        ).upper()
+
+        students_data.append(
+            {
+                "roll_no": i + 1,
+                "name": student.name,
+                "parent": student.father_name,
+                "fees_paid": fees.status,
+                "attendance": attendance_percentage,
+                "days_present": days_present,
+                "total_days": total_days_in_month,
+                "initials": initials,
+            }
+        )
+
+    return students_data
 
 
 @app.get("/teacher/students", name="teacher_students")

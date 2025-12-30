@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Initial Setup
     initProgressBars();
-    initModalButtons();
+    setupTableDelegation();
 
     // Month Selector Logic
     const months = document.querySelectorAll('.month-item');
@@ -47,84 +47,126 @@ function initProgressBars() {
     });
 }
 
-function initModalButtons() {
+// Replace initModalButtons with Event Delegation
+function setupTableDelegation() {
+    const tbody = document.getElementById('student-table-body');
     const viewModal = document.getElementById('viewModal');
     const editModal = document.getElementById('editModal');
 
-    // View Buttons
-    document.querySelectorAll('.view-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.getElementById('viewName').textContent = btn.dataset.name;
-            document.getElementById('viewRoll').textContent = 'Roll No: #' + btn.dataset.roll;
-            document.getElementById('viewParent').textContent = btn.dataset.parent;
-            document.getElementById('viewAttendance').textContent = btn.dataset.attendance + '%';
-            document.getElementById('viewAvatar').textContent = btn.dataset.initials;
+    if (!tbody) return;
+
+    tbody.addEventListener('click', (event) => {
+        const target = event.target;
+
+        // Handle View Button
+        const viewBtn = target.closest('.view-btn');
+        if (viewBtn) {
+            document.getElementById('viewName').textContent = viewBtn.dataset.name;
+            document.getElementById('viewRoll').textContent = 'Roll No: #' + viewBtn.dataset.roll;
+            document.getElementById('viewParent').textContent = viewBtn.dataset.parent;
+            document.getElementById('viewAttendance').textContent = viewBtn.dataset.attendance + '%';
+            document.getElementById('viewAvatar').textContent = viewBtn.dataset.initials;
             viewModal.style.display = 'block';
-        });
+            return;
+        }
+
+        // Handle Edit Button
+        const editBtn = target.closest('.edit-btn');
+        if (editBtn) {
+            document.getElementById('editName').value = editBtn.dataset.name;
+            document.getElementById('editRoll').value = '#' + editBtn.dataset.roll;
+            editModal.style.display = 'block';
+            return;
+        }
     });
 
-    // Edit Buttons
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.getElementById('editName').value = btn.dataset.name;
-            document.getElementById('editRoll').value = '#' + btn.dataset.roll;
-            editModal.style.display = 'block';
-        });
-    });
 }
 
 function renderTable(students) {
     const tbody = document.getElementById('student-table-body');
     if (!tbody) return;
 
-    tbody.innerHTML = ''; // Clear current rows
-
     students.forEach(student => {
-        const tr = document.createElement('tr');
+        const rowId = `student-row-${student.roll_no}`;
+        let tr = document.getElementById(rowId);
 
-        const feesStatusHtml = student.fees_paid
-            ? `<span class="status-badge paid">Paid</span>`
-            : `<span class="status-badge pending">Pending</span>`;
+        if (tr) {
+            // --- UPDATE EXISTING ROW ---
 
-        tr.innerHTML = `
-            <td>#${student.roll_no}</td>
-            <td>
-                <div class="table-user-info">
-                    <div class="table-avatar">${student.initials}</div>
-                    <div>
-                        <span style="font-weight: 600; display: block;">${student.name}</span>
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">${student.parent}</span>
+            // 1. Update Fees Status
+            const feesCell = tr.querySelector('td:nth-child(3)');
+            if (feesCell) {
+                const feesStatusHtml = student.fees_paid
+                    ? `<span class="status-badge paid">Paid</span>`
+                    : `<span class="status-badge pending">Pending</span>`;
+                feesCell.innerHTML = feesStatusHtml;
+            }
+
+            // 2. Update Attendance (Progress Bar & Text)
+            const progressBar = tr.querySelector('.progress-bar-fill');
+            if (progressBar) {
+                // Update width directly
+                progressBar.dataset.width = student.attendance + '%';
+                progressBar.style.width = student.attendance + '%';
+            }
+
+            const progressText = tr.querySelector('.progress-text');
+            if (progressText) {
+                progressText.textContent = `${student.days_present}/${student.total_days}`;
+            }
+
+            // 3. Update View Button Data (specifically attendance)
+            const viewBtn = tr.querySelector('.view-btn');
+            if (viewBtn) {
+                viewBtn.dataset.attendance = student.attendance;
+            }
+
+        } else {
+            // --- CREATE NEW ROW (Fallback) ---
+            tr = document.createElement('tr');
+            tr.id = rowId;
+
+            const feesStatusHtml = student.fees_paid
+                ? `<span class="status-badge paid">Paid</span>`
+                : `<span class="status-badge pending">Pending</span>`;
+
+            tr.innerHTML = `
+                <td>#${student.roll_no}</td>
+                <td>
+                    <div class="table-user-info">
+                        <div class="table-avatar">${student.initials}</div>
+                        <div>
+                            <span style="font-weight: 600; display: block;">${student.name}</span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">${student.parent}</span>
+                        </div>
                     </div>
-                </div>
-            </td>
-            <td>${feesStatusHtml}</td>
-            <td>
-                <div class="progress-wrapper">
-                    <div class="progress-bar-bg">
-                        <div class="progress-bar-fill" data-width="${student.attendance}%"></div>
+                </td>
+                <td>${feesStatusHtml}</td>
+                <td>
+                    <div class="progress-wrapper">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" data-width="${student.attendance}%" style="width: ${student.attendance}%"></div>
+                        </div>
+                        <div class="progress-text">${student.days_present}/${student.total_days}</div>
                     </div>
-                    <div class="progress-text">${student.days_present}/${student.total_days}</div>
-                </div>
-            </td>
-            <td>
-                <button class="table-action-btn view-btn" title="View Profile"
-                    data-name="${student.name}" data-roll="${student.roll_no}"
-                    data-parent="${student.parent}" data-attendance="${student.attendance}"
-                    data-initials="${student.initials}">
-                    <i class="fa-solid fa-eye"></i>
-                </button>
-                <button class="table-action-btn edit-btn" title="Edit"
-                    data-name="${student.name}" data-roll="${student.roll_no}">
-                    <i class="fa-solid fa-pen"></i>
-                </button>
-            </td>
-        `;
-        tbody.appendChild(tr);
+                </td>
+                <td>
+                    <button class="table-action-btn view-btn" title="View Profile"
+                        data-name="${student.name}" data-roll="${student.roll_no}"
+                        data-parent="${student.parent}" data-attendance="${student.attendance}"
+                        data-initials="${student.initials}">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                    <button class="table-action-btn edit-btn" title="Edit"
+                        data-name="${student.name}" data-roll="${student.roll_no}">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
     });
 
-    // Re-initialize dynamic elements
-    initProgressBars();
-    initModalButtons();
 }
 
 function closeModal(modalId) {

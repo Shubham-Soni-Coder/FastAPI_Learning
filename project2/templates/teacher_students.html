@@ -104,7 +104,7 @@
                         </thead>
                         <tbody id="student-table-body">
                             {% for student in students %}
-                            <tr>
+                            <tr id="student-row-{{ student.roll_no }}">
                                 <td>#{{ student.roll_no }}</td>
                                 <td>
                                     <div class="table-user-info">
