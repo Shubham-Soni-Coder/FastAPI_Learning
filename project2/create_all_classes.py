@@ -34,6 +34,8 @@ from app.schemas import (
     AttendanceRecordCreate,
 )
 import json
+from datetime import datetime
+import random
 
 # store in database
 Base.metadata.create_all(bind=engine)
@@ -203,7 +205,35 @@ def update_status():
 
 
 def add_data():
-    pass
+    # add data in database
+    # for i in range(1, 31):
+    #     date = datetime(2025, 11, i)
+    #     schems = AttendanceSessionCreate(class_id=11, date=date, session_name="Morning")
+    #     model = AttendanceSession(**schems.model_dump())
+    #     db.add(model)
+    # db.commit()
+    session_id = [
+        i[0]
+        for i in db.query(AttendanceSession.id)
+        .filter(AttendanceSession.class_id == 11)
+        .filter(AttendanceSession.id != 1)
+        .all()
+    ]
+
+    student_id = [
+        i[0] for i in db.query(Student.id).filter(Student.class_id == 11).all()
+    ]
+
+    for i in student_id:
+        for j in session_id:
+            schems = AttendanceRecordCreate(
+                session_id=j,
+                student_id=i,
+                status=random.choice(("absent", "present")),
+            )
+            model = AttendanceRecord(**schems.model_dump())
+            db.add(model)
+    db.commit()
 
 
 def show_data():
@@ -232,7 +262,7 @@ def show_data():
 def drop_table():
     from sqlalchemy import text
 
-    db.execute(text("DROP TABLE IF EXISTS fee_payments"))
+    db.execute(text("DROP TABLE IF EXISTS attendance_records"))
     db.commit()
 
 
@@ -244,7 +274,7 @@ if __name__ == "__main__":
     # update_status()
     # show_data()
     # drop_table()
-    create_fees_payment()
+    # create_fees_payment()
     # create_attendance_session()
     # create_attendance_record()
-    # add_data()
+    add_data()

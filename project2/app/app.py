@@ -10,21 +10,21 @@ from fastapi import FastAPI, Request, Form, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from app.schemas import UserCreate, Usermodel
-from sqlalchemy.orm import Session
 from fastapi import Depends
-from app.database import get_db, Base, engine
-from app.models import User, OTP, Student, StudentFeesDue, Class
-from passlib.context import CryptContext
+from sqlalchemy.orm import Session
 import hashlib
-from datetime import datetime, timedelta
-from app.otp_sender import send_otp, verify_otp
-from starlette.middleware.sessions import SessionMiddleware
 from passlib.context import CryptContext
-from app.database import session
+from starlette.middleware.sessions import SessionMiddleware
+from datetime import datetime, timedelta
+from app.schemas import UserCreate, Usermodel
 import os
 import json
 from dotenv import load_dotenv
+from app.database import get_db, Base, engine
+from app.models import User, OTP, Student, StudentFeesDue, Class
+from app.otp_sender import send_otp, verify_otp
+from app.database import session
+from app.function import count_student_present_day
 
 # load the data
 load_dotenv()
@@ -138,6 +138,7 @@ def show_teacher_students(request: Request):
     )
 
     students_data = []
+
     for i, (student, fees) in enumerate(results):
         parts = student.name.strip().split()
         initials = (
@@ -150,7 +151,7 @@ def show_teacher_students(request: Request):
                 "parent": student.father_name,
                 "fees_paid": fees.status,
                 "attendance": 90,
-                "days_present": 28,
+                "days_present": count_student_present_day(db, student.id, 2025, 11),
                 "total_days": 31,
                 "initials": initials,
             }
