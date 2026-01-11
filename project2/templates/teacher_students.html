@@ -98,7 +98,7 @@
                                 <th>Roll No</th>
                                 <th>Student Name</th>
                                 <th>Fees Status</th>
-                                <th class="Attendance">Attendance (March)</th>
+                                <th class="Attendance">Attendance ({{ current_month_name }})</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -137,7 +137,7 @@
                                 <td>
                                     <button class="table-action-btn view-btn" title="View Profile"
                                         data-name="{{ student.name }}" data-roll="{{ student.roll_no }}"
-                                        data-parent="{{ student.father_name }}"
+                                        data-father-name="{{ student.father_name }}"
                                         data-attendance="{{ student.attendance }}"
                                         data-initials="{{ student.initials }}">
                                         <i class="fa-solid fa-eye"></i>
@@ -167,8 +167,8 @@
             </div>
             <div class="modal-body">
                 <div class="info-row">
-                    <span class="label"><i class="fa-solid fa-user-group"></i> Parent/Guardian:</span>
-                    <span class="value" id="viewParent">Parent Name</span>
+                    <span class="label"><i class="fa-solid fa-user-group"></i> Father Name:</span>
+                    <span class="value" id="viewFatherName">Parent Name</span>
                 </div>
                 <div class="info-row">
                     <span class="label"><i class="fa-solid fa-chart-pie"></i> Attendance:</span>

@@ -153,7 +153,7 @@ def get_student_data(request: Request, month: str, db: Session = Depends(get_db)
             {
                 "roll_no": i + 1,
                 "name": student.name,
-                "parent": student.father_name,
+                "father_name": student.father_name,
                 "fees_paid": fees.status,
                 "attendance": attendance_percentage,
                 "days_present": days_present,
@@ -171,6 +171,15 @@ def show_teacher_students(request: Request):
         return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
     class_id = 11
 
+    # Get current date
+    now = datetime.now()
+    current_year = now.year
+    current_month = now.month
+    current_month_name = now.strftime("%B")
+
+    # Get total days in the current month
+    _, total_days_in_month = calendar.monthrange(current_year, current_month)
+
     # Mock Data for student list
     results = (
         db.query(Student, StudentFeesDue)
@@ -184,6 +193,17 @@ def show_teacher_students(request: Request):
     students_data = []
 
     for i, (student, fees) in enumerate(results):
+        days_present = count_student_present_day(
+            db, student.id, current_year, current_month
+        )
+
+        # Calculate attendance percentage
+        attendance_percentage = (
+            round((days_present / total_days_in_month) * 100)
+            if total_days_in_month > 0
+            else 0
+        )
+
         parts = student.name.strip().split()
         initials = (
             parts[0][0] if len(parts) == 1 else parts[0][0] + parts[-1][0]
@@ -192,17 +212,22 @@ def show_teacher_students(request: Request):
             {
                 "roll_no": i + 1,
                 "name": student.name,
-                "parent": student.father_name,
+                "father_name": student.father_name,
                 "fees_paid": fees.status,
-                "attendance": 90,
-                "days_present": count_student_present_day(db, student.id, 2025, 11),
-                "total_days": 31,
+                "attendance": attendance_percentage,
+                "days_present": days_present,
+                "total_days": total_days_in_month,
                 "initials": initials,
             }
         )
 
     return templates.TemplateResponse(
-        "teacher_students.html", {"request": request, "students": students_data}
+        "teacher_students.html",
+        {
+            "request": request,
+            "students": students_data,
+            "current_month_name": current_month_name,
+        },
     )
 
 

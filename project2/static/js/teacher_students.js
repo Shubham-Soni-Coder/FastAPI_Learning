@@ -63,7 +63,7 @@ function setupTableDelegation() {
         if (viewBtn) {
             document.getElementById('viewName').textContent = viewBtn.dataset.name;
             document.getElementById('viewRoll').textContent = 'Roll No: #' + viewBtn.dataset.roll;
-            document.getElementById('viewParent').textContent = viewBtn.dataset.parent;
+            document.getElementById('viewFatherName').textContent = viewBtn.dataset.fatherName;
             document.getElementById('viewAttendance').textContent = viewBtn.dataset.attendance + '%';
             document.getElementById('viewAvatar').textContent = viewBtn.dataset.initials;
             viewModal.style.display = 'block';
@@ -137,7 +137,7 @@ function renderTable(students) {
                         <div class="table-avatar">${student.initials}</div>
                         <div>
                             <span style="font-weight: 600; display: block;">${student.name}</span>
-                            <span style="font-size: 0.8rem; color: var(--text-muted);">${student.parent}</span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">${student.father_name}</span>
                         </div>
                     </div>
                 </td>
@@ -153,7 +153,7 @@ function renderTable(students) {
                 <td>
                     <button class="table-action-btn view-btn" title="View Profile"
                         data-name="${student.name}" data-roll="${student.roll_no}"
-                        data-parent="${student.parent}" data-attendance="${student.attendance}"
+                        data-father-name="${student.father_name}" data-attendance="${student.attendance}"
                         data-initials="${student.initials}">
                         <i class="fa-solid fa-eye"></i>
                     </button>
