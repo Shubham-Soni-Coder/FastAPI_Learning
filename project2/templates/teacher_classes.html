@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Classes - TeacherHub</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', path='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='styles/teacher_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='styles/teacher_classes.css') }}">
+</head>
+
+<body>
+    <!-- Background -->
+    <div class="main" style="position: fixed; z-index: -1;"></div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <span>TeacherHub</span>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="/teacher-dashboard"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li><a href="/teacher/students"><i class="fa-solid fa-users"></i> Students</a></li>
+                <li><a href="#" class="active"><i class="fa-solid fa-book-open"></i> Classes</a></li>
+                <li><a href="#"><i class="fa-solid fa-file-pen"></i> Homework</a></li>
+                <li><a href="#"><i class="fa-solid fa-chart-line"></i> Report Cards</a></li>
+                <li><a href="#"><i class="fa-solid fa-calendar-alt"></i> Timetable</a></li>
+            </ul>
+
+            <a href="/" class="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <section class="main-content">
+            <header>
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search classes...">
+                </div>
+
+                <div class="user-profile">
+                    <button class="notification-btn">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
+
+                    <div class="profile-section">
+                        <div class="user-info">
+                            <span>Mrs. Anderson</span>
+                            <small>Math Teacher</small>
+                        </div>
+                        <div class="user-avatar">
+                            MA
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="section-header">
+                    <h2>My Classes</h2>
+                    <div class="view-options">
+                        <button class="view-btn active" id="cardViewBtn" title="Card View">
+                            <i class="fa-solid fa-grip"></i>
+                        </button>
+                        <button class="view-btn" id="tableViewBtn" title="Table View">
+                            <i class="fa-solid fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Classes Grid Container -->
+                <div id="classesContainer" class="classes-grid">
+                    <!-- Content injected by JS -->
+                </div>
+
+                <!-- Classes Table Container (Hidden by default) -->
+                <div id="classesTableContainer" class="table-container hidden">
+                    <table class="glass-table">
+                        <thead>
+                            <tr>
+                                <th>Class Name</th>
+                                <th>Subject</th>
+                                <th>Students</th>
+                                <th>Schedule</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="classesTableBody">
+                            <!-- Content injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', path='js/teacher_classes.js') }}"></script>
+</body>
+
+</html>

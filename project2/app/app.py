@@ -101,7 +101,14 @@ def show_teacher_dashboard(request: Request):
 
     return templates.TemplateResponse("teacher_dashboard.html", {"request": request})
 
-    return templates.TemplateResponse("teacher_dashboard.html", {"request": request})
+
+@app.get("/teacher/classes", name="teacher_classes")
+def show_teacher_classes(request: Request):
+    # Security check: exist session
+    if "gmail" not in request.session:
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse("teacher_classes.html", {"request": request})
 
 
 @app.get("/teacher/students/data", name="get_student_data")
