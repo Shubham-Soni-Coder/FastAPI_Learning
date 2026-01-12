@@ -111,6 +111,17 @@ def show_teacher_classes(request: Request):
     return templates.TemplateResponse("teacher_classes.html", {"request": request})
 
 
+@app.get("/teacher/classes/details", name="teacher_class_details")
+def show_teacher_class_details(request: Request):
+    # Security check: exist session
+    if "gmail" not in request.session:
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse(
+        "teacher_class_details.html", {"request": request}
+    )
+
+
 @app.get("/teacher/students/data", name="get_student_data")
 def get_student_data(request: Request, month: str, db: Session = Depends(get_db)):
     if "gmail" not in request.session:

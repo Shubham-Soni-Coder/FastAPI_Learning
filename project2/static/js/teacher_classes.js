@@ -120,7 +120,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Global function for onclick (CTA)
 window.openClass = function (className) {
-  alert(`Opening class: ${className}`);
-  // In a real app, this would navigate to the detailed class view
-  // window.location.href = `/teacher/class/${className}`;
+  // Navigate to new details page
+  window.location.href = `/teacher/classes/details?className=${encodeURIComponent(className)}`;
 };
