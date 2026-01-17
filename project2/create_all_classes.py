@@ -37,6 +37,11 @@ import json
 from datetime import datetime, date
 import random
 import calendar
+from itertools import chain
+
+with open("demo.json", "r", encoding="utf-8") as f:
+    JSON_DATA = json.load(f)
+
 
 # store in database
 Base.metadata.create_all(bind=engine)
@@ -68,8 +73,7 @@ def create_class():
 
 def create_student():
 
-    with open("demo.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
+    data = JSON_DATA
 
     classes = db.query(Class).all()
 
@@ -103,9 +107,7 @@ def create_fees_structure():
 
 
 def create_fees_component():
-    with open("demo.json", "r") as f:
-        data = json.load(f)
-        data = data["fees_by_class"]
+    data = JSON_DATA["fees_by_class"]
 
     class_data = list(data.keys())
     fees_data = db.query(FeesStructure).all()
@@ -283,10 +285,53 @@ def show_data():
         )
 
 
+def create_subject():
+    Subject_data = JSON_DATA["Subjects"]
+
+    subjects = set(
+        chain.from_iterable(
+            (
+                value
+                if key != "Streams"
+                else chain.from_iterable(Subject_data["Streams"].values())
+            )
+            for key, value in Subject_data.items()
+        )
+    )
+
+    for subject in subjects:
+        schems = SubjectCreate(name=subject)
+        model = Subject(**schems.model_dump())
+        db.add(model)
+    db.commit()
+
+
+#
+
+
+def create_class_subject():
+    # add data for 11-non medical
+    class_id = 11
+    OptionalData = JSON_DATA["Subjects"]["Optional"]
+    not_optional = "Home Science", "Legal Studies", "Entrepreneurship"
+
+    optonal_data = [s for s in OptionalData if s not in not_opional]
+
+    # get the subject_id using subject_name
+    subject_list = [
+        "Chemistry",
+        "Physics",
+        "Maths",
+        "English",
+    ] + optonal_data
+
+    print(subject_list)
+
+
 def drop_table():
     from sqlalchemy import text
 
-    db.execute(text("DROP TABLE IF EXISTS attendance_records"))
+    db.execute(text("DROP TABLE IF EXISTS class_subject"))
     db.commit()
 
 
@@ -300,5 +345,7 @@ if __name__ == "__main__":
     # drop_table()
     # create_fees_payment()
     # create_attendance_session()
-    create_attendance_record()
+    # create_attendance_record()
     # add_data()
+    # create_subject()
+    create_class_subject()

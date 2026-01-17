@@ -1,5 +1,6 @@
 from sqlalchemy import func, distinct
 from app.models import AttendanceSession, AttendanceRecord
+import json
 
 
 def count_student_present_day(db, student_id: int, year: int, month: int) -> int:
@@ -15,3 +16,9 @@ def count_student_present_day(db, student_id: int, year: int, month: int) -> int
         .scalar()
     )
     return present_day
+
+
+def load_data():
+    with open("demo.json", "r", encoding="utf-8") as f:
+        JSON_DATA = json.load(f)
+    return JSON_DATA
