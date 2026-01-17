@@ -57,7 +57,7 @@ class SubjectCreate(BaseModel):
 class ClassSubjectCreate(BaseModel):
     class_id: int
     subject_id: int
-    is_optional: bool
+    is_optional: Optional[bool] = False
 
 
 class StudentSubjectSelect(BaseModel):

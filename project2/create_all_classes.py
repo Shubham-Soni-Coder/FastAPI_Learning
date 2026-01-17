@@ -6,7 +6,7 @@ This script is used to populate the database with initial data.
 It includes functions to create classes, students, and fee structures from a JSON source.
 """
 
-from app.database import engine, Base, get_db, session
+from app.database import engine, Base, session
 from app.models import (
     Base,
     User,
@@ -24,6 +24,7 @@ from app.models import (
 )
 from app.schemas import (
     ClassCreate,
+    ClassSubjectCreate,
     SubjectCreate,
     StudentCreate,
     FeesStructureCreate,
@@ -38,6 +39,7 @@ from datetime import datetime, date
 import random
 import calendar
 from itertools import chain
+from app.function import conn_database
 
 with open("demo.json", "r", encoding="utf-8") as f:
     JSON_DATA = json.load(f)
@@ -310,22 +312,45 @@ def create_subject():
 
 
 def create_class_subject():
+
     # add data for 11-non medical
     class_id = 11
     OptionalData = JSON_DATA["Subjects"]["Optional"]
     not_optional = "Home Science", "Legal Studies", "Entrepreneurship"
 
-    optonal_data = [s for s in OptionalData if s not in not_opional]
+    optional_list = [s for s in OptionalData if s not in not_optional]
 
     # get the subject_id using subject_name
     subject_list = [
         "Chemistry",
         "Physics",
-        "Maths",
+        "Mathematics",
         "English",
-    ] + optonal_data
+    ]
 
-    print(subject_list)
+    # this is for main subjects
+    placeholders = ",".join("?" for _ in subject_list)
+    query = f"SELECT id,name FROM subjects WHERE name IN ({placeholders})"
+    main_subjects = {id: name for id, name in conn_database(query, subject_list)}
+
+    # make schems for this
+    for id in main_subjects.keys():
+        schems = ClassSubjectCreate(class_id=class_id, subject_id=id)
+        model = ClassSubject(**schems.model_dump())
+        db.add(model)
+    db.commit()
+
+    # this is for optional subjects
+    placeholfers = ",".join("?" for _ in optional_list)
+    query = f"SELECT id,name FROM subjects WHERE name IN ({placeholfers})"
+    optional_result = {id: name for id, name in conn_database(query, optional_list)}
+
+    # make schems for this
+    for id in optional_result.keys():
+        schems = ClassSubjectCreate(class_id=class_id, subject_id=id, is_optional=True)
+        model = ClassSubject(**schems.model_dump())
+        db.add(model)
+    db.commit()
 
 
 def drop_table():
