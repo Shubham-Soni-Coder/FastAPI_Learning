@@ -25,7 +25,7 @@ from app.database import get_db, Base, engine
 from app.models import User, OTP, Student, StudentFeesDue, Class
 from app.otp_sender import send_otp, verify_otp
 from app.database import session
-from app.function import count_student_present_day
+from app.function import count_student_present_day, initilas, conn_database
 
 # load the data
 load_dotenv()
@@ -116,9 +116,25 @@ def show_teacher_class_details(request: Request):
     # Security check: exist session
     if "gmail" not in request.session:
         return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    class_id = 11
+
+    # name,init,roll_no
+    student_data = []
+
+    # result
+    query = "SELECT name FROM students WHERE class_id = ? ORDER BY name ASC"
+    result = conn_database(query, (class_id,))
+    for i, row in enumerate(result):
+        student_data.append(
+            {
+                "roll_no": i + 1,
+                "name": row[0],
+                "initials": initilas(row[0]),
+            }
+        )
 
     return templates.TemplateResponse(
-        "teacher_class_details.html", {"request": request}
+        "teacher_class_details.html", {"request": request, "students": student_data}
     )
 
 
@@ -222,10 +238,10 @@ def show_teacher_students(request: Request):
             else 0
         )
 
-        parts = student.name.strip().split()
-        initials = (
-            parts[0][0] if len(parts) == 1 else parts[0][0] + parts[-1][0]
-        ).upper()
+        # Initalital calculate
+        initials = initilas(student.name)
+
+        # add data in list
         students_data.append(
             {
                 "roll_no": i + 1,

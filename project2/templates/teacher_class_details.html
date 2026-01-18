@@ -62,7 +62,6 @@
                             MA
                         </div>
                     </div>
-                </div>
             </header>
 
             <div class="content-wrapper">
@@ -133,6 +132,19 @@
         </section>
     </div>
 
+    <script>
+        // Data injected from Backend
+        const existingStudents = {{ students | tojson }};
+
+        // Transform backend data to match JS expectations
+        window.studentsData = existingStudents.map(student => ({
+            id: student.roll_no,
+            rollNo: student.roll_no,
+            name: student.name,
+            initials: student.initials,
+            status: 'absent' // Default status
+        }));
+    </script>
     <script src="{{ url_for('static', path='js/teacher_class_details.js') }}"></script>
 </body>
 

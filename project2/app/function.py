@@ -35,3 +35,8 @@ def conn_database(query: str, parameter=None):
     result = cursor.fetchall()
     conn.close()
     return result
+
+
+def initilas(name: str):
+    parts = name.strip().split()
+    return (parts[0][0] if len(parts) == 1 else parts[0][0] + parts[-1][0]).upper()

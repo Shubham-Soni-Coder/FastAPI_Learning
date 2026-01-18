@@ -1,22 +1,5 @@
 // Teacher Class Details - Attendance Logic
 
-// Mock Data for Students (Grade 10-A)
-const maxStudents = 32;
-const studentsData = Array.from({ length: maxStudents }, (_, i) => {
-    const names = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Martinez", "Lopez"];
-    const firstNames = ["James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda", "William", "Elizabeth"];
-
-    const randomFirst = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const randomLast = names[Math.floor(Math.random() * names.length)];
-
-    return {
-        id: i + 1,
-        rollNo: 100 + i + 1,
-        name: `${randomFirst} ${randomLast}`,
-        initials: `${randomFirst[0]}${randomLast[0]}`,
-        status: 'present' // default
-    };
-});
 
 document.addEventListener('DOMContentLoaded', () => {
     // Set Date to Today
@@ -28,8 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const markAllPresentBtn = document.getElementById('markAllPresentBtn');
     const saveAttendanceBtn = document.getElementById('saveAttendanceBtn');
 
+    // Use global studentsData
+    let studentsData = window.studentsData || [];
+
     // Render Student Cards
     function renderStudents() {
+        if (!studentsData.length) {
+            attendanceGrid.innerHTML = '<p style="text-align:center; width:100%; color: var(--text-muted);">No students found.</p>';
+            return;
+        }
+
         attendanceGrid.innerHTML = studentsData.map(student => `
             <div class="student-card" id="card-${student.id}">
                 <div class="student-info">
@@ -65,8 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Update UI for this specific card
             const btn = document.querySelector(`#card-${id} .attendance-toggle`);
-            btn.className = `attendance-toggle ${student.status}`;
-            btn.innerHTML = `<i class="fa-solid ${student.status === 'present' ? 'fa-check' : 'fa-xmark'}"></i>`;
+            if (btn) {
+                btn.className = `attendance-toggle ${student.status}`;
+                btn.innerHTML = `<i class="fa-solid ${student.status === 'present' ? 'fa-check' : 'fa-xmark'}"></i>`;
+            }
 
             // Update stats
             updateStats();
@@ -81,8 +74,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Save Attendance
     saveAttendanceBtn.addEventListener('click', () => {
+        // Collect data to send
+        const attendancePayload = studentsData.map(s => ({
+            student_id: s.id,
+            status: s.status,
+            date: document.getElementById('attendanceDate').value
+        }));
+
+        console.log('Saving attendance:', attendancePayload);
         alert('Attendance Saved Successfully for ' + document.getElementById('attendanceDate').value);
-        // Here you would send a POST request to the backend
+
+        // Example POST request (commented out until backend endpoint is ready)
+        /*
+        fetch('/teacher/attendance/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(attendancePayload)
+        });
+        */
     });
 
     // Initial Render
