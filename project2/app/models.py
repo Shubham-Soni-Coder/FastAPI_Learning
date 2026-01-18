@@ -74,8 +74,12 @@ class ClassSubject(Base):
     id = Column(Integer, primary_key=True, index=True)
     class_id = Column(Integer, ForeignKey("classes.id"), nullable=False)
     subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False)
+    category = Column(String(20), nullable=False)
+    stream = Column(String(20))
 
-    is_optional = Column(Boolean, default=False)
+    is_compulsory = Column(Boolean, default=False)
+    is_main = Column(Boolean, default=False)
+
     __table_args__ = (
         UniqueConstraint("class_id", "subject_id", name="uix_class_subject"),
     )

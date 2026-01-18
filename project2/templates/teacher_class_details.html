@@ -132,9 +132,14 @@
         </section>
     </div>
 
+    <!-- Data injected from Backend -->
+    <script id="students-data" type="application/json">
+        {{ students | tojson | safe }}
+    </script>
+
     <script>
         // Data injected from Backend
-        const existingStudents = {{ students | tojson }};
+        const existingStudents = JSON.parse(document.getElementById('students-data').textContent);
 
         // Transform backend data to match JS expectations
         window.studentsData = existingStudents.map(student => ({

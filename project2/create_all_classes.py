@@ -39,10 +39,10 @@ from datetime import datetime, date
 import random
 import calendar
 from itertools import chain
-from app.function import conn_database
+from app.function import normalize, load_data
 
-with open("demo.json", "r", encoding="utf-8") as f:
-    JSON_DATA = json.load(f)
+# load the data from json file
+JSON_DATA = load_data()
 
 
 # store in database
@@ -290,74 +290,89 @@ def show_data():
 def create_subject():
     Subject_data = JSON_DATA["Subjects"]
 
-    subjects = set(
-        chain.from_iterable(
-            (
-                value
-                if key != "Streams"
-                else chain.from_iterable(Subject_data["Streams"].values())
-            )
-            for key, value in Subject_data.items()
-        )
-    )
-
-    for subject in subjects:
-        schems = SubjectCreate(name=subject)
+    def add_subject(nane):
+        schems = SubjectCreate(name=nane)
         model = Subject(**schems.model_dump())
         db.add(model)
+
+    unique_subjects = set()
+
+    # common
+    for s in Subject_data.get("Common", []):
+        unique_subjects.add(s)
+
+    # optional
+    for s in Subject_data.get("Optional", []):
+        unique_subjects.add(s)
+
+    # Stream
+    for stream_subject in Subject_data.get("Streams", {}).values():
+        for s in stream_subject:
+            unique_subjects.add(s)
+
+    # Add at once
+    for name in unique_subjects:
+        add_subject(name)
     db.commit()
 
 
-#
+def insert(class_id, subject_name, category, stream, compulsory, main):
+
+    # get data using name
+    subject_data = {s.name: s.id for s in db.query(Subject).all()}
+
+    subject_id = subject_data.get(subject_name)
+
+    if not subject_id:
+        None
+
+    exists = (
+        db.query(ClassSubject)
+        .filter_by(class_id=class_id, subject_id=subject_id)
+        .first()
+    )
+
+    if exists:
+        None
+
+    schems = ClassSubjectCreate(
+        class_id=class_id,
+        subject_id=subject_id,
+        category=category,
+        stream=stream,
+        is_compulsory=compulsory,
+        is_main=main,
+    )
+
+    model = ClassSubject(**schems.model_dump())
+    db.add(model)
 
 
 def create_class_subject():
+    subjects_json = JSON_DATA["Subjects"]
 
-    # add data for 11-non medical
-    class_id = 11
-    OptionalData = JSON_DATA["Subjects"]["Optional"]
-    not_optional = "Home Science", "Legal Studies", "Entrepreneurship"
+    # get data using name
+    subject_data = {s.name: s.id for s in db.query(Subject).all()}
 
-    optional_list = [s for s in OptionalData if s not in not_optional]
+    classes = db.query(Class).all()
 
-    # get the subject_id using subject_name
-    subject_list = [
-        "Chemistry",
-        "Physics",
-        "Mathematics",
-        "English",
-    ]
+    for cls in classes:
+        cno = cls.id
+        cstr = cls.stream
 
-    # this is for main subjects
-    placeholders = ",".join("?" for _ in subject_list)
-    query = f"SELECT id,name FROM subjects WHERE name IN ({placeholders})"
-    main_subjects = {id: name for id, name in conn_database(query, subject_list)}
-
-    # make schems for this
-    for id in main_subjects.keys():
-        schems = ClassSubjectCreate(class_id=class_id, subject_id=id)
-        model = ClassSubject(**schems.model_dump())
-        db.add(model)
-    db.commit()
-
-    # this is for optional subjects
-    placeholfers = ",".join("?" for _ in optional_list)
-    query = f"SELECT id,name FROM subjects WHERE name IN ({placeholfers})"
-    optional_result = {id: name for id, name in conn_database(query, optional_list)}
-
-    # make schems for this
-    for id in optional_result.keys():
-        schems = ClassSubjectCreate(class_id=class_id, subject_id=id, is_optional=True)
-        model = ClassSubject(**schems.model_dump())
-        db.add(model)
+        # common (1-12)
+        for s in subjects_json.get("Common", []):
+            insert(cls.id, normalize(s), "common", None, True, True)
+        # optional (6-12)
+        if cno >= 6:
+            for s in subjects_json.get("Optional", []):
+                insert(cls.id, normalize(s), "optional", None, False, False)
     db.commit()
 
 
 def drop_table():
-    from sqlalchemy import text
-
-    db.execute(text("DROP TABLE IF EXISTS class_subject"))
-    db.commit()
+    subject_map = {s.name: s.id for s in db.query(Subject).all()}
+    return subject_map
 
 
 if __name__ == "__main__":

@@ -57,7 +57,10 @@ class SubjectCreate(BaseModel):
 class ClassSubjectCreate(BaseModel):
     class_id: int
     subject_id: int
-    is_optional: Optional[bool] = False
+    category: str
+    stream: Optional[str] = None
+    is_compulsory: Optional[bool] = False
+    is_main: Optional[bool] = False
 
 
 class StudentSubjectSelect(BaseModel):
