@@ -112,11 +112,17 @@ def show_teacher_classes(request: Request):
 
 
 @app.get("/teacher/classes/details", name="teacher_class_details")
-def show_teacher_class_details(request: Request):
+def show_teacher_class_details(
+    request: Request,
+    class_id: int = 11,
+    db: Session = Depends(get_db),
+):
     # Security check: exist session
     if "gmail" not in request.session:
         return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
-    class_id = 11
+
+    # Fetch class info
+    class_info = db.query(Class).filter(Class.id == class_id).first()
 
     # name,init,roll_no
     student_data = []
@@ -134,7 +140,8 @@ def show_teacher_class_details(request: Request):
         )
 
     return templates.TemplateResponse(
-        "teacher_class_details.html", {"request": request, "students": student_data}
+        "teacher_class_details.html",
+        {"request": request, "students": student_data, "class_info": class_info},
     )
 
 

@@ -70,8 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                     
                     <div class="class-actions-row">
-                        <button class="action-btn btn-primary" onclick="openClass('${cls.name}')">Start Class</button>
-                        <button class="action-btn btn-outline" onclick="openAttendance('${cls.name}')">Attendance</button>
+                        <button class="action-btn btn-primary" onclick="openClass(${cls.id})">Start Class</button>
+                        <button class="action-btn btn-outline" onclick="openAttendance(${cls.id})">Attendance</button>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td>${cls.students}</td>
                 <td>${cls.time}</td>
                 <td>
-                    <button class="table-action-btn" onclick="openClass('${cls.name}')">
+                    <button class="table-action-btn" onclick="openClass(${cls.id})">
                         Open Class
                     </button>
                 </td>
@@ -123,12 +123,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Global navigation functions
-window.openClass = function (className) {
+window.openClass = function (classId) {
   // Can link to a specific "Start Class" view or just the details
-  window.location.href = `/teacher/classes/details?className=${encodeURIComponent(className)}&mode=start`;
+  window.location.href = `/teacher/classes/details?class_id=${classId}&mode=start`;
 };
 
-window.openAttendance = function (className) {
+window.openAttendance = function (classId) {
   // Link to the attendance tab of the details page
-  window.location.href = `/teacher/classes/details?className=${encodeURIComponent(className)}&tab=attendance`;
+  window.location.href = `/teacher/classes/details?class_id=${classId}&tab=attendance`;
 };

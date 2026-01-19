@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Class 10-A - TeacherHub</title>
+    <title>{{ class_info.class_name if class_info else 'Class Details' }} - TeacherHub</title>
     <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -68,10 +68,10 @@
                 <!-- Class Header -->
                 <div class="class-hero">
                     <div class="hero-content">
-                        <span class="class-badge">Grade 10-A</span>
-                        <h1>Mathematics</h1>
+                        <span class="class-badge">{{ class_info.class_name if class_info else 'Class Details' }}</span>
+                        <h1>{{ class_info.stream if class_info.stream else 'General Subject' }}</h1>
                         <p><i class="fa-solid fa-clock"></i> 09:00 AM - 10:30 AM &nbsp;|&nbsp; <i
-                                class="fa-solid fa-user-group"></i> 32 Students</p>
+                                class="fa-solid fa-user-group"></i> {{ students|length }} Students</p>
                     </div>
                     <div class="hero-actions">
                         <!-- Date Picker for Attendance -->
