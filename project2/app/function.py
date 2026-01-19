@@ -43,4 +43,4 @@ def initilas(name: str):
 
 
 def normalize(name: str) -> str:
-    return " ".join(name.strip().split()).title()
+    return " ".join(name.strip().split())

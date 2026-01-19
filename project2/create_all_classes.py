@@ -320,7 +320,6 @@ def insert(class_id, subject_name, category, stream, compulsory, main):
 
     # get data using name
     subject_data = {s.name: s.id for s in db.query(Subject).all()}
-
     subject_id = subject_data.get(subject_name)
 
     if not subject_id:
@@ -351,9 +350,6 @@ def insert(class_id, subject_name, category, stream, compulsory, main):
 def create_class_subject():
     subjects_json = JSON_DATA["Subjects"]
 
-    # get data using name
-    subject_data = {s.name: s.id for s in db.query(Subject).all()}
-
     classes = db.query(Class).all()
 
     for cls in classes:
@@ -367,12 +363,46 @@ def create_class_subject():
         if cno >= 6:
             for s in subjects_json.get("Optional", []):
                 insert(cls.id, normalize(s), "optional", None, False, False)
+
+        # for science srteam
+        if cstr == "science":
+            for s in subjects_json.get("Science", {}).get("Medical", []):
+                insert(cls.id, normalize(s), "stream", "science", True, True)
+
+            for s in subjects_json.get("Science", {}).get("Non-Medical", []):
+                insert(cls.id, normalize(s), "stream", "science", True, True)
+
+            for s in subjects_json.get("Science", {}).get("Optional", []):
+                insert(cls.id, normalize(s), "optional", "science", False, False)
+
+        # for commerce srteam
+        elif cstr == "commerce":
+            for s in subjects_json.get("Commerce", {}).get("Core", []):
+                insert(cls.id, normalize(s), "stream", "commerce", True, True)
+
+            for s in subjects_json.get("Commerce", {}).get("Optional", []):
+                insert(cls.id, normalize(s), "optional", "commerce", False, False)
+
+        # for humanities srteam
+        elif cstr == "humanities":
+            for s in subjects_json.get("Humanities", {}).get("Core", []):
+                insert(cls.id, normalize(s), "stream", "humanities", True, True)
+
+            for s in subjects_json.get("Humanities", {}).get("Optional", []):
+                insert(cls.id, normalize(s), "optional", "humanities", False, False)
+
     db.commit()
 
 
 def drop_table():
     subject_map = {s.name: s.id for s in db.query(Subject).all()}
-    return subject_map
+    classes = db.query(Class).all()
+    subjects_json = JSON_DATA["Subjects"]
+
+    for s in subjects_json.get("Common", []):
+        subject_id = subject_map.get(normalize(s))
+        print(type(subject_id))
+        print(normalize(s))
 
 
 if __name__ == "__main__":
