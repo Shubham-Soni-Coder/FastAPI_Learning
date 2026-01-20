@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api")
 
 
 @router.post("/attendance")
-def save_attendance(payload: AttendanceSubmit, db: Session = Depends(get_db)):
+def save_attendance(payload: AttendanceSubmitCreate, db: Session = Depends(get_db)):
     # 1. Find or create session
     session = (
         db.query(AttendanceSession)
@@ -42,7 +42,7 @@ def save_attendance(payload: AttendanceSubmit, db: Session = Depends(get_db)):
         # optional safety : check for the student beylong to class
         student = (
             db.query(Student)
-            .filter(Student.id == item.student_id, student.class_id == payload.class_id)
+            .filter(Student.id == item.student_id, Student.class_id == payload.class_id)
             .first()
         )
 
@@ -57,17 +57,18 @@ def save_attendance(payload: AttendanceSubmit, db: Session = Depends(get_db)):
             )
             .first()
         )
-
-        status = "Present" if item.is_present else "Absent"
+        if item.is_present:
+            status = "present"
+        else:
+            with open("AttendanceError.txt", "a") as f:
+                f.write(f"{item.is_present}\n")
+            status = "absent"
 
         if record:
             record.status = status
         else:
             schems = AttendanceRecordCreate(
-                session_id=session.id,
-                student_id=item.student_id,
-                status=status,
-                remark=item.remark,
+                session_id=session.id, student_id=item.student_id, status=status
             )
             record = AttendanceRecord(**schems.dict())
             db.add(record)

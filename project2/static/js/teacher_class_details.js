@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         attendanceGrid.innerHTML = studentsData.map(student => `
             <div class="student-card" id="card-${student.student_id}">
                 <div class="student-info">
-                    <div class="student-avatar" style="background: hsl(${student.id * 15}, 70%, 50%)">
+                    <div class="student-avatar" style="background: hsl(${student.student_id * 15}, 70%, 50%)">
                         ${student.initials}
                     </div>
                     <div class="student-details">
@@ -54,9 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const student = studentsData.find(s => s.student_id === student_id);
         if (student) {
             student.status = student.status === 'present' ? 'absent' : 'present';
+            // Sync is_present with status
+            student.is_present = (student.status === 'present');
 
             // Update UI for this specific card
-            const btn = document.querySelector(`#card-${id} .attendance-toggle`);
+            const btn = document.querySelector(`#card-${student_id} .attendance-toggle`);
             if (btn) {
                 btn.className = `attendance-toggle ${student.status}`;
                 btn.innerHTML = `<i class="fa-solid ${student.status === 'present' ? 'fa-check' : 'fa-xmark'}"></i>`;
@@ -69,7 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mark All Present
     markAllPresentBtn.addEventListener('click', () => {
-        studentsData.forEach(s => s.status = 'present');
+        studentsData.forEach(s => {
+            s.status = 'present';
+            s.is_present = true;
+        });
         renderStudents();
     });
 

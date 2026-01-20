@@ -26,6 +26,7 @@ from app.models import User, OTP, Student, StudentFeesDue, Class
 from app.otp_sender import send_otp, verify_otp
 from app.database import session
 from app.function import count_student_present_day, initilas, conn_database, load_data
+from routers import attendance
 
 # load the data
 load_dotenv()
@@ -41,6 +42,9 @@ app = FastAPI()
 
 # make database
 db = session()
+
+# Include Routers
+app.include_router(attendance.router)
 
 # Static folder
 app.mount("/static", StaticFiles(directory="static"), name="static")

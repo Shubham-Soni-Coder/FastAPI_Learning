@@ -39,7 +39,7 @@ from datetime import datetime, date
 import random
 import calendar
 from itertools import chain
-from app.function import normalize, load_data
+from app.function import normalize, load_data, conn_database
 
 # load the data from json file
 JSON_DATA = load_data()
@@ -395,14 +395,9 @@ def create_class_subject():
 
 
 def drop_table():
-    subject_map = {s.name: s.id for s in db.query(Subject).all()}
-    classes = db.query(Class).all()
-    subjects_json = JSON_DATA["Subjects"]
-
-    for s in subjects_json.get("Common", []):
-        subject_id = subject_map.get(normalize(s))
-        print(type(subject_id))
-        print(normalize(s))
+    # remove data from attendance_records where session_id is 276
+    db.query(AttendanceRecord).filter(AttendanceRecord.session_id == 276).delete()
+    db.commit()
 
 
 if __name__ == "__main__":
@@ -412,10 +407,10 @@ if __name__ == "__main__":
     # create_student_fees_due()
     # update_status()
     # show_data()
-    # drop_table()
+    drop_table()
     # create_fees_payment()
     # create_attendance_session()
     # create_attendance_record()
     # add_data()
     # create_subject()
-    create_class_subject()
+    # create_class_subject()
