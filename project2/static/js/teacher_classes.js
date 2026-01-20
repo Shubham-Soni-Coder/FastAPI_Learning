@@ -38,6 +38,15 @@ const classesData = [
     // Grey or Blue variant
     color: "#74b9ff",
   },
+  {
+    id: 5,
+    name: "Grade 11",
+    subject: "Biology",
+    students: 34,
+    time: "01:15 PM",
+    // Orange
+    color: "#e67e22",
+  },
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
