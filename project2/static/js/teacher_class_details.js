@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         attendanceGrid.innerHTML = studentsData.map(student => `
-            <div class="student-card" id="card-${student.id}">
+            <div class="student-card" id="card-${student.student_id}">
                 <div class="student-info">
                     <div class="student-avatar" style="background: hsl(${student.id * 15}, 70%, 50%)">
                         ${student.initials}
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="student-roll">Roll No: #${student.rollNo}</span>
                     </div>
                 </div>
-                <button class="attendance-toggle ${student.status}" onclick="toggleAttendance(${student.id})">
+                <button class="attendance-toggle ${student.status}" onclick="toggleAttendance(${student.student_id})">
                     <i class="fa-solid ${student.status === 'present' ? 'fa-check' : 'fa-xmark'}"></i>
                 </button>
             </div>
@@ -43,14 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update Counts
     function updateStats() {
         const present = studentsData.filter(s => s.status === 'present').length;
-        const absent = studentsData.filter(s => s.status === 'absent').length;
+        const absent = studentsData.length - present;
         presentCountEl.textContent = present;
         absentCountEl.textContent = absent;
     }
 
     // Toggle Handler (Global scope)
-    window.toggleAttendance = function (id) {
-        const student = studentsData.find(s => s.id === id);
+    window.toggleAttendance = function (student_id) {
+        const student = studentsData.find(s => s.student_id === student_id);
         if (student) {
             student.status = student.status === 'present' ? 'absent' : 'present';
 
@@ -72,28 +72,26 @@ document.addEventListener('DOMContentLoaded', () => {
         renderStudents();
     });
 
-    // Save Attendance
     saveAttendanceBtn.addEventListener('click', () => {
-        // Collect data to send
-        const attendancePayload = studentsData.map(s => ({
-            student_id: s.id,
-            status: s.status,
-            date: document.getElementById('attendanceDate').value
-        }));
+        const payload = {
+            class_id: parseInt(document.getElementById("classId").value),
+            date: document.getElementById('attendanceDate').value,
+            session_type: "morning", // later make dynamic
+            attendance: studentsData.map(s => ({
+                student_id: s.student_id,
+                is_present: s.is_present
+            }))
+        };
 
-        console.log('Saving attendance:', attendancePayload);
-        alert('Attendance Saved Successfully for ' + document.getElementById('attendanceDate').value);
+        console.log("FINAL PAYLOAD:", payload);
 
-        // Example POST request (commented out until backend endpoint is ready)
-        /*
-        fetch('/teacher/attendance/save', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(attendancePayload)
-        });
-        */
+        fetch("/api/attendance", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        })
+            .then(res => res.json())
+            .then(() => alert("Attendance saved successfully"));
     });
 
     // Initial Render

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ class_info.class_name if class_info else 'Class Details' }} - TeacherHub</title>
+    <title>{{ class_name if class_name else 'Class Details' }} - TeacherHub</title>
     <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -17,6 +17,8 @@
 </head>
 
 <body>
+    <!-- Hidden -->
+    <input type="hidden" id="classId" value="{{ class_id}}">
     <!-- Background -->
     <div class="main" style="position: fixed; z-index: -1;"></div>
 
@@ -68,8 +70,8 @@
                 <!-- Class Header -->
                 <div class="class-hero">
                     <div class="hero-content">
-                        <span class="class-badge">{{ class_info.class_name if class_info else 'Class Details' }}</span>
-                        <h1>{{ class_info.stream if class_info.stream else 'General Subject' }}</h1>
+                        <span class="class-badge">{{ class_name if class_name else 'Class Details' }}</span>
+                        <h1>{{ 'General Subject' }}</h1>
                         <p><i class="fa-solid fa-clock"></i> 09:00 AM - 10:30 AM &nbsp;|&nbsp; <i
                                 class="fa-solid fa-user-group"></i> {{ students|length }} Students</p>
                     </div>
@@ -143,11 +145,12 @@
 
         // Transform backend data to match JS expectations
         window.studentsData = existingStudents.map(student => ({
-            id: student.roll_no,
+            student_id: student.student_id,
             rollNo: student.roll_no,
             name: student.name,
             initials: student.initials,
-            status: 'absent' // Default status
+            status: 'absent', // Default status,
+            is_present: false
         }));
     </script>
     <script src="{{ url_for('static', path='js/teacher_class_details.js') }}"></script>

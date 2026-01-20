@@ -122,26 +122,36 @@ def show_teacher_class_details(
         return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
     # Fetch class info
-    class_info = db.query(Class).filter(Class.id == class_id).first()
+    class_obj = db.query(Class).filter(Class.id == class_id).first()
+    if not class_obj:
+        print("CLasss is not founds")
+        raise HTTPException(status_code=404, detail="Class not found")
 
     # name,init,roll_no
     student_data = []
 
     # result
-    query = "SELECT name FROM students WHERE class_id = ? ORDER BY name ASC"
+    query = "SELECT id , name FROM students where class_id = ? ORDER BY name ASC"
     result = conn_database(query, (class_id,))
     for i, row in enumerate(result):
         student_data.append(
             {
                 "roll_no": i + 1,
-                "name": row[0],
-                "initials": initilas(row[0]),
+                "student_id": row[0],
+                "name": row[1],
+                "initials": initilas(row[1]),
             }
         )
 
     return templates.TemplateResponse(
         "teacher_class_details.html",
-        {"request": request, "students": student_data, "class_info": class_info},
+        {
+            "request": request,
+            "students": student_data,
+            "class_id": class_obj.id,
+            "class_name": class_obj.class_name,
+            "mode": "start",
+        },
     )
 
 
