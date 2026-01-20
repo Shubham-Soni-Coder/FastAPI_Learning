@@ -1,65 +1,59 @@
-// Teacher Classes - Mock Data & Logic
+// Teacher Classes - Dynamic Data & Logic
 
-// Mock Data matching the reference image colors
-const classesData = [
-  {
-    id: 10,
-    name: "Grade 10",
-    subject: "Mathematics",
-    students: 32,
-    time: "09:00 AM",
-    // Purple like the first card
-    color: "#8c7ae6",
-  },
-  {
-    id: 9,
-    name: "Grade 9",
-    subject: "Physics",
-    students: 28,
-    time: "11:30 AM",
-    // Salmon/Red like the second card
-    color: "#ff7675",
-  },
-  {
-    id: 12,
-    name: "Grade 11-Med",
-    subject: "Chemistry",
-    students: 30,
-    time: "02:00 PM",
-    // Teal/Green like the third card
-    color: "#00b894",
-  },
-  {
-    id: 8,
-    name: "Grade 8",
-    subject: "Basic Algebra",
-    students: 25,
-    time: "10:00 AM",
-    // Grey or Blue variant
-    color: "#74b9ff",
-  },
-  {
-    id: 11,
-    name: "Grade 11",
-    subject: "Biology",
-    students: 34,
-    time: "01:15 PM",
-    // Orange
-    color: "#e67e22",
-  },
+let classesData = [];
+// Colors to cycle through for cards
+const classColors = [
+  "#8c7ae6", // Purple
+  "#ff7675", // Salmon
+  "#00b894", // Teal
+  "#74b9ff", // Blue
+  "#e67e22", // Orange
+  "#fd79a8", // Pink
+  "#fbc531", // Yellow
+  "#2d3436"  // Dark Grey
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
   const cardViewBtn = document.getElementById("cardViewBtn");
   const tableViewBtn = document.getElementById("tableViewBtn");
   const classesContainer = document.getElementById("classesContainer");
-  const classesTableContainer = document.getElementById(
-    "classesTableContainer"
-  );
+  const classesTableContainer = document.getElementById("classesTableContainer");
   const classesTableBody = document.getElementById("classesTableBody");
+
+  // Fetch Data from Backend
+  async function fetchClasses() {
+    try {
+      const response = await fetch('/teacher/api/classes-list');
+      if (!response.ok) throw new Error('Failed to fetch classes');
+
+      const data = await response.json();
+
+      // Enhance data with colors
+      classesData = data.map((cls, index) => ({
+        ...cls,
+        color: classColors[index % classColors.length]
+      }));
+
+      renderCards();
+      renderTable();
+
+    } catch (error) {
+      console.error("Error loading classes:", error);
+      if (classesContainer) {
+        classesContainer.innerHTML = `<p class="error-msg">Failed to load classes. Please try again.</p>`;
+      }
+    }
+  }
 
   // Render Functions
   function renderCards() {
+    if (!classesContainer) return;
+
+    if (classesData.length === 0) {
+      classesContainer.innerHTML = '<p class="empty-msg">No classes found.</p>';
+      return;
+    }
+
     classesContainer.innerHTML = classesData
       .map(
         (cls) => `
@@ -90,6 +84,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderTable() {
+    if (!classesTableBody) return;
+
     classesTableBody.innerHTML = classesData
       .map(
         (cls) => `
@@ -126,9 +122,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Initial Render
-  if (classesContainer) renderCards();
-  if (classesTableBody) renderTable();
+  // Initial Fetch
+  fetchClasses();
 });
 
 // Global navigation functions

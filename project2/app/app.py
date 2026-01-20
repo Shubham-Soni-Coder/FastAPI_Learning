@@ -25,11 +25,11 @@ from app.database import get_db, Base, engine
 from app.models import User, OTP, Student, StudentFeesDue, Class
 from app.otp_sender import send_otp, verify_otp
 from app.database import session
-from app.function import count_student_present_day, initilas, conn_database
+from app.function import count_student_present_day, initilas, conn_database, load_data
 
 # load the data
 load_dotenv()
-
+JSON_data = load_data()
 # load the sercet key
 secret_key = os.getenv("SECRET_KEY")
 
@@ -386,3 +386,43 @@ def login(
     request.session["gmail"] = usergmail
 
     return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@app.get("/teacher/api/classes-list", name="get_all_classes_data")
+def get_all_classes_data(request: Request, db: Session = Depends(get_db)):
+    if "gmail" not in request.session:
+        return {"error": "Unauthorized"}
+
+    from sqlalchemy import func
+
+    # Load teacher's specific classes from demo.json
+    try:
+        teacher_classes = JSON_data.get("teacher_classes", [])
+    except Exception as e:
+        print(f"Error reading demo.json: {e}")
+        return []
+
+    results = []
+
+    for cls_data in teacher_classes:
+        class_id = cls_data["id"]
+
+        # Count students in this class from Real Database
+        student_count = (
+            db.query(func.count(Student.id))
+            .filter(Student.class_id == class_id)
+            .scalar()
+        )
+
+        # Combine static demo data with dynamic DB count
+        results.append(
+            {
+                "id": class_id,
+                "name": cls_data["name"],
+                "subject": cls_data["subject"],
+                "students": student_count,
+                "time": cls_data["time"],
+            }
+        )
+
+    return results
