@@ -3,8 +3,8 @@
 // Mock Data matching the reference image colors
 const classesData = [
   {
-    id: 1,
-    name: "Grade 10-A",
+    id: 10,
+    name: "Grade 10",
     subject: "Mathematics",
     students: 32,
     time: "09:00 AM",
@@ -12,8 +12,8 @@ const classesData = [
     color: "#8c7ae6",
   },
   {
-    id: 2,
-    name: "Grade 9-B",
+    id: 9,
+    name: "Grade 9",
     subject: "Physics",
     students: 28,
     time: "11:30 AM",
@@ -21,17 +21,17 @@ const classesData = [
     color: "#ff7675",
   },
   {
-    id: 3,
-    name: "Grade 10-C",
-    subject: "Geometry",
+    id: 12,
+    name: "Grade 11-Med",
+    subject: "Chemistry",
     students: 30,
     time: "02:00 PM",
     // Teal/Green like the third card
     color: "#00b894",
   },
   {
-    id: 4,
-    name: "Grade 8-A",
+    id: 8,
+    name: "Grade 8",
     subject: "Basic Algebra",
     students: 25,
     time: "10:00 AM",
@@ -39,7 +39,7 @@ const classesData = [
     color: "#74b9ff",
   },
   {
-    id: 5,
+    id: 11,
     name: "Grade 11",
     subject: "Biology",
     students: 34,
