@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const absentCountEl = document.getElementById('absentCount');
     const markAllPresentBtn = document.getElementById('markAllPresentBtn');
     const saveAttendanceBtn = document.getElementById('saveAttendanceBtn');
+    const pageMode = document.getElementById("pageMode").value;
 
     // Use global studentsData
     let studentsData = window.studentsData || [];
@@ -73,9 +74,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     saveAttendanceBtn.addEventListener('click', () => {
+        const classid = parseInt(document.getElementById("classId").value);
+        const data = document.getElementById('attendanceDate').value;
+
+        if (!data) {
+            alert("Select a data")
+            return
+        }
+
+        // Build the playload 
+
+
         const payload = {
-            class_id: parseInt(document.getElementById("classId").value),
-            date: document.getElementById('attendanceDate').value,
+            class_id: classid,
+            date: data,
             session_type: "morning", // later make dynamic
             attendance: studentsData.map(s => ({
                 student_id: s.student_id,
@@ -90,9 +102,23 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         })
-            .then(res => res.json())
-            .then(() => alert("Attendance saved successfully"));
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Falied to load the data");
+                }
+                return res.json()
+            })
+            .then(data => {
+                alert("Attendance saved successfully");
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to save attendance");
+            })
     });
+
+    // Save the attendance 
+
 
     // Initial Render
     renderStudents();

@@ -116,3 +116,15 @@ class AttendanceRecordCreate(BaseModel):
     student_id: int
     status: str
     remark: Optional[str] = None
+
+
+class AttendanceItemCreate(BaseModel):
+    student_id: int
+    is_present: bool
+
+
+class AttendanceSubmitCreate(BaseModel):
+    class_id: int
+    date: date
+    session_type: str
+    attendance: List[AttendanceItemCreate]
