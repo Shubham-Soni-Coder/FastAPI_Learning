@@ -6,7 +6,7 @@ This module initializes the FastAPI application and defines the route handlers.
 It includes routes for authentication (login, register), dashboard views, and teacher functionalities.
 """
 
-from fastapi import FastAPI, Request, Form, status
+from fastapi import FastAPI, Request, Form, status, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -16,20 +16,20 @@ import hashlib
 from starlette.middleware.sessions import SessionMiddleware
 from datetime import datetime, timedelta
 import calendar
-from app.schemas import UserCreate, Usermodel
-import json
-from app.database import get_db, Base, engine
+
 from app.models import User, OTP, Student, StudentFeesDue, Class
 from app.otp_sender import send_otp, verify_otp
-from app.database import session
-from app.function import count_student_present_day, initilas, conn_database, load_data
-from routers import attendance
+from app.function import count_student_present_day, initials, conn_database, load_data
+from app.routers import attendance
 from app.core.security import hash_password, verify_password
+from app.core.middleware import setup_middleware
+from app.database.session import SessionLocal, engine, get_db
+from app.database.base import Base
 
 app = FastAPI()
 
 # make database
-db = session()
+db = SessionLocal()
 
 # Include Routers
 app.include_router(attendance.router)
@@ -43,12 +43,7 @@ templates = Jinja2Templates(directory="templates")
 
 
 # add security
-app.add_middleware(
-    SessionMiddleware,
-    secret_key=secret_key,
-    same_site="lax",
-    https_only=False,  # True in production
-)
+setup_middleware(app)
 
 
 @app.on_event("startup")
@@ -114,7 +109,7 @@ def show_teacher_class_details(
     # Fetch class info
     class_obj = db.query(Class).filter(Class.id == class_id).first()
     if not class_obj:
-        print("CLasss is not founds")
+        print("Class is not found")
         raise HTTPException(status_code=404, detail="Class not found")
 
     # name,init,roll_no
@@ -129,7 +124,7 @@ def show_teacher_class_details(
                 "roll_no": i + 1,
                 "student_id": row[0],
                 "name": row[1],
-                "initials": initilas(row[1]),
+                "initials": initials(row[1]),
             }
         )
 
@@ -246,7 +241,7 @@ def show_teacher_students(request: Request):
         )
 
         # Initalital calculate
-        initials = initilas(student.name)
+        initials_str = initials(student.name)
 
         # add data in list
         students_data.append(
@@ -258,7 +253,7 @@ def show_teacher_students(request: Request):
                 "attendance": attendance_percentage,
                 "days_present": days_present,
                 "total_days": total_days_in_month,
-                "initials": initials,
+                "initials": initials_str,
             }
         )
 
@@ -375,7 +370,7 @@ def login(
         )
 
     # verify password
-    if not pwd_context.verify(userpassword, user.password):
+    if not verify_password(userpassword, user.password):
         print("Password is incorrect")
         return templates.TemplateResponse(
             "login_page.html",
@@ -396,8 +391,10 @@ def get_all_classes_data(request: Request, db: Session = Depends(get_db)):
     from sqlalchemy import func
 
     # Load teacher's specific classes from demo.json
+    from app.core.config import Settings
+
     try:
-        teacher_classes = JSON_data.get("teacher_classes", [])
+        teacher_classes = Settings.JSON_DATA.get("teacher_classes", [])
     except Exception as e:
         print(f"Error reading demo.json: {e}")
         return []

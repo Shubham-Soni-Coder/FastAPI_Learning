@@ -20,7 +20,7 @@ def count_student_present_day(db, student_id: int, year: int, month: int) -> int
 
 
 def load_data():
-    with open("demo.json", "r", encoding="utf-8") as f:
+    with open("data.json", "r", encoding="utf-8") as f:
         JSON_DATA = json.load(f)
     return JSON_DATA
 
@@ -37,7 +37,7 @@ def conn_database(query: str, parameter=None):
     return result
 
 
-def initilas(name: str):
+def initials(name: str):
     parts = name.strip().split()
     return (parts[0][0] if len(parts) == 1 else parts[0][0] + parts[-1][0]).upper()
 

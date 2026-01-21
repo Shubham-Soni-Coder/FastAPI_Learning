@@ -14,7 +14,8 @@ import resend
 from datetime import datetime, timedelta
 import hashlib
 from app.models import OTP
-from app.database import engine, Base, get_db, session
+from app.database.session import engine, get_db, SessionLocal
+from app.database.base import Base
 
 
 load_dotenv()
@@ -28,7 +29,7 @@ if not resend_api_key:
 # store in database
 Base.metadata.create_all(bind=engine)
 
-db = session()
+db = SessionLocal()
 
 
 def generate_otp(length=4) -> str:
