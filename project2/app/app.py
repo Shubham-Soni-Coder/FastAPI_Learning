@@ -17,16 +17,17 @@ from starlette.middleware.sessions import SessionMiddleware
 from datetime import datetime, timedelta
 import calendar
 
-from app.models import User, OTP, Student, StudentFeesDue, Class
-from app.services.otp_service import send_otp, verify_otp
+from app.models import Class, Student
+from app.services.otp_service import send_otp
+from app.services import auth_service, teacher_service
 from app.utils.helpers import initials
-from app.function import count_student_present_day, conn_database
+from app.function import conn_database
 from app.routers import attendance
-from app.core.security import hash_password, verify_password
 from app.core.middleware import setup_middleware
 from app.database.session import SessionLocal, engine, get_db
 from app.database.base import Base
 from app.core.config import Settings
+from app.core.exceptions import CustomException
 
 # load the data
 JSON_DATA = Settings.JSON_DATA
@@ -161,47 +162,12 @@ def get_student_data(request: Request, month: str, db: Session = Depends(get_db)
     year = 2025  # Using current context year
 
     # Get total days in the selected month
-    _, total_days_in_month = calendar.monthrange(year, month_num)
+    class_id = 11
+    year = 2025  # Using current context year
 
-    # Query Students
-    results = (
-        db.query(Student, StudentFeesDue)
-        .join(Class, Student.class_id == Class.id)
-        .join(StudentFeesDue, Student.id == StudentFeesDue.student_id)
-        .filter(Class.id == class_id)
-        .order_by(Student.name.asc())
-        .all()
+    students_data = teacher_service.get_students_for_classes(
+        db, class_id, month_num, year
     )
-
-    students_data = []
-
-    for i, (student, fees) in enumerate(results):
-        days_present = count_student_present_day(db, student.id, year, month_num)
-
-        # Calculate attendance percentage
-        attendance_percentage = (
-            round((days_present / total_days_in_month) * 100)
-            if total_days_in_month > 0
-            else 0
-        )
-
-        parts = student.name.strip().split()
-        initials = (
-            parts[0][0] if len(parts) == 1 else parts[0][0] + parts[-1][0]
-        ).upper()
-
-        students_data.append(
-            {
-                "roll_no": i + 1,
-                "name": student.name,
-                "father_name": student.father_name,
-                "fees_paid": fees.status,
-                "attendance": attendance_percentage,
-                "days_present": days_present,
-                "total_days": total_days_in_month,
-                "initials": initials,
-            }
-        )
 
     return students_data
 
@@ -219,48 +185,10 @@ def show_teacher_students(request: Request):
     current_month_name = now.strftime("%B")
 
     # Get total days in the current month
-    _, total_days_in_month = calendar.monthrange(current_year, current_month)
-
-    # Mock Data for student list
-    results = (
-        db.query(Student, StudentFeesDue)
-        .join(Class, Student.class_id == Class.id)
-        .join(StudentFeesDue, Student.id == StudentFeesDue.student_id)
-        .filter(Class.id == class_id)
-        .order_by(Student.name.asc())
-        .all()
+    # Get total days in the current month
+    students_data = teacher_service.get_students_for_classes(
+        db, class_id, current_month, current_year
     )
-
-    students_data = []
-
-    for i, (student, fees) in enumerate(results):
-        days_present = count_student_present_day(
-            db, student.id, current_year, current_month
-        )
-
-        # Calculate attendance percentage
-        attendance_percentage = (
-            round((days_present / total_days_in_month) * 100)
-            if total_days_in_month > 0
-            else 0
-        )
-
-        # Initalital calculate
-        initials_str = initials(student.name)
-
-        # add data in list
-        students_data.append(
-            {
-                "roll_no": i + 1,
-                "name": student.name,
-                "father_name": student.father_name,
-                "fees_paid": fees.status,
-                "attendance": attendance_percentage,
-                "days_present": days_present,
-                "total_days": total_days_in_month,
-                "initials": initials_str,
-            }
-        )
 
     return templates.TemplateResponse(
         "teacher_students.html",
@@ -280,26 +208,12 @@ def register_user(
     db: Session = Depends(get_db),
 ):
 
-    # `has`h the password
-    # pwd_context is now global
-
-    hashed_password = hash_password(userpassword)
-
-    # check existing gmail
-    existing = db.query(User).filter(User.gmail_id == usergmail).first()
-
-    if existing:
-        # delete data just for testing
-        print("data is already exist")
-        hashed_password = None
+    try:
+        auth_service.start_register(db, usergmail, userpassword, request.session)
+    except CustomException as e:
         return templates.TemplateResponse(
-            "register_page.html", {"request": request, "error": "Email already in use"}
+            "register_page.html", {"request": request, "error": e.detail}
         )
-
-    send_otp(usergmail, db)
-    request.session["gmail"] = usergmail
-    request.session["password"] = hashed_password
-    request.session["time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     return templates.TemplateResponse(
         "otp_send_page.html", {"request": request, "usergmail": usergmail}
@@ -335,31 +249,15 @@ def verify_otp_code(
     db: Session = Depends(get_db),
 ):
 
-    gmail = request.session.get("gmail")
-    password = request.session.get("password")
-    timestamp = request.session.get("time")
-
-    if not gmail:
-        print("Session expried error")
+    try:
+        auth_service.complet_register(db, request.session, otp)
+        print("Data sucessful added")
+        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+    except CustomException as e:
         return templates.TemplateResponse(
             "otp_send_page.html",
-            {"request": request, "error": "Session expired. Try again."},
+            {"request": request, "error": e.detail},
         )
-
-    is_valid = verify_otp(gmail, otp, db)
-
-    if not is_valid:
-        print("Otp not match")
-        return templates.TemplateResponse(
-            "otp_send_page.html",
-            {"request": request, "error": "Invalid or expired OTP"},
-        )
-
-    user = User(gmail_id=gmail, password=password)
-    db.add(user)
-    db.commit()
-    print("Data sucessful added")
-    return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @app.post("/login", name="login")
@@ -369,26 +267,14 @@ def login(
     userpassword: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    # check for existing user
-    user = db.query(User).filter(User.gmail_id == usergmail).first()
-
-    if not user:
-        print("User not found")
+    try:
+        auth_service.login_user(db, usergmail, userpassword, request.session)
+        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+    except CustomException as e:
         return templates.TemplateResponse(
             "login_page.html",
-            {"request": request, "error": "Email address is not found"},
+            {"request": request, "error": e.detail},
         )
-
-    # verify password
-    if not verify_password(userpassword, user.password):
-        print("Password is incorrect")
-        return templates.TemplateResponse(
-            "login_page.html",
-            {"request": request, "error": "Invalid password"},
-        )
-
-    # Store user in session
-    request.session["gmail"] = usergmail
 
     return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
 
