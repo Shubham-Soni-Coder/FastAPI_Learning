@@ -13,14 +13,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi import Depends
 from sqlalchemy.orm import Session
 import hashlib
-from passlib.context import CryptContext
 from starlette.middleware.sessions import SessionMiddleware
 from datetime import datetime, timedelta
 import calendar
 from app.schemas import UserCreate, Usermodel
-import os
 import json
-from dotenv import load_dotenv
 from app.database import get_db, Base, engine
 from app.models import User, OTP, Student, StudentFeesDue, Class
 from app.otp_sender import send_otp, verify_otp
@@ -28,15 +25,6 @@ from app.database import session
 from app.function import count_student_present_day, initilas, conn_database, load_data
 from routers import attendance
 
-# load the data
-load_dotenv()
-JSON_data = load_data()
-# load the sercet key
-secret_key = os.getenv("SECRET_KEY")
-
-# Safety check: Stop the app if the key is missing
-if secret_key is None:
-    raise ValueError("No SECRET_KEY found in .env file!")
 
 app = FastAPI()
 
@@ -53,8 +41,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Templates
 templates = Jinja2Templates(directory="templates")
 
-# hashed password add
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 # add security
 app.add_middleware(
