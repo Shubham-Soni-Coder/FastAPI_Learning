@@ -1,6 +1,5 @@
 from sqlalchemy import func, distinct
 from app.models import AttendanceSession, AttendanceRecord
-import json
 import sqlite3
 
 
@@ -19,12 +18,6 @@ def count_student_present_day(db, student_id: int, year: int, month: int) -> int
     return present_day
 
 
-def load_data():
-    with open("data.json", "r", encoding="utf-8") as f:
-        JSON_DATA = json.load(f)
-    return JSON_DATA
-
-
 def conn_database(query: str, parameter=None):
     conn = sqlite3.connect("test.db")
     cursor = conn.cursor()
@@ -35,11 +28,6 @@ def conn_database(query: str, parameter=None):
     result = cursor.fetchall()
     conn.close()
     return result
-
-
-def initials(name: str):
-    parts = name.strip().split()
-    return (parts[0][0] if len(parts) == 1 else parts[0][0] + parts[-1][0]).upper()
 
 
 def normalize(name: str) -> str:

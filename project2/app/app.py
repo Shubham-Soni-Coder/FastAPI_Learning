@@ -19,7 +19,8 @@ import calendar
 
 from app.models import User, OTP, Student, StudentFeesDue, Class
 from app.otp_sender import send_otp, verify_otp
-from app.function import count_student_present_day, initials, conn_database, load_data
+from app.utils.helpers import initials
+from app.function import count_student_present_day, conn_database, load_data
 from app.routers import attendance
 from app.core.security import hash_password, verify_password
 from app.core.middleware import setup_middleware
