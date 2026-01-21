@@ -18,9 +18,9 @@ from datetime import datetime, timedelta
 import calendar
 
 from app.models import User, OTP, Student, StudentFeesDue, Class
-from app.otp_sender import send_otp, verify_otp
+from app.services.otp_service import send_otp, verify_otp
 from app.utils.helpers import initials
-from app.function import count_student_present_day, conn_database, load_data
+from app.function import count_student_present_day, conn_database
 from app.routers import attendance
 from app.core.security import hash_password, verify_password
 from app.core.middleware import setup_middleware
@@ -296,7 +296,7 @@ def register_user(
             "register_page.html", {"request": request, "error": "Email already in use"}
         )
 
-    send_otp(usergmail)
+    send_otp(usergmail, db)
     request.session["gmail"] = usergmail
     request.session["password"] = hashed_password
     request.session["time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -314,9 +314,14 @@ def show_login_success(
 
 
 @app.post("/otp_send", name="otp_send")
-def otp_sender(request: Request, usergmail: str = Form(...), password: str = Form(...)):
+def otp_sender(
+    request: Request,
+    usergmail: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db),
+):
 
-    send_otp(usergmail)
+    send_otp(usergmail, db)
 
     request.session["gmail"] = usergmail  # This is a cookie for brower
 
@@ -341,7 +346,7 @@ def verify_otp_code(
             {"request": request, "error": "Session expired. Try again."},
         )
 
-    is_valid = verify_otp(gmail, otp)
+    is_valid = verify_otp(gmail, otp, db)
 
     if not is_valid:
         print("Otp not match")

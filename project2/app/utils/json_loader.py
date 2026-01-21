@@ -2,7 +2,7 @@ import json
 import os
 
 
-def load_json(filename: str = "demo.json"):
+def load_json(filename: str = "data.json"):
 
     if not os.path.exists(filename):
         raise FileNotFoundError(f"File {filename} not found")
