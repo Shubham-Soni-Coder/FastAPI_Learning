@@ -24,7 +24,7 @@ from app.otp_sender import send_otp, verify_otp
 from app.database import session
 from app.function import count_student_present_day, initilas, conn_database, load_data
 from routers import attendance
-
+from app.core.security import hash_password, verify_password
 
 app = FastAPI()
 
@@ -280,10 +280,10 @@ def register_user(
     db: Session = Depends(get_db),
 ):
 
-    # hash the password
+    # `has`h the password
     # pwd_context is now global
 
-    hashed_password = pwd_context.hash(userpassword)
+    hashed_password = hash_password(userpassword)
 
     # check existing gmail
     existing = db.query(User).filter(User.gmail_id == usergmail).first()
