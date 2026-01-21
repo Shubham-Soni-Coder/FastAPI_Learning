@@ -25,6 +25,10 @@ from app.core.security import hash_password, verify_password
 from app.core.middleware import setup_middleware
 from app.database.session import SessionLocal, engine, get_db
 from app.database.base import Base
+from app.core.config import Settings
+
+# load the data
+JSON_DATA = Settings.JSON_DATA
 
 app = FastAPI()
 
@@ -391,10 +395,9 @@ def get_all_classes_data(request: Request, db: Session = Depends(get_db)):
     from sqlalchemy import func
 
     # Load teacher's specific classes from demo.json
-    from app.core.config import Settings
 
     try:
-        teacher_classes = Settings.JSON_DATA.get("teacher_classes", [])
+        teacher_classes = JSON_DATA.get("teacher_classes", [])
     except Exception as e:
         print(f"Error reading demo.json: {e}")
         return []
