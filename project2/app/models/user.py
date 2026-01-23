@@ -7,6 +7,8 @@ class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
     gmail_id = Column(String, unique=True, index=True)
-    password = Column(String)
-    is_admin = Column(Boolean, default=False)
+    hashed_password = Column(String, nullable=False)
+
+    role = Column(String, nullable=False)
+    is_active = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)

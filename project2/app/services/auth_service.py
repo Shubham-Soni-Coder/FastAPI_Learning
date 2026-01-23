@@ -38,9 +38,10 @@ def complet_register(db: Session, session: dict, otp: str):
 
 
 def login_user(db: Session, gmail: str, password: str, session: dict):
-    user = db.query(User).filter(User.gmail == gmail).first()
+    user = db.query(User).filter(User.gmail_id == gmail).first()
     if not user:
         raise CustomException(status_code=400, detail="User not found")
-    if not verify_password(password, user.password):
+    if not verify_password(password, user.hashed_password):
         raise CustomException(status_code=400, detail="Invalid password")
-    session["gmail"] = user.gmail
+    session["gmail"] = user.gmail_id
+    return user

@@ -5,7 +5,9 @@ from datetime import datetime
 class Usermodel(BaseModel):
     id: int
     gmail_id: str
-    password: str
+    hashed_password: str
+    role: str
+    is_active: bool
     created_at: datetime
 
     class Config:
@@ -14,5 +16,6 @@ class Usermodel(BaseModel):
 
 class UserCreate(BaseModel):
     gmail_id: str
-    password: str
-    is_admin: bool = False
+    hashed_password: str
+    role: str
+    is_active: bool

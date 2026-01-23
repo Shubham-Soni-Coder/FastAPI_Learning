@@ -53,8 +53,29 @@ def login(
     db: Session = Depends(get_db),
 ):
     try:
-        auth_service.login_user(db, usergmail, userpassword, request.session)
+        user = auth_service.login_user(db, usergmail, userpassword, request.session)
+
+        # Save user info in session
+        request.session["user_id"] = user.id
+        request.session["role"] = user.role
+
+        # Redirect based on role
+        if user.role == "teacher":
+            return RedirectResponse(
+                url="/teacher/dashboard", status_code=status.HTTP_303_SEE_OTHER
+            )
+        elif user.role == "Student":  # Matching the case from your create_user script
+            return RedirectResponse(
+                url="/dashboard", status_code=status.HTTP_303_SEE_OTHER
+            )
+        elif user.role == "Admin":
+            return RedirectResponse(
+                url="/dashboard", status_code=status.HTTP_303_SEE_OTHER
+            )
+
+        # Default fallback
         return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+
     except CustomException as e:
         return templates.TemplateResponse(
             "login_page.html",
