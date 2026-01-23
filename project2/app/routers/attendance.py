@@ -57,12 +57,7 @@ def save_attendance(payload: AttendanceSubmitCreate, db: Session = Depends(get_d
             )
             .first()
         )
-        if item.is_present:
-            status = "present"
-        else:
-            with open("AttendanceError.txt", "a") as f:
-                f.write(f"{item.is_present}\n")
-            status = "absent"
+        status = "present" if item.is_present else "absent"
 
         if record:
             record.status = status

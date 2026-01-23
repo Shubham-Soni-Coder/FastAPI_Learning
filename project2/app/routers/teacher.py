@@ -10,6 +10,7 @@ from app.models import Class, Student
 from app.services import teacher_service
 from app.utils.helpers import initials
 from app.core.config import Settings
+from app.core.dependencies import get_current_user
 
 # Initialize templates
 templates = Jinja2Templates(directory="templates")
@@ -18,19 +19,13 @@ router = APIRouter(prefix="/teacher", tags=["teacher"])
 
 
 @router.get("-dashboard", name="teacher_dashboard")
-def show_teacher_dashboard(request: Request):
-    # Security check: exist session
-    if "gmail" not in request.session:
-        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+def show_teacher_dashboard(request: Request, user: str = Depends(get_current_user)):
 
     return templates.TemplateResponse("teacher_dashboard.html", {"request": request})
 
 
 @router.get("/classes", name="teacher_classes")
-def show_teacher_classes(request: Request):
-    # Security check: exist session
-    if "gmail" not in request.session:
-        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+def show_teacher_classes(request: Request, user: str = Depends(get_current_user)):
 
     return templates.TemplateResponse("teacher_classes.html", {"request": request})
 
@@ -40,10 +35,8 @@ def show_teacher_class_details(
     request: Request,
     class_id: int,
     db: Session = Depends(get_db),
+    user: str = Depends(get_current_user),
 ):
-    # Security check: exist session
-    if "gmail" not in request.session:
-        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
     # Fetch class info
     class_obj = db.query(Class).filter(Class.id == class_id).first()
@@ -85,9 +78,12 @@ def show_teacher_class_details(
 
 
 @router.get("/students/data", name="get_student_data")
-def get_student_data(request: Request, month: str, db: Session = Depends(get_db)):
-    if "gmail" not in request.session:
-        return {"error": "Unauthorized"}
+def get_student_data(
+    request: Request,
+    month: str,
+    db: Session = Depends(get_db),
+    user: str = Depends(get_current_user),
+):
 
     try:
         # Convert month name to number (e.g., "January" -> 1)
@@ -107,9 +103,11 @@ def get_student_data(request: Request, month: str, db: Session = Depends(get_db)
 
 
 @router.get("/students", name="teacher_students")
-def show_teacher_students(request: Request, db: Session = Depends(get_db)):
-    if "gmail" not in request.session:
-        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+def show_teacher_students(
+    request: Request,
+    db: Session = Depends(get_db),
+    user: str = Depends(get_current_user),
+):
     class_id = 11
 
     # Get current date
@@ -134,9 +132,11 @@ def show_teacher_students(request: Request, db: Session = Depends(get_db)):
 
 
 @router.get("/api/classes-list", name="get_all_classes_data")
-def get_all_classes_data(request: Request, db: Session = Depends(get_db)):
-    if "gmail" not in request.session:
-        return {"error": "Unauthorized"}
+def get_all_classes_data(
+    request: Request,
+    db: Session = Depends(get_db),
+    user: str = Depends(get_current_user),
+):
 
     from sqlalchemy import func
     from app.models import Student

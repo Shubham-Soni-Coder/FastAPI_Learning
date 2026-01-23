@@ -6,7 +6,7 @@ This module initializes the FastAPI application and defines the route handlers.
 It includes routes for authentication (login, register), dashboard views, and teacher functionalities.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, status, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -41,8 +41,15 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
+from app.core.dependencies import NotAuthenticatedException
+
 # add security
 setup_middleware(app)
+
+
+@app.exception_handler(NotAuthenticatedException)
+def auth_exception_handler(request: Request, exc: NotAuthenticatedException):
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @app.on_event("startup")
