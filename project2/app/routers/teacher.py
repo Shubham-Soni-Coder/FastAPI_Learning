@@ -38,7 +38,7 @@ def show_teacher_classes(request: Request):
 @router.get("/classes/details", name="teacher_class_details")
 def show_teacher_class_details(
     request: Request,
-    class_id: int = 11,
+    class_id: int,
     db: Session = Depends(get_db),
 ):
     # Security check: exist session
@@ -97,7 +97,7 @@ def get_student_data(request: Request, month: str, db: Session = Depends(get_db)
         return []
 
     class_id = 11
-    year = 2025  # Using current context year
+    year = datetime.now().year  # Using current context year
 
     students_data = teacher_service.get_students_for_classes(
         db, class_id, month_num, year
