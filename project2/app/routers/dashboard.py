@@ -12,5 +12,5 @@ router = APIRouter()
 
 
 @router.get("/dashboard", name="dashboard")
-def show_dashboard(request: Request, current_user: str = Depends(get_current_user)):
+def show_dashboard(request: Request, current_user: int = Depends(get_current_user)):
     return templates.TemplateResponse("dashboard.html", {"request": request})

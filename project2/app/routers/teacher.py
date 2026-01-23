@@ -19,13 +19,13 @@ router = APIRouter(prefix="/teacher", tags=["teacher"])
 
 
 @router.get("/dashboard", name="teacher_dashboard")
-def show_teacher_dashboard(request: Request, user: str = Depends(get_current_user)):
+def show_teacher_dashboard(request: Request, user: int = Depends(get_current_user)):
 
     return templates.TemplateResponse("teacher_dashboard.html", {"request": request})
 
 
 @router.get("/classes", name="teacher_classes")
-def show_teacher_classes(request: Request, user: str = Depends(get_current_user)):
+def show_teacher_classes(request: Request, user: int = Depends(get_current_user)):
 
     return templates.TemplateResponse("teacher_classes.html", {"request": request})
 
@@ -35,7 +35,7 @@ def show_teacher_class_details(
     request: Request,
     class_id: int,
     db: Session = Depends(get_db),
-    user: str = Depends(get_current_user),
+    user: int = Depends(get_current_user),
 ):
 
     # Fetch class info

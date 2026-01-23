@@ -6,6 +6,6 @@ class NotAuthenticatedException(Exception):
 
 
 def get_current_user(request: Request):
-    if "gmail" not in request.session:
+    if "auth" not in request.session:
         raise NotAuthenticatedException()
-    return request.session["gmail"]
+    return request.session["user_id"]

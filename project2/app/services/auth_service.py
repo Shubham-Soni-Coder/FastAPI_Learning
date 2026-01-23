@@ -43,5 +43,4 @@ def login_user(db: Session, gmail: str, password: str, session: dict):
         raise CustomException(status_code=400, detail="User not found")
     if not verify_password(password, user.hashed_password):
         raise CustomException(status_code=400, detail="Invalid password")
-    session["gmail"] = user.gmail_id
     return user

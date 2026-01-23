@@ -16,7 +16,7 @@ router = APIRouter()
 @router.get("/", name="login_page")
 def show_form(request: Request):
     # Security check: exist session
-    if "gmail" in request.session:
+    if "auth" in request.session:
         return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
     return templates.TemplateResponse("login_page.html", {"request": request})
 
@@ -58,6 +58,7 @@ def login(
         # Save user info in session
         request.session["user_id"] = user.id
         request.session["role"] = user.role
+        request.session["auth"] = True
 
         # Redirect based on role
         if user.role == "teacher":
@@ -88,6 +89,12 @@ def show_login_success(
     request: Request,
 ):
     return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.get("/logout", name="logout")
+def logout(request: Request):
+    request.session.clear()
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.post("/otp_send", name="otp_send")
