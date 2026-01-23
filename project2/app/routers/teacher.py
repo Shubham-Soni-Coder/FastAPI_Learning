@@ -18,7 +18,7 @@ templates = Jinja2Templates(directory="templates")
 router = APIRouter(prefix="/teacher", tags=["teacher"])
 
 
-@router.get("-dashboard", name="teacher_dashboard")
+@router.get("/dashboard", name="teacher_dashboard")
 def show_teacher_dashboard(request: Request, user: str = Depends(get_current_user)):
 
     return templates.TemplateResponse("teacher_dashboard.html", {"request": request})
