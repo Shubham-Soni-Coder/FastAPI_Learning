@@ -41,7 +41,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
-from app.core.dependencies import NotAuthenticatedException
+from app.core.dependencies import NotAuthenticatedException, NotAuthorizedException
 
 # add security
 setup_middleware(app)
@@ -49,6 +49,18 @@ setup_middleware(app)
 
 @app.exception_handler(NotAuthenticatedException)
 def auth_exception_handler(request: Request, exc: NotAuthenticatedException):
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@app.exception_handler(NotAuthorizedException)
+def permission_exception_handler(request: Request, exc: NotAuthorizedException):
+    if exc.role == "teacher":
+        return RedirectResponse(
+            url="/teacher/dashboard", status_code=status.HTTP_303_SEE_OTHER
+        )
+    elif exc.role == "Student":
+        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 

@@ -10,7 +10,7 @@ from app.models import Class, Student
 from app.services import teacher_service
 from app.utils.helpers import initials
 from app.core.config import Settings
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_teacher
 
 # Initialize templates
 templates = Jinja2Templates(directory="templates")
@@ -19,13 +19,13 @@ router = APIRouter(prefix="/teacher", tags=["teacher"])
 
 
 @router.get("/dashboard", name="teacher_dashboard")
-def show_teacher_dashboard(request: Request, user: int = Depends(get_current_user)):
+def show_teacher_dashboard(request: Request, user: int = Depends(get_current_teacher)):
 
     return templates.TemplateResponse("teacher_dashboard.html", {"request": request})
 
 
 @router.get("/classes", name="teacher_classes")
-def show_teacher_classes(request: Request, user: int = Depends(get_current_user)):
+def show_teacher_classes(request: Request, user: int = Depends(get_current_teacher)):
 
     return templates.TemplateResponse("teacher_classes.html", {"request": request})
 
@@ -35,7 +35,7 @@ def show_teacher_class_details(
     request: Request,
     class_id: int,
     db: Session = Depends(get_db),
-    user: int = Depends(get_current_user),
+    user: int = Depends(get_current_teacher),
 ):
 
     # Fetch class info
@@ -82,7 +82,7 @@ def get_student_data(
     request: Request,
     month: str,
     db: Session = Depends(get_db),
-    user: str = Depends(get_current_user),
+    user: str = Depends(get_current_teacher),
 ):
 
     try:
@@ -106,7 +106,7 @@ def get_student_data(
 def show_teacher_students(
     request: Request,
     db: Session = Depends(get_db),
-    user: str = Depends(get_current_user),
+    user: str = Depends(get_current_teacher),
 ):
     class_id = 11
 
@@ -135,7 +135,7 @@ def show_teacher_students(
 def get_all_classes_data(
     request: Request,
     db: Session = Depends(get_db),
-    user: str = Depends(get_current_user),
+    user: int = Depends(get_current_teacher),
 ):
 
     from sqlalchemy import func
