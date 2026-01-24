@@ -1,3 +1,4 @@
+from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from app.models import Student, StudentFeesDue, Class
 from app.utils.helpers import initials
@@ -11,7 +12,14 @@ def get_students_for_classes(db: Session, class_id: int, month: int, year: int):
     results = (
         db.query(Student, StudentFeesDue)
         .join(Class, Student.class_id == Class.id)
-        .join(StudentFeesDue, Student.id == StudentFeesDue.student_id)
+        .outerjoin(
+            StudentFeesDue,
+            and_(
+                Student.id == StudentFeesDue.student_id,
+                StudentFeesDue.month == month,
+                StudentFeesDue.year == year,
+            ),
+        )
         .filter(Class.id == class_id)
         .order_by(Student.name.asc())
         .all()
@@ -32,7 +40,7 @@ def get_students_for_classes(db: Session, class_id: int, month: int, year: int):
                 "name": student.name,
                 "initials": initials(student.name),
                 "father_name": student.father_name,
-                "fees_paid": fees.status,
+                "fees_paid": fees.status if fees else "pending",
                 "days_present": days_present,
                 "total_days": total_days,
                 "attendance": attendance_percentage,
