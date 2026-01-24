@@ -140,24 +140,6 @@ def create_fees_component():
     db.commit()
 
 
-def create_student_fees_due():
-    class_id = 11
-    ids = [
-        i[0] for i in db.query(Student.id).filter(Student.class_id == class_id).all()
-    ]
-    for id in ids:
-        schems = StudentFeesDueCreate(
-            student_id=id,
-            month=1,
-            year=2025,
-            total_amount=4000,
-            status="pending",
-        )
-        model = StudentFeesDue(**schems.model_dump())
-        db.add(model)
-    db.commit()
-
-
 def create_fees_payment():
 
     Student_ids = [21, 22, 23, 24, 25]
