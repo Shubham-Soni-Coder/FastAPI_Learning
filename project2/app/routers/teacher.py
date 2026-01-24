@@ -93,7 +93,7 @@ def get_student_data(
         return []
 
     class_id = 11
-    year = datetime.now().year  # Using current context year
+    year = 2025  # Using current context year
 
     students_data = teacher_service.get_students_for_classes(
         db, class_id, month_num, year
