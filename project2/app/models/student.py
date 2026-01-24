@@ -9,6 +9,9 @@ class Student(Base):
     user_id = Column(Integer, ForeignKey("users.id"), unique=True)
 
     roll_no = Column(Integer, nullable=True)
+    name = Column(String, nullable=True)
+    father_name = Column(String, nullable=True)
+    mother_name = Column(String, nullable=True)
     class_id = Column(Integer, ForeignKey("classes.id"), nullable=False)
 
     class_ = relationship("Class", backref="students")

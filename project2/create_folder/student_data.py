@@ -28,7 +28,13 @@ def add_data():
     # add the student data to the database
     for i, user in enumerate(JSON_DATA):
         class_obj = class_id[i % len(class_id)]
-        schems = StudentCreate(user_id=student_id[i], class_id=class_obj)
+        schems = StudentCreate(
+            user_id=student_id[i],
+            class_id=class_obj,
+            name=user["name"],
+            father_name=user["father_name"],
+            mother_name=user["mother_name"],
+        )
         model = Student(**schems.model_dump())
         db.add(model)
     db.commit()

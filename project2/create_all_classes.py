@@ -26,6 +26,10 @@ from app.schemas import (
     ClassCreate,
     ClassSubjectCreate,
     SubjectCreate,
+    ClassCreate,
+    ClassSubjectCreate,
+    SubjectCreate,
+    UserCreate,
     StudentCreate,
     FeesStructureCreate,
     FeesComponentCreate,
@@ -74,24 +78,34 @@ def create_class():
 
 
 def create_student():
-
     data = JSON_DATA
-
     classes = db.query(Class).all()
 
     for i, user in enumerate(data["students"]):
-        class_obj = classes[i % len(classes)]  # roation with %
-        schems = StudentCreate(
+        # First create the User
+        user_schema = UserCreate(
+            gmail_id=user["email"],
+            hashed_password=user["hashed_password"],
+            role="Student",
+            is_active=user["is_active"],
+        )
+        user_model = User(**user_schema.model_dump())
+        db.add(user_model)
+        db.commit()
+        db.refresh(user_model)
+
+        # Then create the Student linked to the User
+        class_obj = classes[i % len(classes)]  # rotation with %
+        student_schema = StudentCreate(
+            user_id=user_model.id,
             name=user["name"],
             father_name=user["father_name"],
             mother_name=user["mother_name"],
-            email=user["email"],
-            hashed_password=user["hashed_password"],
-            is_active=user["is_active"],
+            roll_no=user["roll_no"],
             class_id=class_obj.id,
         )
-        model = Student(**schems.model_dump())
-        db.add(model)
+        student_model = Student(**student_schema.model_dump())
+        db.add(student_model)
     db.commit()
 
 
