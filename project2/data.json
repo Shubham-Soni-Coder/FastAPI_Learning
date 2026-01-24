@@ -5,8 +5,8 @@
             "name": "Rahul",
             "father_name": "Suresh Kumar",
             "mother_name": "Anita Devi",
-            "email": "demo.user01@gmail.com",
-            "hashed_password": "$2b$12$6vR7c7n2E7FJ9cRkKpH8Oe6j1m4QbY3q9Y0YtY7m9uF9ZcQwzLq1K",
+            "email": "Rahul01@gmail.com",
+            "hashed_password": "Rahul@09082006",
             "is_active": true
         },
         {
@@ -14,8 +14,8 @@
             "name": "Neha",
             "father_name": "Rajesh Sharma",
             "mother_name": "Sunita Sharma",
-            "email": "demo.user02@gmail.com",
-            "hashed_password": "$2b$12$M5J8Wq0H5R0A7F9N2U5T3OZ9cF5zYH3p8c9ZQxF2u3Y0V7mXy",
+            "email": "Neha02@gmail.com",
+            "hashed_password": "Neha@09082006",
             "is_active": true
         },
         {
@@ -23,8 +23,8 @@
             "name": "Amit",
             "father_name": "Vijay Singh",
             "mother_name": "Meena Singh",
-            "email": "demo.user03@gmail.com",
-            "hashed_password": "$2b$12$8E1T4K7Yc3XJQyH5F6pN0Yx9m2Cz5WqR6uM8KZ0F9A1L7Oe",
+            "email": "Amit03@gmail.com",
+            "hashed_password": "Amit@09082006",
             "is_active": true
         },
         {
@@ -32,8 +32,8 @@
             "name": "Pooja",
             "father_name": "Mahesh Verma",
             "mother_name": "Kiran Verma",
-            "email": "demo.user04@gmail.com",
-            "hashed_password": "$2b$12$P6Z5H9u3A7N0mR8F2cQX1LJYq4K5OeT7yW9CzVxM0S",
+            "email": "Pooja04@gmail.com",
+            "hashed_password": "Pooja@09082006",
             "is_active": true
         },
         {
@@ -41,8 +41,8 @@
             "name": "Ravi",
             "father_name": "Prakash Yadav",
             "mother_name": "Seema Yadav",
-            "email": "demo.user05@gmail.com",
-            "hashed_password": "$2b$12$7X9Z5u3QF1A2R6C8Y4N0TqKJpM9OeWcH",
+            "email": "Ravi05@gmail.com",
+            "hashed_password": "Ravi@09082006",
             "is_active": true
         },
         {
@@ -50,8 +50,8 @@
             "name": "Sneha",
             "father_name": "Arun Mehta",
             "mother_name": "Rekha Mehta",
-            "email": "demo.user06@gmail.com",
-            "hashed_password": "$2b$12$abc128",
+            "email": "Sneha06@gmail.com",
+            "hashed_password": "Sneha@09082006",
             "is_active": true
         },
         {
@@ -59,8 +59,8 @@
             "name": "Karan",
             "father_name": "Devendra Joshi",
             "mother_name": "Shalini Joshi",
-            "email": "demo.user07@gmail.com",
-            "hashed_password": "$2b$12$abc129",
+            "email": "Karan07@gmail.com",
+            "hashed_password": "Karan@09082006",
             "is_active": true
         },
         {
@@ -68,8 +68,8 @@
             "name": "Priya",
             "father_name": "Manoj Gupta",
             "mother_name": "Anjali Gupta",
-            "email": "demo.user08@gmail.com",
-            "hashed_password": "$2b$12$abc130",
+            "email": "Priya08@gmail.com",
+            "hashed_password": "Priya@09082006",
             "is_active": true
         },
         {
@@ -77,8 +77,8 @@
             "name": "Vikas",
             "father_name": "Sanjay Kumar",
             "mother_name": "Kusum Kumar",
-            "email": "demo.user09@gmail.com",
-            "hashed_password": "$2b$12$abc131",
+            "email": "Vikas09@gmail.com",
+            "hashed_password": "Vikas@09082006",
             "is_active": true
         },
         {
@@ -86,8 +86,8 @@
             "name": "Anjali",
             "father_name": "Ramesh Patel",
             "mother_name": "Geeta Patel",
-            "email": "demo.user10@gmail.com",
-            "hashed_password": "$2b$12$abc132",
+            "email": "Anjali10@gmail.com",
+            "hashed_password": "Anjali@09082006",
             "is_active": true
         },
         {
@@ -95,8 +95,8 @@
             "name": "Deepak",
             "father_name": "Harish Malhotra",
             "mother_name": "Suman Malhotra",
-            "email": "demo.user11@gmail.com",
-            "hashed_password": "$2b$12$abc133",
+            "email": "Deepak11@gmail.com",
+            "hashed_password": "Deepak@09082006",
             "is_active": true
         },
         {
@@ -104,8 +104,8 @@
             "name": "Meena",
             "father_name": "Satish Bansal",
             "mother_name": "Kamla Bansal",
-            "email": "demo.user12@gmail.com",
-            "hashed_password": "$2b$12$abc134",
+            "email": "Meena12@gmail.com",
+            "hashed_password": "Meena@09082006",
             "is_active": true
         },
         {
@@ -113,8 +113,8 @@
             "name": "Arjun",
             "father_name": "Naresh Chauhan",
             "mother_name": "Poonam Chauhan",
-            "email": "demo.user13@gmail.com",
-            "hashed_password": "$2b$12$abc135",
+            "email": "Arjun13@gmail.com",
+            "hashed_password": "Arjun@09082006",
             "is_active": true
         },
         {
@@ -122,8 +122,8 @@
             "name": "Komal",
             "father_name": "Ashok Rathi",
             "mother_name": "Seema Rathi",
-            "email": "demo.user14@gmail.com",
-            "hashed_password": "$2b$12$abc136",
+            "email": "Komal14@gmail.com",
+            "hashed_password": "Komal@09082006",
             "is_active": true
         },
         {
@@ -131,8 +131,8 @@
             "name": "Sahil",
             "father_name": "Ravi Kapoor",
             "mother_name": "Neelam Kapoor",
-            "email": "demo.user15@gmail.com",
-            "hashed_password": "$2b$12$abc137",
+            "email": "Sahil15@gmail.com",
+            "hashed_password": "Sahil@09082006",
             "is_active": true
         },
         {
@@ -140,8 +140,8 @@
             "name": "Divya",
             "father_name": "Ajay Soni",
             "mother_name": "Shobha Soni",
-            "email": "demo.user16@gmail.com",
-            "hashed_password": "$2b$12$abc138",
+            "email": "Divya16@gmail.com",
+            "hashed_password": "Divya@09082006",
             "is_active": true
         },
         {
@@ -149,8 +149,8 @@
             "name": "Nikhil",
             "father_name": "Vinod Sharma",
             "mother_name": "Alka Sharma",
-            "email": "demo.user17@gmail.com",
-            "hashed_password": "$2b$12$abc139",
+            "email": "Nikhil17@gmail.com",
+            "hashed_password": "Nikhil@09082006",
             "is_active": true
         },
         {
@@ -158,8 +158,8 @@
             "name": "Ritu",
             "father_name": "Mukesh Jain",
             "mother_name": "Savita Jain",
-            "email": "demo.user18@gmail.com",
-            "hashed_password": "$2b$12$abc140",
+            "email": "Ritu18@gmail.com",
+            "hashed_password": "Ritu@09082006",
             "is_active": true
         },
         {
@@ -167,8 +167,8 @@
             "name": "Suresh",
             "father_name": "Om Prakash",
             "mother_name": "Radha Prakash",
-            "email": "demo.user19@gmail.com",
-            "hashed_password": "$2b$12$abc141",
+            "email": "Suresh19@gmail.com",
+            "hashed_password": "Suresh@09082006",
             "is_active": true
         },
         {
@@ -176,8 +176,8 @@
             "name": "Alka",
             "father_name": "Bhupendra Singh",
             "mother_name": "Sarita Singh",
-            "email": "demo.user20@gmail.com",
-            "hashed_password": "$2b$12$abc142",
+            "email": "Alka20@gmail.com",
+            "hashed_password": "Alka@09082006",
             "is_active": true
         },
         {
@@ -185,8 +185,8 @@
             "name": "Amit Sharma",
             "father_name": "Rajesh Sharma",
             "mother_name": "Sunita Sharma",
-            "email": "amit.sharma@example.com",
-            "hashed_password": "hashed_pw_amit123",
+            "email": "Amit21@gmail.com",
+            "hashed_password": "Amit@09082006",
             "is_active": true
         },
         {
@@ -194,9 +194,8 @@
             "name": "Priya Verma",
             "father_name": "Suresh Verma",
             "mother_name": "Meena Verma",
-            "email": "priya.verma@example.com",
-            "hashed_password": "hashed_pw_priya456",
-            "class_id": 1,
+            "email": "Priya22@gmail.com",
+            "hashed_password": "Priya@09082006",
             "is_active": true
         },
         {
@@ -204,9 +203,8 @@
             "name": "Rohit Singh",
             "father_name": "Mahesh Singh",
             "mother_name": "Anita Singh",
-            "email": "rohit.singh@example.com",
-            "hashed_password": "hashed_pw_rohit789",
-            "class_id": 2,
+            "email": "Rohit23@gmail.com",
+            "hashed_password": "Rohit@09082006",
             "is_active": true
         },
         {
@@ -214,9 +212,8 @@
             "name": "Sneha Gupta",
             "father_name": "Vijay Gupta",
             "mother_name": "Kavita Gupta",
-            "email": "sneha.gupta@example.com",
-            "hashed_password": "hashed_pw_sneha321",
-            "class_id": 2,
+            "email": "Sneha24@gmail.com",
+            "hashed_password": "Sneha@09082006",
             "is_active": true
         },
         {
@@ -224,9 +221,8 @@
             "name": "Arjun Mehta",
             "father_name": "Rakesh Mehta",
             "mother_name": "Pooja Mehta",
-            "email": "arjun.mehta@example.com",
-            "hashed_password": "hashed_pw_arjun654",
-            "class_id": 3,
+            "email": "Arjun25@gmail.com",
+            "hashed_password": "Arjun@09082006",
             "is_active": true
         }
     ],
@@ -549,10 +545,10 @@
             "time": "01:00 PM"
         },
         {
-             "id": 12,
-             "name": "Grade 12-A",
-             "subject": "Chemistry",
-             "time": "02:30 PM"
+            "id": 12,
+            "name": "Grade 12-A",
+            "subject": "Chemistry",
+            "time": "02:30 PM"
         }
     ]
 }

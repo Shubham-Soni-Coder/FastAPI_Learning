@@ -3,6 +3,12 @@ from app.database.session import SessionLocal, engine
 from app.models import User
 from app.schemas import UserCreate
 from app.core.security import hash_password
+from app.utils.json_loader import load_json
+
+# load the student data
+JSON_DATA = load_json("data.json")
+JSON_DATA = JSON_DATA["students"]
+
 
 # store in database
 Base.metadata.create_all(bind=engine)
@@ -30,5 +36,18 @@ def user_create():
     db.commit()
 
 
+def add_data():
+    for student in JSON_DATA:
+        schems = UserCreate(
+            gmail_id=student["email"],
+            hashed_password=hash_password(student["hashed_password"]),
+            is_active=student["is_active"],
+            role="Student",
+        )
+        model = User(**schems.model_dump())
+        db.add(model)
+    db.commit()
+
+
 if __name__ == "__main__":
-    user_create()
+    add_data()
