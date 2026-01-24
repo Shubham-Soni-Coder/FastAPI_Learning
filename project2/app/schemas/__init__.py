@@ -1,5 +1,5 @@
 from .user import Usermodel, UserCreate
-from .otp import OTP
+
 from .classes import (
     ClassCreate,
     SubjectCreate,
