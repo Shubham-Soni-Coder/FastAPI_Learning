@@ -6,7 +6,7 @@ from .classes import (
     ClassSubjectCreate,
     StudentSubjectSelect,
 )
-from .student import StudentCreate, StudentRespone
+from .student import StudentCreate
 from .fees import (
     FeesStructureCreate,
     FeesComponentCreate,
