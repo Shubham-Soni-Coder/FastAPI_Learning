@@ -6,7 +6,7 @@ from datetime import datetime
 import calendar
 
 from app.database.session import get_db
-from app.models import Class, Student
+from app.models import Class, Student, Teacher
 from app.services import teacher_service
 from app.utils.helpers import initials
 from app.core.config import Settings
@@ -19,15 +19,45 @@ router = APIRouter(prefix="/teacher", tags=["teacher"])
 
 
 @router.get("/dashboard", name="teacher_dashboard")
-def show_teacher_dashboard(request: Request, user: int = Depends(get_current_teacher)):
+def show_teacher_dashboard(
+    request: Request,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_teacher),
+):
+    teacher = db.query(Teacher).filter(Teacher.user_id == user_id).first()
+    if not teacher:
+        raise HTTPException(status_code=404, detail="Teacher profile not found")
 
-    return templates.TemplateResponse("teacher_dashboard.html", {"request": request})
+    teacher_data = {
+        "full_name": teacher.full_name,
+        "department": teacher.department,
+        "initials": initials(teacher.full_name),
+    }
+
+    return templates.TemplateResponse(
+        "teacher_dashboard.html", {"request": request, "teacher": teacher_data}
+    )
 
 
 @router.get("/classes", name="teacher_classes")
-def show_teacher_classes(request: Request, user: int = Depends(get_current_teacher)):
+def show_teacher_classes(
+    request: Request,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_teacher),
+):
+    teacher = db.query(Teacher).filter(Teacher.user_id == user_id).first()
+    if not teacher:
+        raise HTTPException(status_code=404, detail="Teacher profile not found")
 
-    return templates.TemplateResponse("teacher_classes.html", {"request": request})
+    teacher_data = {
+        "full_name": teacher.full_name,
+        "department": teacher.department,
+        "initials": initials(teacher.full_name),
+    }
+
+    return templates.TemplateResponse(
+        "teacher_classes.html", {"request": request, "teacher": teacher_data}
+    )
 
 
 @router.get("/classes/details", name="teacher_class_details")
@@ -35,8 +65,17 @@ def show_teacher_class_details(
     request: Request,
     class_id: int,
     db: Session = Depends(get_db),
-    user: int = Depends(get_current_teacher),
+    user_id: int = Depends(get_current_teacher),
 ):
+    teacher = db.query(Teacher).filter(Teacher.user_id == user_id).first()
+    if not teacher:
+        raise HTTPException(status_code=404, detail="Teacher profile not found")
+
+    teacher_data = {
+        "full_name": teacher.full_name,
+        "department": teacher.department,
+        "initials": initials(teacher.full_name),
+    }
 
     # Fetch class info
     class_obj = db.query(Class).filter(Class.id == class_id).first()
@@ -73,6 +112,7 @@ def show_teacher_class_details(
             "class_id": class_obj.id,
             "class_name": class_obj.class_name,
             "mode": "start",
+            "teacher": teacher_data,
         },
     )
 
@@ -106,8 +146,17 @@ def get_student_data(
 def show_teacher_students(
     request: Request,
     db: Session = Depends(get_db),
-    user: str = Depends(get_current_teacher),
+    user_id: int = Depends(get_current_teacher),
 ):
+    teacher = db.query(Teacher).filter(Teacher.user_id == user_id).first()
+    if not teacher:
+        raise HTTPException(status_code=404, detail="Teacher profile not found")
+
+    teacher_data = {
+        "full_name": teacher.full_name,
+        "department": teacher.department,
+        "initials": initials(teacher.full_name),
+    }
     class_id = 11
 
     # Get current date
@@ -127,6 +176,7 @@ def show_teacher_students(
             "request": request,
             "students": students_data,
             "current_month_name": current_month_name,
+            "teacher": teacher_data,
         },
     )
 
