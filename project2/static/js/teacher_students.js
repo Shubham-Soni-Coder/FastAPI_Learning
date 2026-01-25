@@ -33,11 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Modal Logic (Global)
     const viewModal = document.getElementById('viewModal');
-    const editModal = document.getElementById('editModal');
+
 
     window.onclick = function (event) {
         if (event.target == viewModal) viewModal.style.display = "none";
-        if (event.target == editModal) editModal.style.display = "none";
+
     }
 });
 
@@ -51,7 +51,7 @@ function initProgressBars() {
 function setupTableDelegation() {
     const tbody = document.getElementById('student-table-body');
     const viewModal = document.getElementById('viewModal');
-    const editModal = document.getElementById('editModal');
+
 
     if (!tbody) return;
 
@@ -70,14 +70,7 @@ function setupTableDelegation() {
             return;
         }
 
-        // Handle Edit Button
-        const editBtn = target.closest('.edit-btn');
-        if (editBtn) {
-            document.getElementById('editName').value = editBtn.dataset.name;
-            document.getElementById('editRoll').value = '#' + editBtn.dataset.roll;
-            editModal.style.display = 'block';
-            return;
-        }
+
     });
 
 }
@@ -157,10 +150,7 @@ function renderTable(students) {
                         data-initials="${student.initials}">
                         <i class="fa-solid fa-eye"></i>
                     </button>
-                    <button class="table-action-btn edit-btn" title="Edit"
-                        data-name="${student.name}" data-roll="${student.roll_no}">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
+
                 </td>
             `;
             tbody.appendChild(tr);
