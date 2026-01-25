@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from app.database.base import Base
+from datetime import datetime
+from sqlalchemy import DateTime
 
 
 class Teacher(Base):
@@ -16,4 +18,3 @@ class Teacher(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user_ = relationship("User", backref="teacher")
-

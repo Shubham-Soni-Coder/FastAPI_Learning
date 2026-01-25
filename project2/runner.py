@@ -1,4 +1,5 @@
-from create_folder.attendance_record_create import create_attendance_record
+from create_folder.teacher_create import CreateTeacher
+
 
 if __name__ == "__main__":
-    create_attendance_record()
+    CreateTeacher()

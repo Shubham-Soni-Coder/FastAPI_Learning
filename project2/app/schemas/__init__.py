@@ -19,3 +19,5 @@ from .attendance import (
     AttendanceItemCreate,
     AttendanceSubmitCreate,
 )
+
+from .teacher import TeacherCreate
