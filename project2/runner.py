@@ -1,5 +1,4 @@
-from create_folder.teacher_create import CreateTeacher
-
+from create_folder.classes_create import add_data_classes
 
 if __name__ == "__main__":
-    CreateTeacher()
+    add_data_classes()

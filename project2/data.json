@@ -525,6 +525,85 @@
             }
         }
     },
+    "teacher": [
+        {
+            "gmail": "Himanshi@gmail.com",
+            "hashed_password": "Himanshi@09082006",
+            "is_active": true,
+            "name": "Himanshi",
+            "department_name": "Mathematics"
+        },
+        {
+            "gmail": "Himanshu@gmail.com",
+            "hashed_password": "Himanshu@09082006",
+            "is_active": true,
+            "name": "Himanshu",
+            "department_name": "Physics"
+        },
+        {
+            "gmail": "Anjali@gmail.com",
+            "hashed_password": "Anjali@09082006",
+            "is_active": true,
+            "name": "Anjali",
+            "department_name": "Chemistry"
+        },
+        {
+            "gmail": "Ankit@gmail.com",
+            "hashed_password": "Ankit@09082006",
+            "is_active": true,
+            "name": "Ankit",
+            "department_name": "Biology"
+        },
+        {
+            "gmail": "Karan@gmail.com",
+            "hashed_password": "Karan@09082006",
+            "is_active": true,
+            "name": "Karan",
+            "department_name": "English"
+        },
+        {
+            "gmail": "Shubham@gmail.com",
+            "hashed_password": "Shubham@09082006",
+            "is_active": true,
+            "name": "Shubham",
+            "department_name": "Computer Science"
+        },
+        {
+            "gmail": "Situ@gmail.com",
+            "hashed_password": "Situ@09082006",
+            "is_active": true,
+            "name": "Situ",
+            "department_name": "History"
+        },
+        {
+            "gmail": "Sachin@gmail.com",
+            "hashed_password": "Sachin@09082006",
+            "is_active": true,
+            "name": "Sachin",
+            "department_name": "Geography"
+        },
+        {
+            "gmail": "Saurabh@gmail.com",
+            "hashed_password": "Saurabh@09082006",
+            "is_active": true,
+            "name": "Saurabh",
+            "department_name": "Economics"
+        },
+        {
+            "gmail": "Siddhant@gmail.com",
+            "hashed_password": "Siddhant@09082006",
+            "is_active": true,
+            "name": "Siddhant",
+            "department_name": "Physical Education"
+        },
+        {
+            "gmail": "Naveen@gmail.com",
+            "hashed_password": "Naveen@09082006",
+            "is_active": true,
+            "name": "Naveen",
+            "department_name": "Hindi"
+        }
+    ],
     "teacher_classes": [
         {
             "id": 10,

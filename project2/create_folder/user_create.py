@@ -5,10 +5,6 @@ from app.schemas import UserCreate
 from app.core.security import hash_password
 from app.utils.json_loader import load_json
 
-# load the student data
-JSON_DATA = load_json("data.json")
-JSON_DATA = JSON_DATA["students"]
-
 
 # store in database
 Base.metadata.create_all(bind=engine)
@@ -36,13 +32,28 @@ def user_create():
     db.commit()
 
 
-def add_data():
+def add_student(JSON_DATA):
+    JSON_DATA = JSON_DATA["students"]
     for student in JSON_DATA:
         schems = UserCreate(
             gmail_id=student["email"],
             hashed_password=hash_password(student["hashed_password"]),
             is_active=student["is_active"],
             role="Student",
+        )
+        model = User(**schems.model_dump())
+        db.add(model)
+    db.commit()
+
+
+def add_teacher(JSON_DATA):
+    JSON_DATA = JSON_DATA["teacher"]
+    for teacher in JSON_DATA:
+        schems = UserCreate(
+            gmail_id=teacher["gmail"],
+            hashed_password=hash_password(teacher["hashed_password"]),
+            is_active=teacher["is_active"],
+            role="Teacher",
         )
         model = User(**schems.model_dump())
         db.add(model)

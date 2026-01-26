@@ -5,3 +5,4 @@ from .fees import StudentFeesDue, FeesStructure, FeesComponent, FeesPayment
 from .teacher import Teacher
 from .attendance import AttendanceSession, AttendanceRecord
 from .subjects import Subject, BatchSubject, StudentSubject
+from .classes import Class

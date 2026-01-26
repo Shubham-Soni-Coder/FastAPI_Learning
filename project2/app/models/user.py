@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, UniqueConstraint
 from app.database.base import Base
 from datetime import datetime
 
@@ -12,3 +12,5 @@ class User(Base):
     role = Column(String, nullable=False)
     is_active = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    _table_args__ = (UniqueConstraint("gmail_id", "role", name="uq_gmail_id_role"),)

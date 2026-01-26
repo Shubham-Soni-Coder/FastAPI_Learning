@@ -20,3 +20,9 @@ from .attendance import (
 )
 
 from .teacher import TeacherCreate
+
+from .classes import (
+    ClassCreate,
+    ClassUpdate,
+    ClassOut,
+)

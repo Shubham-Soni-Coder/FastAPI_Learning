@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
@@ -12,7 +12,7 @@ class ClassBase(BaseModel):
     start_time: datetime
     end_time: datetime
 
-    is_active = bool = True
+    is_active: bool = True
 
 
 # --------Create-------
@@ -33,5 +33,4 @@ class ClassOut(ClassBase):
     id: int
     created_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
