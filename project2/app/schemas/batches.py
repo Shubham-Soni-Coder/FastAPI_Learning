@@ -2,17 +2,13 @@ from pydantic import BaseModel
 from typing import Optional, List
 
 
-class ClassCreate(BaseModel):
-    class_name: str
+class BatchesCreate(BaseModel):
+    batch_name: str
     stream: Optional[str] = None
 
 
-class SubjectCreate(BaseModel):
-    name: str
-
-
-class ClassSubjectCreate(BaseModel):
-    class_id: int
+class BatchesSubjectCreate(BaseModel):
+    batch_id: int
     subject_id: int
     category: str
     stream: Optional[str] = None
@@ -20,5 +16,5 @@ class ClassSubjectCreate(BaseModel):
     is_main: Optional[bool] = False
 
 
-class StudentSubjectSelect(BaseModel):
+class BatchesStudentSelect(BaseModel):
     subjects_id: List[int]

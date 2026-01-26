@@ -9,10 +9,10 @@ class Subject(Base):
     name = Column(String(50), nullable=False, unique=True)
 
 
-class ClassSubject(Base):
-    __tablename__ = "class_subjects"
+class BatchSubject(Base):
+    __tablename__ = "batch_subjects"
     id = Column(Integer, primary_key=True, index=True)
-    class_id = Column(Integer, ForeignKey("classes.id"), nullable=False)
+    batch_id = Column(Integer, ForeignKey("batches.id"), nullable=False)
     subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False)
     category = Column(String(20), nullable=False)
     stream = Column(String(20))
@@ -21,7 +21,7 @@ class ClassSubject(Base):
     is_main = Column(Boolean, default=False)
 
     __table_args__ = (
-        UniqueConstraint("class_id", "subject_id", name="uix_class_subject"),
+        UniqueConstraint("batch_id", "subject_id", name="uix_batch_subject"),
     )
 
 

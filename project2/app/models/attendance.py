@@ -16,7 +16,7 @@ class AttendanceSession(Base):
     __tablename__ = "attendance_session"
 
     id = Column(Integer, primary_key=True, index=True)
-    class_id = Column(Integer, ForeignKey("classes.id"))
+    batch_id = Column(Integer, ForeignKey("batches.id"))
 
     date = Column(Date, nullable=False)
     session_name = Column(
@@ -26,7 +26,7 @@ class AttendanceSession(Base):
 
     __table_args__ = (
         UniqueConstraint(
-            "class_id", "date", "session_name", name="uq_class_date_session"
+            "batch_id", "date", "session_name", name="uq_batch_date_session"
         ),
     )
 

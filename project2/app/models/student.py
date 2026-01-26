@@ -12,7 +12,7 @@ class Student(Base):
     name = Column(String, nullable=True)
     father_name = Column(String, nullable=True)
     mother_name = Column(String, nullable=True)
-    class_id = Column(Integer, ForeignKey("classes.id"), nullable=False)
+    batch_id = Column(Integer, ForeignKey("batches.id"), nullable=False)
 
-    class_ = relationship("Class", backref="students")
+    batch = relationship("Batches", backref="students")
     User_ = relationship("User")

@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     saveAttendanceBtn.addEventListener('click', () => {
-        const classid = parseInt(document.getElementById("classId").value);
+        const classid = parseInt(document.getElementById("batchId").value);
         const data = document.getElementById('attendanceDate').value;
 
         if (!data) {
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         const payload = {
-            class_id: classid,
+            batch_id: classid,
             date: data,
             session_type: "morning", // later make dynamic
             attendance: studentsData.map(s => ({

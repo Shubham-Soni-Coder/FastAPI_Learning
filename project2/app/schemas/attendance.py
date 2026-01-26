@@ -4,7 +4,7 @@ from datetime import date
 
 
 class AttendanceSessionCreate(BaseModel):
-    class_id: int
+    batch_id: int
     date: date
     session_name: str
 
@@ -22,7 +22,7 @@ class AttendanceItemCreate(BaseModel):
 
 
 class AttendanceSubmitCreate(BaseModel):
-    class_id: int
+    batch_id: int
     date: date
     session_type: str
     attendance: List[AttendanceItemCreate]

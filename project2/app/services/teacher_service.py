@@ -1,26 +1,19 @@
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
-from app.models import Student, StudentFeesDue, Class
+from app.models import Student, StudentFeesDue, Batches
 from app.utils.helpers import initials
 from app.utils.data_utils import get_total_days_in_month
 from app.services.attendance_service import count_student_present_day
 
 
-def get_students_for_classes(db: Session, class_id: int, month: int, year: int):
+def get_students_for_batch(db: Session, batch_id: int, month: int, year: int):
     total_days = get_total_days_in_month(year, month)
 
     results = (
         db.query(Student, StudentFeesDue)
-        .join(Class, Student.class_id == Class.id)
-        .outerjoin(
-            StudentFeesDue,
-            and_(
-                Student.id == StudentFeesDue.student_id,
-                StudentFeesDue.month == month,
-                StudentFeesDue.year == year,
-            ),
-        )
-        .filter(Class.id == class_id)
+        .join(Batches, Student.batch_id == Batches.id)
+        .join(StudentFeesDue, Student.id == StudentFeesDue.student_id)
+        .filter(Batches.id == batch_id)
         .order_by(Student.name.asc())
         .all()
     )

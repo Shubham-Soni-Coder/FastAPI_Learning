@@ -6,7 +6,7 @@ from datetime import datetime
 import calendar
 
 from app.database.session import get_db
-from app.models import Class, Student, Teacher
+from app.models import Batches, Student, Teacher
 from app.services import teacher_service
 from app.utils.helpers import initials
 from app.core.config import Settings
@@ -63,7 +63,7 @@ def show_teacher_classes(
 @router.get("/classes/details", name="teacher_class_details")
 def show_teacher_class_details(
     request: Request,
-    class_id: int,
+    batch_id: int,
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_teacher),
 ):
@@ -78,10 +78,10 @@ def show_teacher_class_details(
     }
 
     # Fetch class info
-    class_obj = db.query(Class).filter(Class.id == class_id).first()
+    class_obj = db.query(Batches).filter(Batches.id == batch_id).first()
     if not class_obj:
-        print("Class is not found")
-        raise HTTPException(status_code=404, detail="Class not found")
+        print("Batch is not found")
+        raise HTTPException(status_code=404, detail="Batch not found")
 
     # name,init,roll_no
     student_data = []
@@ -89,7 +89,7 @@ def show_teacher_class_details(
     # result
     result = (
         db.query(Student.id, Student.name)
-        .filter(Student.class_id == class_id)
+        .filter(Student.batch_id == batch_id)
         .order_by(Student.name.asc())
         .all()
     )
@@ -109,8 +109,8 @@ def show_teacher_class_details(
         {
             "request": request,
             "students": student_data,
-            "class_id": class_obj.id,
-            "class_name": class_obj.class_name,
+            "batch_id": class_obj.id,
+            "batch_name": class_obj.batch_name,
             "mode": "start",
             "teacher": teacher_data,
         },
@@ -132,11 +132,11 @@ def get_student_data(
     except ValueError:
         return []
 
-    class_id = 11
+    batch_id = 11
     year = 2025  # Using current context year
 
-    students_data = teacher_service.get_students_for_classes(
-        db, class_id, month_num, year
+    students_data = teacher_service.get_students_for_batch(
+        db, batch_id, month_num, year
     )
 
     return students_data
@@ -157,7 +157,7 @@ def show_teacher_students(
         "department": teacher.department,
         "initials": initials(teacher.full_name),
     }
-    class_id = 11
+    batch_id = 11
 
     # Get current date
     now = datetime.now()
@@ -166,8 +166,8 @@ def show_teacher_students(
     current_month_name = now.strftime("%B")
 
     # Get total days in the current month
-    students_data = teacher_service.get_students_for_classes(
-        db, class_id, current_month, current_year
+    students_data = teacher_service.get_students_for_batch(
+        db, batch_id, current_month, current_year
     )
 
     return templates.TemplateResponse(
@@ -206,7 +206,7 @@ def get_all_classes_data(
         # Count students in this class from Real Database
         student_count = (
             db.query(func.count(Student.id))
-            .filter(Student.class_id == class_id)
+            .filter(Student.batch_id == class_id)
             .scalar()
         )
 

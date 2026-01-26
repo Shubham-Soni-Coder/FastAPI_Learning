@@ -127,12 +127,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Global navigation functions
-window.openClass = function (classId) {
+window.openClass = function (batchId) {
   // Can link to a specific "Start Class" view or just the details
-  window.location.href = `/teacher/classes/details?class_id=${classId}&mode=start`;
+  window.location.href = `/teacher/classes/details?batch_id=${batchId}&mode=start`;
 };
 
-window.openAttendance = function (classId) {
+window.openAttendance = function (batchId) {
   // Link to the attendance tab of the details page
-  window.location.href = `/teacher/classes/details?class_id=${classId}&tab=attendance`;
+  window.location.href = `/teacher/classes/details?batch_id=${batchId}&tab=attendance`;
 };

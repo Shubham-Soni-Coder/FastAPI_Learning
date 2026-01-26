@@ -10,9 +10,9 @@ from app.database import engine, Base, session
 from app.models import (
     Base,
     User,
-    Class,
+    Batches,
     Subject,
-    ClassSubject,
+    BatchSubject,
     Student,
     StudentSubject,
     FeesStructure,
@@ -23,11 +23,8 @@ from app.models import (
     AttendanceRecord,
 )
 from app.schemas import (
-    ClassCreate,
-    ClassSubjectCreate,
-    SubjectCreate,
-    ClassCreate,
-    ClassSubjectCreate,
+    BatchesCreate,
+    BatchesSubjectCreate,
     SubjectCreate,
     UserCreate,
     StudentCreate,
@@ -56,30 +53,30 @@ db = session()
 
 
 # make a constent class
-def create_class():
+def create_batch():
     starting = ["1st", "2nd", "3rd"]
     after = [f"{i}th" for i in range(4, 13)]
     streams = ["non-medical", "medical", "arts", "commerce"]
 
-    classes = starting + after
+    batches = starting + after
 
-    for cl in classes:
+    for cl in batches:
         int_cl = int(cl[:-2])  # remove last two
         if int_cl <= 10:
-            schema = ClassCreate(class_name=cl, stream=None)
-            model = Class(**schema.model_dump())
+            schema = BatchesCreate(batch_name=cl, stream=None)
+            model = Batches(**schema.model_dump())
             db.add(model)
         else:
             for stream in streams:
-                schema = ClassCreate(class_name=cl, stream=stream)
-                model = Class(**schema.model_dump())
+                schema = BatchesCreate(batch_name=cl, stream=stream)
+                model = Batches(**schema.model_dump())
                 db.add(model)
     db.commit()
 
 
 def create_student():
     data = JSON_DATA
-    classes = db.query(Class).all()
+    batches = db.query(Batches).all()
 
     for i, user in enumerate(data["students"]):
         # First create the User
@@ -95,14 +92,14 @@ def create_student():
         db.refresh(user_model)
 
         # Then create the Student linked to the User
-        class_obj = classes[i % len(classes)]  # rotation with %
+        batch_obj = batches[i % len(batches)]  # rotation with %
         student_schema = StudentCreate(
             user_id=user_model.id,
             name=user["name"],
             father_name=user["father_name"],
             mother_name=user["mother_name"],
             roll_no=user["roll_no"],
-            class_id=class_obj.id,
+            batch_id=batch_obj.id,
         )
         student_model = Student(**student_schema.model_dump())
         db.add(student_model)
@@ -110,12 +107,12 @@ def create_student():
 
 
 def create_fees_structure():
-    classes = db.query(Class).all()
-    number = len(classes)
+    batches = db.query(Batches).all()
+    number = len(batches)
     academic_year = "2025-26"
-    for cls in classes:
+    for cls in batches:
         schems = FeesStructureCreate(
-            class_id=cls.id, academic_year=academic_year, is_active=True
+            batch_id=cls.id, academic_year=academic_year, is_active=True
         )
         model = FeesStructure(**schems.model_dump())
         db.add(model)
@@ -168,7 +165,7 @@ def create_fees_payment():
 def create_attendance_session():
 
     sessions = []
-    class_id = 11
+    batch_id = 11
     session_name = "Morning"
     year = 2025
 
@@ -177,7 +174,7 @@ def create_attendance_session():
 
         for day in range(1, days_in_month + 1):
             schems = AttendanceSessionCreate(
-                class_id=class_id,
+                batch_id=batch_id,
                 date=date(year, month, day),  # proper date object
                 session_name=session_name,
             )
@@ -189,15 +186,15 @@ def create_attendance_session():
 
 
 def create_attendance_record():
-    class_id = 11
+    batch_id = 11
     session_ids = [
         i[0]
         for i in db.query(AttendanceSession.id)
-        .filter(AttendanceSession.class_id == class_id)
+        .filter(AttendanceSession.batch_id == batch_id)
         .all()
     ]
     student_ids = [
-        i[0] for i in db.query(Student.id).filter(Student.class_id == class_id).all()
+        i[0] for i in db.query(Student.id).filter(Student.batch_id == batch_id).all()
     ]
 
     records = []
@@ -239,13 +236,13 @@ def add_data():
     session_id = [
         i[0]
         for i in db.query(AttendanceSession.id)
-        .filter(AttendanceSession.class_id == 11)
+        .filter(AttendanceSession.batch_id == 11)
         .filter(AttendanceSession.id != 1)
         .all()
     ]
 
     student_id = [
-        i[0] for i in db.query(Student.id).filter(Student.class_id == 11).all()
+        i[0] for i in db.query(Student.id).filter(Student.batch_id == 11).all()
     ]
 
     for i in student_id:
@@ -312,7 +309,7 @@ def create_subject():
     db.commit()
 
 
-def insert(class_id, subject_name, category, stream, compulsory, main):
+def insert(batch_id, subject_name, category, stream, compulsory, main):
 
     # get data using name
     subject_data = {s.name: s.id for s in db.query(Subject).all()}
@@ -322,16 +319,16 @@ def insert(class_id, subject_name, category, stream, compulsory, main):
         None
 
     exists = (
-        db.query(ClassSubject)
-        .filter_by(class_id=class_id, subject_id=subject_id)
+        db.query(BatchSubject)
+        .filter_by(batch_id=batch_id, subject_id=subject_id)
         .first()
     )
 
     if exists:
         None
 
-    schems = ClassSubjectCreate(
-        class_id=class_id,
+    schems = BatchesSubjectCreate(
+        batch_id=batch_id,
         subject_id=subject_id,
         category=category,
         stream=stream,
@@ -339,16 +336,16 @@ def insert(class_id, subject_name, category, stream, compulsory, main):
         is_main=main,
     )
 
-    model = ClassSubject(**schems.model_dump())
+    model = BatchSubject(**schems.model_dump())
     db.add(model)
 
 
-def create_class_subject():
+def create_batch_subject():
     subjects_json = JSON_DATA["Subjects"]
 
-    classes = db.query(Class).all()
+    batches = db.query(Batches).all()
 
-    for cls in classes:
+    for cls in batches:
         cno = cls.id
         cstr = cls.stream
 
@@ -409,4 +406,4 @@ if __name__ == "__main__":
     # create_attendance_record()
     # add_data()
     # create_subject()
-    # create_class_subject()
+    # create_batch_subject()

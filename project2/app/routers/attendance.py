@@ -18,7 +18,7 @@ def save_attendance(payload: AttendanceSubmitCreate, db: Session = Depends(get_d
     session = (
         db.query(AttendanceSession)
         .filter(
-            AttendanceSession.class_id == payload.class_id,
+            AttendanceSession.batch_id == payload.batch_id,
             AttendanceSession.date == payload.date,
             AttendanceSession.session_name == payload.session_type,
         )
@@ -28,7 +28,7 @@ def save_attendance(payload: AttendanceSubmitCreate, db: Session = Depends(get_d
     # check for session
     if not session:
         session_create = AttendanceSessionCreate(
-            class_id=payload.class_id,
+            batch_id=payload.batch_id,
             date=payload.date,
             session_name=payload.session_type,
         )
@@ -42,7 +42,7 @@ def save_attendance(payload: AttendanceSubmitCreate, db: Session = Depends(get_d
         # optional safety : check for the student beylong to class
         student = (
             db.query(Student)
-            .filter(Student.id == item.student_id, Student.class_id == payload.class_id)
+            .filter(Student.id == item.student_id, Student.batch_id == payload.batch_id)
             .first()
         )
 

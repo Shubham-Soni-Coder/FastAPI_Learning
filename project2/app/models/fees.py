@@ -16,7 +16,7 @@ from datetime import datetime
 class FeesStructure(Base):
     __tablename__ = "fees_structure"
     id = Column(Integer, primary_key=True, index=True)
-    class_id = Column(Integer, ForeignKey("classes.id"), nullable=False)
+    batch_id = Column(Integer, ForeignKey("batches.id"), nullable=False)
     academic_year = Column(String(50), nullable=False)
     is_active = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -26,7 +26,7 @@ class FeesStructure(Base):
     )
 
     __table_args__ = (
-        UniqueConstraint("class_id", "academic_year", name="uq_class_year"),
+        UniqueConstraint("batch_id", "academic_year", name="uq_batch_year"),
     )
 
 

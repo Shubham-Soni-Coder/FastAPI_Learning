@@ -1,10 +1,9 @@
 from .user import Usermodel, UserCreate
 
-from .classes import (
-    ClassCreate,
-    SubjectCreate,
-    ClassSubjectCreate,
-    StudentSubjectSelect,
+from .batches import (
+    BatchesCreate,
+    BatchesSubjectCreate,
+    BatchesStudentSelect,
 )
 from .student import StudentCreate
 from .fees import (

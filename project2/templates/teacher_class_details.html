@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ class_name if class_name else 'Class Details' }} - TeacherHub</title>
+    <title>{{ batch_name if batch_name else 'Class Details' }} - TeacherHub</title>
     <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -18,7 +18,7 @@
 
 <body>
     <!-- Hidden -->
-    <input type="hidden" id="classId" value="{{ class_id}}">
+    <input type="hidden" id="batchId" value="{{ batch_id}}">
     <input type="hidden" id="pageMode" value="{{ mode }}">
     <!-- Background -->
     <div class="main" style="position: fixed; z-index: -1;"></div>
@@ -71,7 +71,7 @@
                 <!-- Class Header -->
                 <div class="class-hero">
                     <div class="hero-content">
-                        <span class="class-badge">{{ class_name if class_name else 'Class Details' }}</span>
+                        <span class="class-badge">{{ batch_name if batch_name else 'Class Details' }}</span>
                         <h1>{{ 'General Subject' }}</h1>
                         <p><i class="fa-solid fa-clock"></i> 09:00 AM - 10:30 AM &nbsp;|&nbsp; <i
                                 class="fa-solid fa-user-group"></i> {{ students|length }} Students</p>

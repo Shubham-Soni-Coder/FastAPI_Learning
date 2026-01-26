@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class FeesStructureCreate(BaseModel):
-    class_id: int
+    batch_id: int
     academic_year: str
     is_active: bool
 
