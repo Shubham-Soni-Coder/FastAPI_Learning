@@ -8,24 +8,22 @@ class ClassBase(BaseModel):
     subject: str
 
     teacher_id: int
+    batch_id: int
 
     start_time: datetime
     end_time: datetime
 
-    is_active: bool = True
-
 
 # --------Create-------
-class ClassCreate(BaseModel):
+class ClassCreate(ClassBase):
     pass
 
 
 # --------Update--------
-class ClassUpdate(BaseModel):
+class ClassUpdate(ClassBase):
     subject: str | None = None
     start_time: datetime | None = None
     end_time: datetime | None = None
-    is_active: bool | None = None
 
 
 # ------Respone----------

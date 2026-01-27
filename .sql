@@ -1,0 +1,4 @@
+CREATE TABLE datas (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    content TEXT
+);
