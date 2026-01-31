@@ -19,7 +19,8 @@ class NotAuthorizedException(Exception):
 def get_current_teacher(request: Request):
     if "auth" not in request.session:
         raise NotAuthenticatedException()
-    if request.session.get("role") != "teacher":
+    role = request.session.get("role")
+    if not role or role.lower() != "teacher":
         raise NotAuthorizedException(role="teacher")
     return request.session["user_id"]
 

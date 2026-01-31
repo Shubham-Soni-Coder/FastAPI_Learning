@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.core.middleware import setup_middleware
+from app.utils.auth_checker import redirect_by_user
 from app.database.session import engine, SessionLocal
 from app.database.base import Base
 from app.models import *  # Import all models to ensure they are registered with Base
@@ -54,14 +55,8 @@ def auth_exception_handler(request: Request, exc: NotAuthenticatedException):
 
 @app.exception_handler(NotAuthorizedException)
 def permission_exception_handler(request: Request, exc: NotAuthorizedException):
-    if exc.role == "teacher":
-        return RedirectResponse(
-            url="/teacher/dashboard", status_code=status.HTTP_303_SEE_OTHER
-        )
-    elif exc.role == "Student":
-        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
-
-    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    role = request.session.get("role")
+    return redirect_by_user(role)
 
 
 @app.on_event("startup")

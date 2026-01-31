@@ -4,7 +4,7 @@ from fastapi import status
 
 def redirect_by_user(role: str):
     if not role:
-        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
     role_key = role.lower()
     if role_key == "teacher":
@@ -17,4 +17,4 @@ def redirect_by_user(role: str):
         return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
 
     # Fallback for unknown roles
-    return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
