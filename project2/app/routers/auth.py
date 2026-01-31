@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.services import auth_service
 from app.core.exceptions import CustomException
+from app.utils.auth_checker import rediirect_by_user
 
 # Initialize templates
 templates = Jinja2Templates(directory="templates")
@@ -16,8 +17,10 @@ router = APIRouter()
 @router.get("/", name="login_page")
 def show_form(request: Request):
     # Security check: exist session
-    if "auth" in request.session:
-        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+    if request.session.get("auth") is True:
+        role = request.session.get("role")
+        return rediirect_by_user(role)
+
     return templates.TemplateResponse("login_page.html", {"request": request})
 
 
@@ -36,22 +39,10 @@ def login(
         request.session["role"] = user.role
         request.session["auth"] = True
 
-        # Redirect based on role
-        if user.role == "teacher":
-            return RedirectResponse(
-                url="/teacher/dashboard", status_code=status.HTTP_303_SEE_OTHER
-            )
-        elif user.role == "Student":  # Matching the case from your create_user script
-            return RedirectResponse(
-                url="/dashboard", status_code=status.HTTP_303_SEE_OTHER
-            )
-        elif user.role == "Admin":
-            return RedirectResponse(
-                url="/dashboard", status_code=status.HTTP_303_SEE_OTHER
-            )
+        if not user.role:
+            raise CustomException("Invalid user role")
 
-        # Default fallback
-        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+        return rediirect_by_user(user.role)
 
     except CustomException as e:
         return templates.TemplateResponse(
@@ -64,10 +55,10 @@ def login(
 def show_login_success(
     request: Request,
 ):
-    return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+    return rediirect_by_user(request.session.get("role"))
 
 
 @router.get("/logout", name="logout")
 def logout(request: Request):
     request.session.clear()
-    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse("/", status_code=303)
