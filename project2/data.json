@@ -603,35 +603,5 @@
             "name": "Naveen",
             "department_name": "Hindi"
         }
-    ],
-    "teacher_classes": [
-        {
-            "id": 10,
-            "name": "Grade 10",
-            "subject": "Mathematics",
-            "start_time": "09:00 AM",
-            "end_time": "10:00 AM"
-        },
-        {
-            "id": 11,
-            "name": "Grade 11-B",
-            "subject": "Biology",
-            "start_time": "11:30 AM",
-            "end_time": "12:30 PM"
-        },
-        {
-            "id": 9,
-            "name": "Grade 9",
-            "subject": "Physics",
-            "start_time": "01:00 PM",
-            "end_time": "02:00 PM"
-        },
-        {
-            "id": 12,
-            "name": "Grade 12-A",
-            "subject": "Chemistry",
-            "start_time": "02:30 PM",
-            "end_time": "03:30 PM"
-        }
     ]
 }

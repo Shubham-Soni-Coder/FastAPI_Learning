@@ -2,11 +2,12 @@ from fastapi import APIRouter, Request, Depends, HTTPException, status
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from datetime import datetime
 import calendar
 
 from app.database.session import get_db
-from app.models import Batches, Student, Teacher
+from app.models import Batches, Student, Teacher, Class
 from app.services import teacher_service
 from app.utils.helpers import initials
 from app.core.config import Settings
@@ -185,39 +186,35 @@ def show_teacher_students(
 def get_all_classes_data(
     request: Request,
     db: Session = Depends(get_db),
-    user: int = Depends(get_current_teacher),
+    user_id: int = Depends(get_current_teacher),
 ):
-
-    from sqlalchemy import func
-    from app.models import Student
-
-    # Load teacher's specific classes from demo.json
-    try:
-        teacher_classes = Settings.JSON_DATA.get("teacher_classes", [])
-    except Exception as e:
-        print(f"Error reading demo.json: {e}")
+    # Fetch teacher profile
+    teacher = db.query(Teacher).filter(Teacher.user_id == user_id).first()
+    if not teacher:
         return []
+
+    # Query classes for this teacher
+    classes = db.query(Class).filter(Class.teacher_id == teacher.id).all()
 
     results = []
 
-    for cls_data in teacher_classes:
-        class_id = cls_data["id"]
-
-        # Count students in this class from Real Database
+    for cls in classes:
+        # Count students in this batch (real DB count)
         student_count = (
             db.query(func.count(Student.id))
-            .filter(Student.batch_id == class_id)
+            .filter(Student.batch_id == cls.batch_id)
             .scalar()
         )
 
-        # Combine static demo data with dynamic DB count
         results.append(
             {
-                "id": class_id,
-                "name": cls_data["name"],
-                "subject": cls_data["subject"],
+                "id": cls.batch_id,
+                "name": cls.name,
+                "subject": cls.subject,
                 "students": student_count,
-                "time": cls_data["time"],
+                "time": (
+                    cls.start_time.strftime("%I:%M %p") if cls.start_time else "N/A"
+                ),
             }
         )
 
