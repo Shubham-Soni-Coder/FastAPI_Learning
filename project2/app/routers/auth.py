@@ -51,13 +51,6 @@ def login(
         )
 
 
-@router.post("/login_success", name="login_success")
-def show_login_success(
-    request: Request,
-):
-    return redirect_by_user(request.session.get("role"))
-
-
 @router.get("/logout", name="logout")
 def logout(request: Request):
     request.session.clear()
