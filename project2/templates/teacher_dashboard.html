@@ -128,59 +128,32 @@
                 </div>
 
                 <div class="classes-grid">
-                    <!-- Class 1 -->
+                    {% if active_classes %}
+                    {% for class in active_classes %}
                     <div class="class-card">
-                        <div class="class-header">
-                            <span class="class-badge">Grade 10-A</span>
+                        <div class="class-header" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">
+                            <span class="class-badge">{{ class.batch_name }}</span>
                         </div>
                         <div class="class-body">
-                            <h3 class="class-title">Mathematics</h3>
+                            <h3 class="class-title">{{ class.subject }}</h3>
                             <div class="class-meta">
-                                <span><i class="fa-solid fa-clock"></i> 09:00 AM</span>
-                                <span><i class="fa-solid fa-user-group"></i> 32 Students</span>
+                                <span><i class="fa-solid fa-clock"></i> {{ class.time }}</span>
+                                <span><i class="fa-solid fa-user-group"></i> {{ class.student_count }} Students</span>
                             </div>
                             <div class="class-actions">
-                                <a href="/teacher/classes" class="action-btn primary">Start Class</a>
-                                <a href="/teacher/classes" class="action-btn">Attendance</a>
+                                <a href="/teacher/classes/details?batch_id={{ class.batch_id }}"
+                                    class="action-btn primary">Start Class</a>
+                                <a href="/teacher/classes/details?batch_id={{ class.batch_id }}"
+                                    class="action-btn">Attendance</a>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Class 2 -->
-                    <div class="class-card">
-                        <div class="class-header" style="background: linear-gradient(135deg, #ff7675, #fab1a0);">
-                            <span class="class-badge">Grade 9-B</span>
-                        </div>
-                        <div class="class-body">
-                            <h3 class="class-title">Physics</h3>
-                            <div class="class-meta">
-                                <span><i class="fa-solid fa-clock"></i> 11:30 AM</span>
-                                <span><i class="fa-solid fa-user-group"></i> 28 Students</span>
-                            </div>
-                            <div class="class-actions">
-                                <a href="/teacher/classes" class="action-btn primary">Start Class</a>
-                                <a href="/teacher/classes" class="action-btn">Attendance</a>
-                            </div>
-                        </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="class-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                        <p style="color: grey;">No upcoming classes for today.</p>
                     </div>
-
-                    <!-- Class 3 -->
-                    <div class="class-card">
-                        <div class="class-header" style="background: linear-gradient(135deg, #00b894, #55efc4);">
-                            <span class="class-badge">Grade 10-C</span>
-                        </div>
-                        <div class="class-body">
-                            <h3 class="class-title">Geometry</h3>
-                            <div class="class-meta">
-                                <span><i class="fa-solid fa-clock"></i> 02:00 PM</span>
-                                <span><i class="fa-solid fa-user-group"></i> 30 Students</span>
-                            </div>
-                            <div class="class-actions">
-                                <a href="/teacher/classes" class="action-btn primary">Start Class</a>
-                                <a href="/teacher/classes" class="action-btn">Attendance</a>
-                            </div>
-                        </div>
-                    </div>
+                    {% endif %}
                 </div>
             </div>
         </section>

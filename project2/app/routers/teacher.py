@@ -35,8 +35,43 @@ def show_teacher_dashboard(
         "initials": initials(teacher.full_name),
     }
 
+    # Fetch active/upcoming classes
+    now = datetime.now()
+
+    upcoming_classes = (
+        db.query(Class)
+        .filter(Class.teacher_id == teacher.id, Class.start_time > now)
+        .order_by(Class.start_time.asc())
+        .limit(3)
+        .all()
+    )
+
+    active_classes_data = []
+    for cls in upcoming_classes:
+        batch = db.query(Batches).filter(Batches.id == cls.batch_id).first()
+        student_count = (
+            db.query(func.count(Student.id))
+            .filter(Student.batch_id == cls.batch_id)
+            .scalar()
+        )
+
+        active_classes_data.append(
+            {
+                "batch_id": cls.batch_id,
+                "batch_name": batch.batch_name if batch else "Class",
+                "subject": cls.subject,
+                "time": cls.start_time.strftime("%I:%M %p"),
+                "student_count": student_count,
+            }
+        )
+
     return templates.TemplateResponse(
-        "teacher_dashboard.html", {"request": request, "teacher": teacher_data}
+        "teacher_dashboard.html",
+        {
+            "request": request,
+            "teacher": teacher_data,
+            "active_classes": active_classes_data,
+        },
     )
 
 
