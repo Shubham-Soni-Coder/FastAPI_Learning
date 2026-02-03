@@ -36,13 +36,14 @@ class ClassSchedule(Base):
 
     id = Column(Integer, primary_key=True)
 
+    batch_id = Column(Integer, ForeignKey("batches.id"), nullable=False)
+    teacher_id = Column(Integer, ForeignKey("teachers.id"), nullable=False)
+
     # 1.Mondey .... 7.Sunday
     day_of_week = Column(Integer, nullable=False)
 
     start_time = Column(Time, nullable=False)
     end_time = Column(Time, nullable=False)
-
-    subject = Column(String(100), nullable=False)
 
     __table_args__ = (
         CheckConstraint(
