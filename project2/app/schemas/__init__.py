@@ -23,6 +23,7 @@ from .teacher import TeacherCreate
 
 from .classes import (
     ClassCreate,
+    ClassScheduleCreate,
     ClassUpdate,
     ClassOut,
 )

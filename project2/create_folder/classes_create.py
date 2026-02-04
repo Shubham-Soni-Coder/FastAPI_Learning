@@ -1,13 +1,12 @@
 from app.database.base import Base
 from app.database.session import SessionLocal, engine
-from app.models import Class, Teacher
+from app.models import Subject, ClassSchedule
 from app.utils.json_loader import load_json
-from app.schemas.classes import ClassCreate
-from datetime import datetime, date
+from app.schemas.classes import ClassScheduleCreate
+from datetime import time, datetime
 
 # load the student data
-JSON_DATA = load_json()
-JSON_DATA = JSON_DATA["teacher_classes"]
+# JSON_DATA = load_json()
 
 # # store in database
 Base.metadata.create_all(bind=engine)
@@ -18,28 +17,26 @@ db = SessionLocal()
 
 
 def add_data_classes(JSON_DATA):
-    # first get the teacher_id
-    teacher_id = list(db.query(Teacher.id).filter(Teacher.full_name == "Shubham Soni"))[
-        0
-    ][0]
-
-    JSON_DATA = JSON_DATA["teacher_classes"]
+    JSON_DATA = JSON_DATA["class_schedules"]
 
     for data in JSON_DATA:
-        schems = ClassCreate(
+
+        subject = db.query(Subject).filter(Subject.name == data["subject"]).first()
+
+        if subject is None:
+            raise ValueError("Subject not found")
+
+        subject_id = subject.id  # get the integer ID
+
+        schems = ClassScheduleCreate(
+            batch_id=data["batch_id"],
+            teacher_id=data["teacher_id"],
+            subject_id=subject_id,
+            day_of_week=data["day_of_week"],
             name=data["name"],
-            subject=data["subject"],
-            batch_id=data["id"],
-            teacher_id=teacher_id,
-            start_time=datetime.strptime(
-                f"{date.today()} {data['start_time']}".replace("20", ""),
-                "%y-%m-%d %I:%M %p",
-            ),
-            end_time=datetime.strptime(
-                f"{date.today()} {data['end_time']}".replace("20", ""),
-                "%y-%m-%d %I:%M %p",
-            ),
+            start_time=datetime.strptime(data["start_time"], "%H:%M:%S").time(),
+            end_time=datetime.strptime(data["end_time"], "%H:%M:%S").time(),
         )
-        model = Class(**schems.model_dump())
+        model = ClassSchedule(**schems.dict())
         db.add(model)
     db.commit()

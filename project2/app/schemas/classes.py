@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from datetime import datetime
+from datetime import datetime, time
 
 
 # ------------Base---------
@@ -14,8 +14,22 @@ class ClassBase(BaseModel):
     end_time: datetime
 
 
+class ClassScheduleBase(BaseModel):
+    batch_id: int
+    teacher_id: int
+    subject_id: int
+    day_of_week: int
+    name: str
+    start_time: time
+    end_time: time
+
+
 # --------Create-------
 class ClassCreate(ClassBase):
+    pass
+
+
+class ClassScheduleCreate(ClassScheduleBase):
     pass
 
 

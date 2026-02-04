@@ -12,6 +12,7 @@ from sqlalchemy import (
 )
 from app.database.base import Base
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 
 class Class(Base):
@@ -38,12 +39,19 @@ class ClassSchedule(Base):
 
     batch_id = Column(Integer, ForeignKey("batches.id"), nullable=False)
     teacher_id = Column(Integer, ForeignKey("teachers.id"), nullable=False)
+    subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False)
 
     # 1.Mondey .... 7.Sunday
     day_of_week = Column(Integer, nullable=False)
 
+    name = Column(String, nullable=False)
+
     start_time = Column(Time, nullable=False)
     end_time = Column(Time, nullable=False)
+
+    batch = relationship("Batches")
+    teacher = relationship("Teacher")
+    subject = relationship("Subject")
 
     __table_args__ = (
         CheckConstraint(

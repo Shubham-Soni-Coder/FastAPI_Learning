@@ -603,5 +603,55 @@
             "name": "Naveen",
             "department_name": "Hindi"
         }
+    ],
+    "class_schedules": [
+        {
+            "name": "Grade 10",
+            "subject": "Mathematics",
+            "batch_id": 10,
+            "teacher_id": 1,
+            "day_of_week": 1,
+            "start_time": "09:00:00",
+            "end_time": "10:30:00"
+        },
+        {
+            "name": "Grade 11-B",
+            "subject": "Biology",
+            "batch_id": 11,
+            "teacher_id": 1,
+            "day_of_week": 1,
+            "start_time": "09:00:00",
+            "end_time": "10:00:00"
+        },
+        {
+            "name": "Grade 9",
+            "subject": "Chemistry",
+            "batch_id": 9,
+            "teacher_id": 1,
+            "day_of_week": 1,
+            "start_time": "11:00:00",
+            "end_time": "12:30:00"
+        },
+        {
+            "name": "Grade 12-A",
+            "subject": "Physics",
+            "batch_id": 12,
+            "teacher_id": 1,
+            "day_of_week": 1,
+            "start_time": "09:00:00",
+            "end_time": "10:30:00"
+        }
+    ],
+    "class_instances": [
+        {
+            "schedule_id": 1,
+            "class_date": "2026-02-03",
+            "status": "held"
+        },
+        {
+            "schedule_id": 2,
+            "class_date": "2026-02-05",
+            "status": "scheduled"
+        }
     ]
 }
