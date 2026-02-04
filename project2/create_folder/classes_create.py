@@ -36,8 +36,8 @@ def add_data_classes(JSON_DATA):
                 subject_id=subject_id,
                 day_of_week=day,  # Use the loop variable for day
                 name=data["name"],
-                start_time=datetime.strptime(data["start_time"], "%H:%M:%S").time(),
-                end_time=datetime.strptime(data["end_time"], "%H:%M:%S").time(),
+                start_time=datetime.strptime(data["start_time"], "%I:%M %p").time(),
+                end_time=datetime.strptime(data["end_time"], "%I:%M %p").time(),
             )
             model = ClassSchedule(**schems.dict())
             db.add(model)

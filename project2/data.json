@@ -611,8 +611,8 @@
             "batch_id": 10,
             "teacher_id": 1,
             "day_of_week": 1,
-            "start_time": "09:00:00",
-            "end_time": "10:30:00"
+            "start_time": "09:00 AM",
+            "end_time": "10:30 AM"
         },
         {
             "name": "Grade 11-B",
@@ -620,8 +620,8 @@
             "batch_id": 11,
             "teacher_id": 1,
             "day_of_week": 1,
-            "start_time": "09:00:00",
-            "end_time": "10:00:00"
+            "start_time": "09:00 AM",
+            "end_time": "10:00 AM"
         },
         {
             "name": "Grade 9",
@@ -629,8 +629,8 @@
             "batch_id": 9,
             "teacher_id": 1,
             "day_of_week": 1,
-            "start_time": "11:00:00",
-            "end_time": "12:30:00"
+            "start_time": "11:00 AM",
+            "end_time": "12:30 PM"
         },
         {
             "name": "Grade 12-A",
@@ -638,8 +638,26 @@
             "batch_id": 12,
             "teacher_id": 1,
             "day_of_week": 1,
-            "start_time": "09:00:00",
-            "end_time": "10:30:00"
+            "start_time": "09:00 AM",
+            "end_time": "10:30 AM"
+        },
+        {
+            "name": "Grade 10",
+            "subject": "Mathematics",
+            "batch_id": 10,
+            "teacher_id": 1,
+            "day_of_week": 1,
+            "start_time": "02:00 PM",
+            "end_time": "03:00 PM"
+        },
+        {
+            "name": "Grade 11-A",
+            "subject": "Psychology",
+            "batch_id": 1,
+            "teacher_id": 1,
+            "day_of_week": 3,
+            "start_time": "04:00 PM",
+            "end_time": "05:00 PM"
         }
     ],
     "class_instances": [
