@@ -15,23 +15,6 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
 
-class Class(Base):
-    __tablename__ = "classes"
-
-    id = Column(Integer, primary_key=True)
-
-    name = Column(String, nullable=False)
-    subject = Column(String, nullable=False)
-
-    batch_id = Column(Integer, ForeignKey("batches.id"))
-    teacher_id = Column(Integer, ForeignKey("teachers.id"), nullable=False)
-
-    start_time = Column(DateTime, nullable=False)
-    end_time = Column(DateTime, nullable=False)
-
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-
 class ClassSchedule(Base):
     __tablename__ = "class_schedules"
 

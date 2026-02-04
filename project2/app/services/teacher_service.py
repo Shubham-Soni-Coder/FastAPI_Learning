@@ -1,9 +1,10 @@
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
-from app.models import Student, StudentFeesDue, Batches
+from app.models import Student, StudentFeesDue, Batches, ClassSchedule
 from app.utils.helpers import initials
 from app.utils.data_utils import get_total_days_in_month
 from app.services.attendance_service import count_student_present_day
+from datetime import time
 
 
 def get_students_for_batch(db: Session, batch_id: int, month: int, year: int):
@@ -40,3 +41,37 @@ def get_students_for_batch(db: Session, batch_id: int, month: int, year: int):
             }
         )
     return students_data
+
+
+def get_active_classes(db: Session, teacher_id: int, day: int, current_time: time):
+    """
+    Get classes that are currently happening (Start <= Now <= End)
+    """
+    schedules = (
+        db.query(ClassSchedule)
+        .filter(
+            ClassSchedule.teacher_id == teacher_id,
+            ClassSchedule.day_of_week == day,
+            ClassSchedule.start_time <= current_time,
+            ClassSchedule.end_time >= current_time,
+        )
+        .all()
+    )
+    return schedules
+
+
+def get_upcoming_classes(db: Session, teacher_id: int, day: int, current_time: time):
+    """
+    Get classes that will start later today (Start > Now)
+    """
+    schedules = (
+        db.query(ClassSchedule)
+        .filter(
+            ClassSchedule.teacher_id == teacher_id,
+            ClassSchedule.day_of_week == day,
+            ClassSchedule.start_time > current_time,
+        )
+        .order_by(ClassSchedule.start_time.asc())
+        .all()
+    )
+    return schedules

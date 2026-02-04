@@ -5,6 +5,7 @@ from app.utils.json_loader import load_json
 from app.schemas.classes import ClassScheduleCreate
 from datetime import time, datetime
 
+
 # load the student data
 # JSON_DATA = load_json()
 
@@ -40,3 +41,30 @@ def add_data_classes(JSON_DATA):
         model = ClassSchedule(**schems.dict())
         db.add(model)
     db.commit()
+
+
+def check_for_active_classes(day, time):
+    schedules = (
+        db.query(ClassSchedule)
+        .filter(
+            ClassSchedule.day_of_week == day,
+            ClassSchedule.start_time <= time,
+            ClassSchedule.end_time >= time,
+        )
+        .all()
+    )
+
+    return schedules
+
+
+def check_for_upcoming_classes(day, time):
+    schedules = (
+        db.query(ClassSchedule)
+        .filter(
+            ClassSchedule.day_of_week == day,
+            ClassSchedule.start_time > time,
+        )
+        .all()
+    )
+
+    return schedules

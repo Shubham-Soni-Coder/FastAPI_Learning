@@ -7,7 +7,7 @@ from datetime import datetime
 import calendar
 
 from app.database.session import get_db
-from app.models import Batches, Student, Teacher, Class
+from app.models import Batches, Student, Teacher, ClassSchedule
 from app.services import teacher_service
 from app.utils.helpers import initials
 from app.core.config import Settings
@@ -35,31 +35,28 @@ def show_teacher_dashboard(
         "initials": initials(teacher.full_name),
     }
 
-    # Fetch active/upcoming classes
+    # Fetch upcoming classes
     now = datetime.now()
+    day = now.weekday() + 1
+    current_time = now.time()
 
-    upcoming_classes = (
-        db.query(Class)
-        .filter(Class.teacher_id == teacher.id, Class.start_time > now)
-        .order_by(Class.start_time.asc())
-        .limit(3)
-        .all()
+    upcoming_classes = teacher_service.get_upcoming_classes(
+        db, teacher.id, day, current_time
     )
 
-    active_classes_data = []
+    upcoming_classes_data = []
     for cls in upcoming_classes:
-        batch = db.query(Batches).filter(Batches.id == cls.batch_id).first()
         student_count = (
             db.query(func.count(Student.id))
             .filter(Student.batch_id == cls.batch_id)
             .scalar()
         )
 
-        active_classes_data.append(
+        upcoming_classes_data.append(
             {
                 "batch_id": cls.batch_id,
-                "batch_name": batch.batch_name if batch else "Class",
-                "subject": cls.subject,
+                "batch_name": cls.batch.batch_name if cls.batch else "Class",
+                "subject": cls.subject.name if cls.subject else "N/A",
                 "time": cls.start_time.strftime("%I:%M %p"),
                 "student_count": student_count,
             }
@@ -70,7 +67,7 @@ def show_teacher_dashboard(
         {
             "request": request,
             "teacher": teacher_data,
-            "active_classes": active_classes_data,
+            "upcoming_classes": upcoming_classes_data,
         },
     )
 
@@ -229,9 +226,21 @@ def get_all_classes_data(
         return []
 
     # Query classes for this teacher
-    classes = db.query(Class).filter(Class.teacher_id == teacher.id).all()
+    # Query classes for this teacher
+    classes = (
+        db.query(ClassSchedule).filter(ClassSchedule.teacher_id == teacher.id).all()
+    )
 
     results = []
+    days = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+    ]
 
     for cls in classes:
         # Count students in this batch (real DB count)
@@ -241,14 +250,18 @@ def get_all_classes_data(
             .scalar()
         )
 
+        day_name = days[cls.day_of_week - 1] if 1 <= cls.day_of_week <= 7 else "Unknown"
+
         results.append(
             {
                 "id": cls.batch_id,
                 "name": cls.name,
-                "subject": cls.subject,
+                "subject": cls.subject.name,
                 "students": student_count,
                 "time": (
-                    cls.start_time.strftime("%I:%M %p") if cls.start_time else "N/A"
+                    f"{day_name} {cls.start_time.strftime('%I:%M %p')}"
+                    if cls.start_time
+                    else "N/A"
                 ),
             }
         )

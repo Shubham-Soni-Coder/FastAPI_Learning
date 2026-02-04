@@ -121,15 +121,15 @@
                     </div>
                 </div>
 
-                <!-- Active Classes -->
+                <!-- Upcoming Classes -->
                 <div class="section-header">
-                    <h2>Active Classes</h2>
+                    <h2>Upcoming Classes</h2>
                     <a href="#" class="view-all">View All</a>
                 </div>
 
                 <div class="classes-grid">
-                    {% if active_classes %}
-                    {% for class in active_classes %}
+                    {% if upcoming_classes %}
+                    {% for class in upcoming_classes %}
                     <div class="class-card">
                         <div class="class-header" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">
                             <span class="class-badge">{{ class.batch_name }}</span>

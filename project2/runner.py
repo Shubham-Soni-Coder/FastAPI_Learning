@@ -1,5 +1,16 @@
-from create_folder.classes_create import add_data_classes
-from app.utils.json_loader import load_json
+from create_folder.classes_create import check_for_upcoming_classes
+from datetime import datetime, time
+
 
 if __name__ == "__main__":
-    add_data_classes(load_json())
+    todey_day = 1
+    current_time = time(8, 0, 0)
+
+    result = check_for_upcoming_classes(todey_day, current_time)
+
+    if len(result) > 0:
+        for data in result:
+            print(data.name)
+
+    else:
+        print("No upcoming classes found")
