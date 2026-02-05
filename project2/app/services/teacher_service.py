@@ -41,7 +41,7 @@ def get_students_for_batch(db: Session, batch_id: int, month: int, year: int):
                 "name": student.name,
                 "initials": initials(student.name),
                 "father_name": student.father_name,
-                "fees_paid": fees.status if fees else "pending",
+                "fees_paid": True if fees and fees.status == "paid" else False,
                 "days_present": days_present,
                 "total_days": total_days,
                 "attendance": attendance_percentage,
