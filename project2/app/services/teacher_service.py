@@ -13,7 +13,14 @@ def get_students_for_batch(db: Session, batch_id: int, month: int, year: int):
     results = (
         db.query(Student, StudentFeesDue)
         .join(Batches, Student.batch_id == Batches.id)
-        .join(StudentFeesDue, Student.id == StudentFeesDue.student_id)
+        .outerjoin(
+            StudentFeesDue,
+            and_(
+                Student.id == StudentFeesDue.student_id,
+                StudentFeesDue.month == month,
+                StudentFeesDue.year == year,
+            ),
+        )
         .filter(Batches.id == batch_id)
         .order_by(Student.name.asc())
         .all()
