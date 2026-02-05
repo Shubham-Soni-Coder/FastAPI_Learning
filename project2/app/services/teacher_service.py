@@ -1,6 +1,15 @@
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, extract
 from sqlalchemy.orm import Session
-from app.models import Student, StudentFeesDue, Batches, ClassSchedule, Teacher, Subject
+from app.models import (
+    Student,
+    StudentFeesDue,
+    Batches,
+    ClassSchedule,
+    Teacher,
+    Subject,
+    AttendanceRecord,
+    AttendanceSession,
+)
 from app.utils.helpers import initials
 from app.utils.data_utils import get_total_days_in_month
 from app.services.attendance_service import count_student_present_day
@@ -10,7 +19,7 @@ from datetime import time, datetime
 def get_students_for_batch(db: Session, batch_id: int, month: int, year: int):
     total_days = get_total_days_in_month(year, month)
 
-    results = (
+    students = (
         db.query(Student, StudentFeesDue)
         .join(Batches, Student.batch_id == Batches.id)
         .outerjoin(
@@ -25,28 +34,50 @@ def get_students_for_batch(db: Session, batch_id: int, month: int, year: int):
         .order_by(Student.name.asc())
         .all()
     )
+    if not students:
+        return []
+
+    student_ids = [s.id for s, _ in students]
+
+    attendance_counts = (
+        db.query(
+            AttendanceRecord.student_id,
+            func.count(AttendanceRecord.id).label("days_present"),
+        )
+        .join(AttendanceSession, AttendanceRecord.session_id == AttendanceSession.id)
+        .filter(
+            AttendanceRecord.student_id.in_(student_ids),
+            extract("year", AttendanceSession.date) == year,
+            extract("month", AttendanceSession.date) == month,
+            AttendanceRecord.status == "present",
+        )
+        .group_by(AttendanceRecord.student_id)
+        .all()
+    )
+
+    attendance_map = {row.student_id: row.days_present for row in attendance_counts}
 
     students_data = []
 
-    for i, (student, fees) in enumerate(results):
-        days_present = count_student_present_day(db, student.id, year, month)
-
+    for index, (student, fees) in enumerate(students, start=1):
+        days_present = attendance_map.get(student.id, 0)
         attendance_percentage = (
             round((days_present / total_days) * 100) if total_days > 0 else 0
         )
 
         students_data.append(
             {
-                "roll_no": i + 1,
+                "serial_no": index,  # NOT roll_no (don’t lie)
                 "name": student.name,
                 "initials": initials(student.name),
                 "father_name": student.father_name,
-                "fees_paid": True if fees and fees.status == "paid" else False,
+                "fees_paid": bool(fees and fees.status == "paid"),
                 "days_present": days_present,
                 "total_days": total_days,
                 "attendance": attendance_percentage,
             }
         )
+
     return students_data
 
 

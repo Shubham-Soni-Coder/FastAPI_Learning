@@ -81,7 +81,7 @@ function renderTable(students) {
     if (!tbody) return;
 
     students.forEach(student => {
-        const rowId = `student-row-${student.roll_no}`;
+        const rowId = `student-row-${student.serial_no}`;
         let tr = document.getElementById(rowId);
 
         if (tr) {
@@ -125,7 +125,7 @@ function renderTable(students) {
                 : `<span class="status-badge pending">Pending</span>`;
 
             tr.innerHTML = `
-                <td>#${student.roll_no}</td>
+                <td>#${student.serial_no}</td>
                 <td>
                     <div class="table-user-info">
                         <div class="table-avatar">${student.initials}</div>
@@ -146,7 +146,7 @@ function renderTable(students) {
                 </td>
                 <td>
                     <button class="table-action-btn view-btn" title="View Profile"
-                        data-name="${student.name}" data-roll="${student.roll_no}"
+                        data-name="${student.name}" data-roll="${student.serial_no}"
                         data-father-name="${student.father_name}" data-attendance="${student.attendance}"
                         data-initials="${student.initials}">
                         <i class="fa-solid fa-eye"></i>
