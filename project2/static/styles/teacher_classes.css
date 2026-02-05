@@ -41,6 +41,44 @@
     color: var(--text-primary);
 }
 
+/* Day Filter Tabs */
+.day-filter {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.day-filter::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome/Safari */
+}
+
+.day-tab {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    padding: 0.6rem 1.2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.day-tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.day-tab.active {
+    background: var(--primary-btn);
+    color: white;
+    border-color: var(--primary-btn);
+    box-shadow: 0 4px 15px rgba(140, 122, 230, 0.3);
+}
+
 /* Classes Grid */
 .classes-grid {
     display: grid;

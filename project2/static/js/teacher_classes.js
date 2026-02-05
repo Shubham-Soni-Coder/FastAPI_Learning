@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const classesContainer = document.getElementById("classesContainer");
   const classesTableContainer = document.getElementById("classesTableContainer");
   const classesTableBody = document.getElementById("classesTableBody");
+  const dayTabs = document.querySelectorAll(".day-tab");
+  let currentDayFilter = "today";
 
   // Fetch Data from Backend
   async function fetchClasses() {
@@ -34,8 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         color: classColors[index % classColors.length]
       }));
 
-      renderCards();
-      renderTable();
+      renderAll();
 
     } catch (error) {
       console.error("Error loading classes:", error);
@@ -45,16 +46,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function renderAll() {
+    const filteredData = filterDataByDay(classesData, currentDayFilter);
+    renderCards(filteredData);
+    renderTable(filteredData);
+  }
+
+  function filterDataByDay(data, filter) {
+    if (filter === "all") return data;
+
+    let targetDay;
+    if (filter === "today") {
+      // getDay() returns 0 for Sunday, 1 for Monday...
+      // Our backend day_code is 1 for Mon, 7 for Sun
+      const day = new Date().getDay();
+      targetDay = day === 0 ? 7 : day;
+    } else {
+      targetDay = parseInt(filter);
+    }
+
+    return data.filter(cls => cls.day_code === targetDay);
+  }
+
   // Render Functions
-  function renderCards() {
+  function renderCards(data) {
     if (!classesContainer) return;
 
-    if (classesData.length === 0) {
-      classesContainer.innerHTML = '<p class="empty-msg">No classes found.</p>';
+    if (data.length === 0) {
+      classesContainer.innerHTML = '<p class="empty-msg" style="color: var(--text-secondary); grid-column: 1/-1; text-align: center; padding: 2rem;">No classes found for this day.</p>';
       return;
     }
 
-    classesContainer.innerHTML = classesData
+    classesContainer.innerHTML = data
       .map(
         (cls) => `
             <div class="class-card">
@@ -83,10 +106,10 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
   }
 
-  function renderTable() {
+  function renderTable(data) {
     if (!classesTableBody) return;
 
-    classesTableBody.innerHTML = classesData
+    classesTableBody.innerHTML = data
       .map(
         (cls) => `
             <tr>
@@ -104,6 +127,19 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       .join("");
   }
+
+  // Day Filter Logic
+  dayTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      // Update UI
+      dayTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      // Update Filter & Render
+      currentDayFilter = tab.dataset.day;
+      renderAll();
+    });
+  });
 
   // View Toggles
   if (cardViewBtn && tableViewBtn) {

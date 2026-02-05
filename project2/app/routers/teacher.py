@@ -263,6 +263,7 @@ def get_all_classes_data(
                     if cls.start_time
                     else "N/A"
                 ),
+                "day_code": cls.day_of_week,
             }
         )
 
