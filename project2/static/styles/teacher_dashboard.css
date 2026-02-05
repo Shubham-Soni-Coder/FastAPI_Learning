@@ -671,7 +671,102 @@ header {
     /* Ensure side-by-side */
 }
 
-.table-action-btn:hover {
-    background: white;
-    color: var(--accent-color);
+/* Dashboard Upcoming Classes Enhancements */
+.classes-grid .class-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.classes-grid .class-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+/* Dynamic Gradients for Class Headers */
+.class-header.variant-1 {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+}
+
+.class-header.variant-2 {
+    background: linear-gradient(135deg, #00b894, #55efc4);
+}
+
+.class-header.variant-3 {
+    background: linear-gradient(135deg, #ff7675, #fab1a0);
+}
+
+.class-header.variant-4 {
+    background: linear-gradient(135deg, #fdcb6e, #ffeaa7);
+}
+
+.class-header.variant-5 {
+    background: linear-gradient(135deg, #0984e3, #74b9ff);
+}
+
+.class-header.variant-6 {
+    background: linear-gradient(135deg, #e17055, #ff7675);
+}
+
+/* Card Glow Effect */
+.class-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.class-card:hover::before {
+    opacity: 1;
+}
+
+.class-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+}
+
+.class-meta span i {
+    color: #a29bfe;
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2);
+}
+
+.action-btn.primary:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+}
+
+.action-btn:not(.primary) {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.action-btn:not(.primary):hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.class-badge {
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }

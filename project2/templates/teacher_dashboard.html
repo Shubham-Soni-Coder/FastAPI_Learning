@@ -131,7 +131,7 @@
                     {% if upcoming_classes %}
                     {% for class in upcoming_classes %}
                     <div class="class-card">
-                        <div class="class-header" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">
+                        <div class="class-header variant-{{ loop.index0 % 6 + 1 }}">
                             <span class="class-badge">{{ class.batch_name }}</span>
                         </div>
                         <div class="class-body">
