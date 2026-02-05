@@ -15,11 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 month.classList.add('active');
 
                 const selectedMonth = month.textContent.trim();
+                const batchId = document.getElementById('batchSelect').value;
                 attendanceEl.innerHTML = `Attendance (${selectedMonth})`;
 
                 // Fetch Data
                 try {
-                    const response = await fetch(`/teacher/students/data?month=${selectedMonth}`);
+                    const response = await fetch(`/teacher/students/data?month=${selectedMonth}&batch_id=${batchId}`);
                     if (!response.ok) throw new Error('Network response was not ok');
                     const students = await response.json();
                     renderTable(students);

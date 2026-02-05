@@ -144,3 +144,31 @@
         opacity: 1;
     }
 }
+
+/* Glass Select Styles */
+.batch-selector-container {
+    margin-left: 1rem;
+}
+
+.glass-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 12px;
+    outline: none;
+    cursor: pointer;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.glass-select:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.glass-select option {
+    background: #1a1a2e;
+    color: white;
+}

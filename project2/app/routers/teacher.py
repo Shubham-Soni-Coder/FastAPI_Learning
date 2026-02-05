@@ -62,12 +62,42 @@ def show_teacher_dashboard(
             }
         )
 
+    # Fetch dynamic stats
+    total_classes = (
+        db.query(func.count(ClassSchedule.id))
+        .filter(ClassSchedule.teacher_id == teacher.id)
+        .scalar()
+    )
+
+    # Get all batch IDs for this teacher
+    teacher_batch_ids = (
+        db.query(ClassSchedule.batch_id)
+        .filter(ClassSchedule.teacher_id == teacher.id)
+        .distinct()
+        .all()
+    )
+    teacher_batch_ids = [r[0] for r in teacher_batch_ids]
+
+    total_students = (
+        db.query(func.count(Student.id))
+        .filter(Student.batch_id.in_(teacher_batch_ids))
+        .scalar()
+        if teacher_batch_ids
+        else 0
+    )
+
     return templates.TemplateResponse(
         "teacher_dashboard.html",
         {
             "request": request,
             "teacher": teacher_data,
             "upcoming_classes": upcoming_classes_data,
+            "stats": {
+                "total_students": total_students,
+                "active_classes": total_classes,
+                "pending_review": 12,  # Still hardcoded as per plan
+                "rating": 4.8,  # Still hardcoded as per plan
+            },
         },
     )
 
@@ -116,6 +146,17 @@ def show_teacher_class_details(
         print("Batch is not found")
         raise HTTPException(status_code=404, detail="Batch not found")
 
+    # Verify teacher teaches this batch
+    is_authorized = (
+        db.query(ClassSchedule)
+        .filter(
+            ClassSchedule.teacher_id == teacher.id, ClassSchedule.batch_id == batch_id
+        )
+        .first()
+    )
+    if not is_authorized:
+        raise HTTPException(status_code=403, detail="Not authorized to view this batch")
+
     # name,init,roll_no
     student_data = []
 
@@ -154,9 +195,24 @@ def show_teacher_class_details(
 def get_student_data(
     request: Request,
     month: str,
+    batch_id: int,
     db: Session = Depends(get_db),
-    user: str = Depends(get_current_teacher),
+    user_id: int = Depends(get_current_teacher),
 ):
+    teacher = db.query(Teacher).filter(Teacher.user_id == user_id).first()
+    if not teacher:
+        return []
+
+    # Verify teacher teaches this batch
+    is_authorized = (
+        db.query(ClassSchedule)
+        .filter(
+            ClassSchedule.teacher_id == teacher.id, ClassSchedule.batch_id == batch_id
+        )
+        .first()
+    )
+    if not is_authorized:
+        return []
 
     try:
         # Convert month name to number (e.g., "January" -> 1)
@@ -165,8 +221,7 @@ def get_student_data(
     except ValueError:
         return []
 
-    batch_id = 11
-    year = 2025  # Using current context year
+    year = 2025
 
     students_data = teacher_service.get_students_for_batch(
         db, batch_id, month_num, year
@@ -178,6 +233,7 @@ def get_student_data(
 @router.get("/students", name="teacher_students")
 def show_teacher_students(
     request: Request,
+    batch_id: int = None,
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_teacher),
 ):
@@ -190,18 +246,48 @@ def show_teacher_students(
         "department": teacher.department,
         "initials": initials(teacher.full_name),
     }
-    batch_id = 11
 
-    # Get current date
-    now = datetime.now()
-    current_year = now.year
-    current_month = now.month
-    current_month_name = now.strftime("%B")
-
-    # Get total days in the current month
-    students_data = teacher_service.get_students_for_batch(
-        db, batch_id, current_month, current_year
+    # Fetch all batches for this teacher to populate a dropdown
+    schedules = (
+        db.query(ClassSchedule).filter(ClassSchedule.teacher_id == teacher.id).all()
     )
+
+    # Unique batches
+    teacher_batches = {}
+    for s in schedules:
+        if s.batch_id not in teacher_batches:
+            teacher_batches[s.batch_id] = s.batch.batch_name
+
+    batches_list = [
+        {"id": bid, "name": bname} for bid, bname in teacher_batches.items()
+    ]
+
+    # If no batch_id specified, pick the first one from teacher's batches
+    if not batch_id and batches_list:
+        batch_id = batches_list[0]["id"]
+
+    current_batch_name = "No Batch Selected"
+    students_data = []
+
+    if batch_id:
+        # Verify teacher teaches this batch
+        if batch_id not in teacher_batches:
+            raise HTTPException(
+                status_code=403, detail="Not authorized to view this batch"
+            )
+
+        current_batch_name = teacher_batches[batch_id]
+
+        # Get current date
+        now = datetime.now()
+        current_year = 2025
+        current_month = now.month
+
+        students_data = teacher_service.get_students_for_batch(
+            db, batch_id, current_month, current_year
+        )
+
+    current_month_name = datetime.now().strftime("%B")
 
     return templates.TemplateResponse(
         "teacher_students.html",
@@ -210,6 +296,9 @@ def show_teacher_students(
             "students": students_data,
             "current_month_name": current_month_name,
             "teacher": teacher_data,
+            "batches": batches_list,
+            "current_batch_id": batch_id,
+            "current_batch_name": current_batch_name,
         },
     )
 

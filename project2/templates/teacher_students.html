@@ -71,7 +71,15 @@
             <div class="content-wrapper">
                 <div class="section-header">
                     <h2>Student Overview</h2>
-                    <div style="color: var(--text-muted);">Grade 10-A</div>
+                    <div class="batch-selector-container">
+                        <select id="batchSelect" class="glass-select"
+                            onchange="window.location.href='/teacher/students?batch_id=' + this.value">
+                            {% for b in batches %}
+                            <option value="{{ b.id }}" {% if b.id==current_batch_id %}selected{% endif %}>{{ b.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Month Selector -->
