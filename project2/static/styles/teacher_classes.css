@@ -240,9 +240,11 @@
     background: var(--card-bg-dark);
     backdrop-filter: blur(30px);
     border-radius: 30px;
-    padding: 2rem;
+    padding: 2.5rem;
     border: 1px solid var(--glass-border);
     animation: fadeIn 0.8s ease;
+    width: 100%;
+    margin-top: 1rem;
 }
 
 @keyframes fadeIn {
@@ -257,18 +259,29 @@
     }
 }
 
+.glass-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
 .glass-table th {
-    padding: 1.5rem;
+    padding: 1.2rem 1.5rem;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    text-align: left;
+    border-bottom: 2px solid var(--glass-border);
 }
 
 .glass-table td {
     padding: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     background: transparent;
+    color: var(--text-primary);
+    font-size: 1rem;
 }
 
 .glass-table tr:hover td {
@@ -276,19 +289,29 @@
 }
 
 .table-action-btn {
-    background: var(--accent-gradient);
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 12px;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
+    background: var(--accent-gradient) !important;
+    border: none !important;
+    padding: 0.7rem 1.5rem !important;
+    border-radius: 14px !important;
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    width: auto !important;
+    /* Override dashboard width */
+    height: auto !important;
+    /* Override dashboard height */
+    display: inline-block !important;
+    text-align: center !important;
+    float: none !important;
+    /* Remove dashboard float */
+    white-space: nowrap !important;
 }
 
 .table-action-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4) !important;
 }
 
 /* Empty State Styling */
