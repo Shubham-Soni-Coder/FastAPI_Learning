@@ -79,8 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     classesContainer.innerHTML = data
       .map(
-        (cls) => `
-            <div class="class-card">
+        (cls, index) => `
+            <div class="class-card" style="animation-delay: ${index * 0.1}s">
                 <!-- Top Half: Solid Color -->
                 <div class="class-header-color" style="background: ${cls.color}">
                     <span class="class-badge">${cls.name}</span>
