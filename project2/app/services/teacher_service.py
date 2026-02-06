@@ -1,4 +1,4 @@
-from sqlalchemy import and_, func, extract
+from sqlalchemy import and_, func, extract, or_
 from sqlalchemy.orm import Session
 from app.models import (
     Student,
@@ -16,10 +16,12 @@ from app.services.attendance_service import count_student_present_day
 from datetime import time, datetime
 
 
-def get_students_for_batch(db: Session, batch_id: int, month: int, year: int):
+def get_students_for_batch(
+    db: Session, batch_id: int, month: int, year: int, search: str = None
+):
     total_days = get_total_days_in_month(year, month)
 
-    students = (
+    query = (
         db.query(Student, StudentFeesDue)
         .join(Batches, Student.batch_id == Batches.id)
         .outerjoin(
@@ -31,9 +33,17 @@ def get_students_for_batch(db: Session, batch_id: int, month: int, year: int):
             ),
         )
         .filter(Batches.id == batch_id)
-        .order_by(Student.name.asc())
-        .all()
     )
+
+    if search:
+        query = query.filter(
+            or_(
+                Student.name.ilike(f"%{search}%"),
+                Student.father_name.ilike(f"%{search}%"),
+            )
+        )
+
+    students = query.order_by(Student.name.asc()).all()
     if not students:
         return []
 

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends, HTTPException, status
+from fastapi import APIRouter, Request, Depends, HTTPException, status, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
@@ -130,6 +130,7 @@ def get_student_data(
     request: Request,
     month: str,
     batch_id: int,
+    search: str = Query(None),
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_teacher),
 ):
@@ -144,7 +145,9 @@ def get_student_data(
     except ValueError:
         return []
 
-    return teacher_service.get_students_for_batch(db, batch_id, month_num, 2025)
+    return teacher_service.get_students_for_batch(
+        db, batch_id, month_num, 2025, search=search
+    )
 
 
 @router.get("/students", name="teacher_students")
