@@ -23,27 +23,41 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentDayFilter = "today";
 
   // Fetch Data from Backend
-  async function fetchClasses() {
+  async function fetchClasses(search = "") {
     try {
-      const response = await fetch('/teacher/api/classes-list');
-      if (!response.ok) throw new Error('Failed to fetch classes');
+      const response = await fetch(
+        `/teacher/api/classes-list${search ? `?search=${search}` : ""}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch classes");
 
       const data = await response.json();
 
       // Enhance data with colors
       classesData = data.map((cls, index) => ({
         ...cls,
-        color: classColors[index % classColors.length]
+        color: classColors[index % classColors.length],
       }));
 
       renderAll();
-
     } catch (error) {
       console.error("Error loading classes:", error);
       if (classesContainer) {
         classesContainer.innerHTML = `<p class="error-msg">Failed to load classes. Please try again.</p>`;
       }
     }
+  }
+
+  // Search Functionality with Debounce
+  let searchTimeout;
+  const searchInput = document.querySelector(".search-bar input");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        fetchClasses(e.target.value.trim());
+      }, 500);
+    });
   }
 
   function renderAll() {

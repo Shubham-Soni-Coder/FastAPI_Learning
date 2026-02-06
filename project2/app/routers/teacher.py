@@ -198,10 +198,23 @@ def show_teacher_students(
 
 @router.get("/api/classes-list", name="get_all_classes_data")
 def get_all_classes_data(
+    search: str = Query(None),
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_teacher),
 ):
     teacher = db.query(Teacher).filter(Teacher.user_id == user_id).first()
     if not teacher:
         return []
-    return teacher_service.get_all_classes_formatted(db, teacher.id)
+    return teacher_service.get_all_classes_formatted(db, teacher.id, search=search)
+
+
+@router.get("/api/global-search", name="get_global_search")
+def get_global_search(
+    search: str = Query(None),
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_teacher),
+):
+    teacher = db.query(Teacher).filter(Teacher.user_id == user_id).first()
+    if not teacher:
+        return {"students": [], "classes": []}
+    return teacher_service.global_search(db, teacher.id, search=search)

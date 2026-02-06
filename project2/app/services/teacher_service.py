@@ -185,10 +185,22 @@ def get_formatted_upcoming_classes(
     return formatted
 
 
-def get_all_classes_formatted(db: Session, teacher_id: int):
-    classes = (
-        db.query(ClassSchedule).filter(ClassSchedule.teacher_id == teacher_id).all()
+def get_all_classes_formatted(db: Session, teacher_id: int, search: str = None):
+    query = (
+        db.query(ClassSchedule)
+        .join(Subject, ClassSchedule.subject_id == Subject.id)
+        .filter(ClassSchedule.teacher_id == teacher_id)
     )
+
+    if search:
+        query = query.filter(
+            or_(
+                ClassSchedule.name.ilike(f"%{search}%"),
+                Subject.name.ilike(f"%{search}%"),
+            )
+        )
+
+    classes = query.all()
 
     days = [
         "Monday",
@@ -213,7 +225,7 @@ def get_all_classes_formatted(db: Session, teacher_id: int):
             {
                 "id": cls.batch_id,
                 "name": cls.name,
-                "subject": cls.subject.name,
+                "subject": cls.subject.name if cls.subject else "N/A",
                 "students": student_count,
                 "time": (
                     f"{day_name} {cls.start_time.strftime('%I:%M %p')}"
@@ -252,3 +264,62 @@ def get_upcoming_classes(db: Session, teacher_id: int, day: int, current_time: t
         .order_by(ClassSchedule.start_time.asc())
         .all()
     )
+
+
+def global_search(db: Session, teacher_id: int, search: str):
+    if not search:
+        return {"students": [], "classes": []}
+
+    # Search Classes/Batches
+    classes_query = (
+        db.query(ClassSchedule)
+        .join(Subject, ClassSchedule.subject_id == Subject.id)
+        .filter(ClassSchedule.teacher_id == teacher_id)
+        .filter(
+            or_(
+                ClassSchedule.name.ilike(f"%{search}%"),
+                Subject.name.ilike(f"%{search}%"),
+            )
+        )
+        .limit(5)
+        .all()
+    )
+
+    # Search Students (Only in batches this teacher teaches)
+    students_query = (
+        db.query(Student)
+        .join(Batches, Student.batch_id == Batches.id)
+        .join(ClassSchedule, ClassSchedule.batch_id == Batches.id)
+        .filter(ClassSchedule.teacher_id == teacher_id)
+        .filter(
+            or_(
+                Student.name.ilike(f"%{search}%"),
+                Student.father_name.ilike(f"%{search}%"),
+            )
+        )
+        .distinct()
+        .limit(5)
+        .all()
+    )
+
+    return {
+        "classes": [
+            {
+                "id": c.batch_id,
+                "name": c.name,
+                "subject": c.subject.name if c.subject else "N/A",
+                "type": "class",
+            }
+            for c in classes_query
+        ],
+        "students": [
+            {
+                "id": s.id,
+                "name": s.name,
+                "batch_id": s.batch_id,
+                "initials": initials(s.name),
+                "type": "student",
+            }
+            for s in students_query
+        ],
+    }

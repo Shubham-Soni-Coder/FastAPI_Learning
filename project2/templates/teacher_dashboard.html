@@ -47,6 +47,7 @@
                 <div class="search-bar">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" placeholder="Search for students, classes...">
+                    <div id="searchResults" class="search-results-dropdown hidden"></div>
                 </div>
 
                 <div class="user-profile">
@@ -158,6 +159,7 @@
             </div>
         </section>
     </div>
+    <script src="{{ url_for('static', path='js/dashboard.js') }}"></script>
 </body>
 
 </html>
