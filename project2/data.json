@@ -611,53 +611,53 @@
             "batch_id": 10,
             "teacher_id": 1,
             "day_of_week": 1,
-            "start_time": "09:00 AM",
-            "end_time": "10:30 AM"
-        },
-        {
-            "name": "Grade 11-B",
-            "subject": "Biology",
-            "batch_id": 11,
-            "teacher_id": 1,
-            "day_of_week": 1,
-            "start_time": "09:00 AM",
+            "start_time": "08:30 AM",
             "end_time": "10:00 AM"
         },
         {
+            "name": "Grade 11-B",
+            "subject": "Mathematics",
+            "batch_id": 11,
+            "teacher_id": 1,
+            "day_of_week": 1,
+            "start_time": "10:15 AM",
+            "end_time": "11:45 AM"
+        },
+        {
             "name": "Grade 9",
-            "subject": "Chemistry",
+            "subject": "Mathematics",
             "batch_id": 9,
             "teacher_id": 1,
             "day_of_week": 1,
-            "start_time": "11:00 AM",
-            "end_time": "12:30 PM"
+            "start_time": "12:00 PM",
+            "end_time": "01:30 PM"
         },
         {
             "name": "Grade 12-A",
-            "subject": "Physics",
+            "subject": "Mathematics",
             "batch_id": 12,
             "teacher_id": 1,
             "day_of_week": 1,
-            "start_time": "09:00 AM",
-            "end_time": "10:30 AM"
-        },
-        {
-            "name": "Grade 10",
-            "subject": "Mathematics",
-            "batch_id": 10,
-            "teacher_id": 1,
-            "day_of_week": 1,
-            "start_time": "02:00 PM",
-            "end_time": "03:00 PM"
+            "start_time": "01:45 PM",
+            "end_time": "03:15 PM"
         },
         {
             "name": "Grade 11-A",
-            "subject": "Psychology",
+            "subject": "Mathematics",
             "batch_id": 1,
             "teacher_id": 1,
-            "day_of_week": 3,
-            "start_time": "04:00 PM",
+            "day_of_week": 1,
+            "start_time": "03:30 PM",
             "end_time": "05:00 PM"
+        },
+        {
+            "name": "Grade 12-B",
+            "subject": "Physics",
+            "batch_id": 12,
+            "teacher_id": 2,
+            "day_of_week": 1,
+            "start_time": "09:00 AM",
+            "end_time": "10:30 AM"
         }
     ],
     "class_instances": [

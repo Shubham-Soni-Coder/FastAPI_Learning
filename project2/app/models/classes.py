@@ -43,6 +43,9 @@ class ClassSchedule(Base):
         CheckConstraint(
             "start_time < end_time", name="ck_class_schedule_start_end_time"
         ),
+        UniqueConstraint(
+            "teacher_id", "day_of_week", "start_time", name="uq_teacher_start_time"
+        ),
     )
 
 

@@ -145,7 +145,11 @@ def get_teacher_batches_list(db: Session, teacher_id: int):
     unique_batches = {}
     for s in schedules:
         if s.batch_id not in unique_batches:
-            unique_batches[s.batch_id] = s.batch.batch_name
+            unique_batches[s.batch_id] = (
+                f"{s.batch.batch_name} ({s.batch.stream})"
+                if s.batch.stream
+                else s.batch.batch_name
+            )
 
     return [
         {"id": bid, "name": bname} for bid, bname in unique_batches.items()
