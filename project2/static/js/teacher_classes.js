@@ -157,11 +157,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // View Toggles
   if (cardViewBtn && tableViewBtn) {
+    const homeworkContainer = document.getElementById("homeworkContainer");
+
     cardViewBtn.addEventListener("click", () => {
       cardViewBtn.classList.add("active");
       tableViewBtn.classList.remove("active");
       classesContainer.classList.remove("hidden");
       classesTableContainer.classList.add("hidden");
+      if (homeworkContainer) homeworkContainer.classList.remove("hidden");
     });
 
     tableViewBtn.addEventListener("click", () => {
@@ -169,6 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cardViewBtn.classList.remove("active");
       classesTableContainer.classList.remove("hidden");
       classesContainer.classList.add("hidden");
+      if (homeworkContainer) homeworkContainer.classList.add("hidden");
     });
   }
 

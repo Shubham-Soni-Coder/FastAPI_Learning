@@ -315,10 +315,155 @@
 }
 
 /* Empty State Styling */
-.empty-msg {
-    font-size: 1.2rem;
-    opacity: 0.7;
-    margin-top: 3rem !important;
+/* Final Remade Styles */
+.homework-container {
+    margin-top: 5rem;
+    position: relative;
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+}
+
+.homework-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 2%;
+    right: 2%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.homework-board {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(25px);
+    border-radius: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1.5rem;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+}
+
+.homework-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+}
+
+.homework-header h2 {
+    font-size: 1.8rem;
+    margin: 0;
+    background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.6));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hw-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.hw-table th {
+    text-align: left;
+    padding: 1rem 1.5rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.hw-row td {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.hw-row:last-child td {
+    border-bottom: none;
+}
+
+.hw-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.hw-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(108, 92, 231, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a29bfe;
+    font-size: 1.25rem;
+    border: 1px solid rgba(108, 92, 231, 0.2);
+}
+
+.hw-name {
+    display: block;
+    font-weight: 600;
+    color: white;
+    font-size: 1.05rem;
+    margin-bottom: 2px;
+}
+
+.hw-sub {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.hw-stat-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.hw-stat-val {
+    font-weight: 600;
+    color: #eee;
+    font-size: 0.95rem;
+}
+
+.hw-stat-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-top: 2px;
+}
+
+.hw-status-pill {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pill-pending {
+    background: rgba(253, 203, 110, 0.1);
+    color: #fdcb6e;
+    border: 1px solid rgba(253, 203, 110, 0.2);
+}
+
+.hw-action-btn {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hw-action-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(108, 92, 231, 0.3);
 }
 
 .hidden {
