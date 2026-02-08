@@ -116,93 +116,98 @@
                     </table>
                 </div>
 
-                <!-- Remade Homework Section -->
+                <!-- Recent Homework Section -->
                 <div class="homework-container" id="homeworkContainer">
-                    <div class="homework-header">
-                        <h2>Recent Homework</h2>
-                        <button class="hw-action-btn">View All Homework <i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
+                    <div class="homework-box">
+                        <h2 class="homework-box-title">Recent Homework</h2>
 
-                    <div class="homework-board">
-                        <table class="hw-table">
-                            <thead>
-                                <tr>
-                                    <th>Title & Subject</th>
-                                    <th>Due Date</th>
-                                    <th>Status</th>
-                                    <th>Submissions</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="hw-row">
-                                    <td>
-                                        <div class="hw-meta">
-                                            <div class="hw-icon-box"><i class="fa-solid fa-square-root-variable"></i>
-                                            </div>
-                                            <div class="hw-text">
-                                                <span class="hw-name">Algebra Practice</span>
-                                                <span class="hw-sub">Mathematics • Grade 9A</span>
-                                            </div>
+                        <!-- Table Header -->
+                        <div class="homework-table-header">
+                            <div class="hw-col hw-col-title">TITLE & SUBJECT</div>
+                            <div class="hw-col hw-col-date">DUE DATE</div>
+                            <div class="hw-col hw-col-status">STATUS</div>
+                            <div class="hw-col hw-col-submissions">SUBMISSIONS</div>
+                            <div class="hw-col hw-col-actions">ACTIONS</div>
+                        </div>
+
+                        <!-- Homework Rows -->
+                        <div class="homework-rows">
+                            <!-- Row 1 -->
+                            <div class="homework-row">
+                                <div class="hw-col hw-col-title">
+                                    <div class="hw-title-content">
+                                        <div class="hw-icon purple-icon">
+                                            <i class="fa-solid fa-square-root-variable"></i>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <div class="hw-stat-group">
-                                            <span class="hw-stat-val">Apr 24, 2026</span>
-                                            <span class="hw-stat-label">Thursday</span>
+                                        <div class="hw-title-info">
+                                            <h4>Algebra Practice</h4>
+                                            <p>Mathematics • Grade 9A</p>
                                         </div>
-                                    </td>
-                                    <td><span class="hw-status-pill pill-pending">Pending Review</span></td>
-                                    <td>
-                                        <div class="hw-stat-group">
-                                            <span class="hw-stat-val">6 / 30</span>
-                                            <span class="hw-stat-label">20% Collected</span>
+                                    </div>
+                                </div>
+                                <div class="hw-col hw-col-date">
+                                    <div class="hw-date-info">
+                                        <span class="hw-date-day">Today</span>
+                                        <span class="hw-date-full">Apr 24, 2026</span>
+                                    </div>
+                                </div>
+                                <div class="hw-col hw-col-status">
+                                    <span class="hw-status-badge pending">PENDING REVIEW</span>
+                                </div>
+                                <div class="hw-col hw-col-submissions">
+                                    <div class="hw-submission-info">
+                                        <span class="hw-submission-count">6 / 30</span>
+                                        <span class="hw-submission-percent">20% Collected</span>
+                                    </div>
+                                </div>
+                                <div class="hw-col hw-col-actions">
+                                    <button class="hw-action-button primary-btn">Review</button>
+                                </div>
+                            </div>
+
+                            <!-- Row 2 -->
+                            <div class="homework-row">
+                                <div class="hw-col hw-col-title">
+                                    <div class="hw-title-content">
+                                        <div class="hw-icon teal-icon">
+                                            <i class="fa-solid fa-shapes"></i>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <button class="view-btn"
-                                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.6rem 1rem;">
-                                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hw-row">
-                                    <td>
-                                        <div class="hw-meta">
-                                            <div class="hw-icon-box"
-                                                style="color: #00b894; background: rgba(0, 184, 148, 0.15); border-color: rgba(0, 184, 148, 0.2);">
-                                                <i class="fa-solid fa-shapes"></i>
-                                            </div>
-                                            <div class="hw-text">
-                                                <span class="hw-name">Geometry Basics</span>
-                                                <span class="hw-sub">Mathematics • Grade 9B</span>
-                                            </div>
+                                        <div class="hw-title-info">
+                                            <h4>Geometry Basics</h4>
+                                            <p>Mathematics • Grade 9B</p>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <div class="hw-stat-group">
-                                            <span class="hw-stat-val">Apr 22, 2026</span>
-                                            <span class="hw-stat-label">Tuesday</span>
-                                        </div>
-                                    </td>
-                                    <td><span class="hw-status-pill"
-                                            style="background: rgba(0, 184, 148, 0.15); color: #00b894; border: 1px solid rgba(0, 184, 148, 0.2);">Completed</span>
-                                    </td>
-                                    <td>
-                                        <div class="hw-stat-group">
-                                            <span class="hw-stat-val">30 / 30</span>
-                                            <span class="hw-stat-label">100% Collected</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <button class="view-btn"
-                                            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.6rem 1rem;">
-                                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    </div>
+                                </div>
+                                <div class="hw-col hw-col-date">
+                                    <div class="hw-date-info">
+                                        <span class="hw-date-day">Tue</span>
+                                        <span class="hw-date-full">Apr 22, 2026</span>
+                                    </div>
+                                </div>
+                                <div class="hw-col hw-col-status">
+                                    <span class="hw-status-badge completed">COMPLETED</span>
+                                </div>
+                                <div class="hw-col hw-col-submissions">
+                                    <div class="hw-submission-info">
+                                        <span class="hw-submission-count">30 / 30</span>
+                                        <span class="hw-submission-percent">100% Collected</span>
+                                    </div>
+                                </div>
+                                <div class="hw-col hw-col-actions">
+                                    <button class="hw-action-button check-btn">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Button -->
+                        <div class="homework-footer">
+                            <button class="view-all-hw-btn">
+                                View All Homework
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
