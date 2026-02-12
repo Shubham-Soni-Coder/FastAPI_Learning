@@ -8,3 +8,4 @@ pydantic
 itsdangerous
 jinja2 
 python-multipart
+passlib
