@@ -9,3 +9,4 @@ itsdangerous
 jinja2 
 python-multipart
 passlib
+argon2-cffi
