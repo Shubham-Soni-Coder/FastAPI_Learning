@@ -7,6 +7,9 @@ It uses Uvicorn to run the FastAPI app defined in `app.app`.
 """
 
 import uvicorn
+import os
 
 if __name__ == "__main__":
-    uvicorn.run("app.app:app", host="0.0.0.0", port=8000, reload=True)
+    # Get port from environment variable (standard for Render) or default to 10000
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run("app.app:app", host="0.0.0.0", port=port, reload=False)
