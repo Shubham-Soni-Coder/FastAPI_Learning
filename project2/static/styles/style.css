@@ -1,6 +1,7 @@
 :root {
   /* Glassmorphism Variables */
-  --glass-bg: rgba(0, 0, 0, 0.3); /* Darker glass for better contrast */
+  --glass-bg: rgba(0, 0, 0, 0.3);
+  /* Darker glass for better contrast */
   --glass-border: rgba(255, 255, 255, 0.2);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 
@@ -16,7 +17,6 @@
 * {
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
-  transition: all 0.3s ease; /* Global smooth transition for that 'fast' feel */
 }
 
 body,
@@ -24,7 +24,8 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden; /* Prevent scrolling if not needed */
+  overflow: hidden;
+  /* Prevent scrolling if not needed */
 }
 
 .main {
@@ -46,7 +47,8 @@ html {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
-  border-top: 1px solid rgba(255, 255, 255, 0.4); /* Highlight top border */
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  /* Highlight top border */
   border-radius: 20px;
   box-shadow: var(--glass-shadow);
 
@@ -102,7 +104,8 @@ input:focus {
   background: rgba(255, 255, 255, 0.15);
   border-color: var(--input-focus-border);
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-  transform: scale(1.02); /* Subtle zoom */
+  transform: scale(1.02);
+  /* Subtle zoom */
 }
 
 button {
@@ -132,13 +135,15 @@ button:active {
 
 .signup-text {
   font-size: 0.85rem;
-  margin: -10px 0 20px 0; /* negative top margin to pull it up closer to inputs */
+  margin: -10px 0 20px 0;
+  /* negative top margin to pull it up closer to inputs */
   text-align: right;
   width: 100%;
 }
 
 .signup-text a {
-  color: #bfa3ff; /* Light purple to match gradient */
+  color: #bfa3ff;
+  /* Light purple to match gradient */
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
@@ -155,13 +160,15 @@ button:active {
     width: 95%;
     padding: 30px 20px;
   }
+
   h1 {
     font-size: 1.8rem;
   }
 }
 
 .error-message {
-  color: #ff6b6b; /* Soft red */
+  color: #ff6b6b;
+  /* Soft red */
   background: rgba(255, 0, 0, 0.1);
   border: 1px solid #ff6b6b;
   padding: 10px;

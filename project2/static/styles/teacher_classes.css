@@ -26,14 +26,16 @@
 /* Day Filter Tabs - Fluid Navbar Style */
 .day-filter {
     display: flex;
+    justify-content: center;
+    /* Center tabs inside */
     gap: 0.5rem;
-    margin-bottom: 2.5rem;
+    margin: 0 auto 2.5rem auto;
+    /* Center the bar itself */
     overflow-x: auto;
     padding: 0.6rem;
-    background: rgba(0, 0, 0, 0.2);
+    background: transparent;
     border-radius: 18px;
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     scrollbar-width: none;
     max-width: fit-content;
 }
@@ -65,7 +67,8 @@
 
 /* Views Toggle Enhancements */
 .view-options {
-    background: rgba(0, 0, 0, 0.2);
+    background: transparent;
+    /* Removed background */
     padding: 0.4rem;
     border-radius: 15px;
     border: 1px solid var(--glass-border);
@@ -77,55 +80,32 @@
 }
 
 /* Classes Grid & Animations */
+/* Classes Grid */
 .classes-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
+    min-height: 400px;
+    /* Prevent footer jump while loading */
 }
 
 /* Stunning Class Card Design */
+/* Clean Modern Class Card */
 .class-card {
-    background: rgba(20, 20, 35, 0.8);
-    /* Slightly more opaque for better performance */
-    backdrop-filter: blur(12px);
-    /* Reduced from 25px for performance */
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 30px;
-    border: 1px solid var(--glass-border);
+    background: transparent;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     overflow: hidden;
     position: relative;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    /* Optimized shadow */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    /* transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); removed all transition */
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
-    animation: cardAppear 0.6s backwards;
-    backface-visibility: hidden;
-    /* Prevent flickering */
-    transform: translateZ(0);
-    /* Trigger GPU acceleration */
-    will-change: transform;
-    /* Hint browser for optimization */
-}
-
-@keyframes cardAppear {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .class-card:hover {
-    transform: translateY(-8px) scale(1.01);
-    /* Reduced movement slightly */
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: var(--accent-purple);
+    transform: translateY(-4px);
 }
 
 /* Card Visual Header */
@@ -138,22 +118,7 @@
 }
 
 /* Animated Shine Effect on Header */
-.class-header-color::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transform: rotate(45deg);
-    transition: left 0.8s;
-    /* Specific property transition */
-}
-
-.class-card:hover .class-header-color::after {
-    left: 100%;
-}
+/* Shine Removed */
 
 .class-badge {
     position: absolute;
@@ -240,7 +205,6 @@
     background: rgba(255, 255, 255, 0.05);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(5px);
 }
 
 .btn-outline:hover {
@@ -250,18 +214,14 @@
 
 /* Premium Table View */
 .table-container {
-    background: rgba(20, 20, 35, 0.85);
-    /* More opaque */
-    backdrop-filter: blur(15px);
-    /* Reduced from 30px */
-    border-radius: 30px;
+    background: transparent;
+    border-radius: 20px;
     padding: 2.5rem;
-    border: 1px solid var(--glass-border);
-    animation: fadeIn 0.8s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     width: 100%;
     margin-top: 1rem;
-    transform: translateZ(0);
-    /* GPU */
+    min-height: 500px;
+    /* Reserve space for table view to prevent CLS */
 }
 
 @keyframes fadeIn {
@@ -337,15 +297,12 @@
 }
 
 .homework-box {
-    background: rgba(50, 53, 62, 0.95);
-    /* Nearly solid */
-    backdrop-filter: blur(10px);
-    /* Reduced from 30px */
-    border-radius: 24px;
+    background: transparent;
+    /* Removed background */
+    border-radius: 20px;
     padding: 2rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-    transform: translateZ(0);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
 .homework-box-title {
