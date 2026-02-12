@@ -5,3 +5,4 @@ imagekitio
 aiosqlite
 sqlmodel
 pydantic
+itsdangerous
