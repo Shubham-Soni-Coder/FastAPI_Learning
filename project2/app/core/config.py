@@ -7,16 +7,16 @@ load_dotenv()
 
 
 class Settings:
-    SECRET_KEY: str = os.getenv("SECRET_KEY")
-    DATABASE_URL: str = os.getenv("DATABASE_URL")
-    RESEND_API_KEY: str = os.getenv("RESEND_API_KEY")
-    # Safety check: Stop the app if the key is missing
-    if SECRET_KEY is None:
-        raise ValueError("No SECRET_KEY found in .env file!")
-    if DATABASE_URL is None:
-        raise ValueError("No DATABASE_URL found in .env file!")
-    if RESEND_API_KEY is None:
-        raise ValueError("No RESEND_API_KEY found in .env file!")
+    # On Render, these values are read directly from the environment
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "fallback-secret-key-for-local-dev")
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./test.db")
+    RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
+
+    @classmethod
+    def validate_config(cls):
+        """Simple check to alert you if keys are missing in production."""
+        if os.getenv("RENDER") and not os.getenv("SECRET_KEY"):
+            print("WARNING: SECRET_KEY is not set in Render environment!")
 
     # load the data
     JSON_DATA: dict = load_json()
