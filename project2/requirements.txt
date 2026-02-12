@@ -6,3 +6,4 @@ aiosqlite
 sqlmodel
 pydantic
 itsdangerous
+passlib
