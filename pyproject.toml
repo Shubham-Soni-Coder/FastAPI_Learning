@@ -1,20 +1,22 @@
 [project]
 name = "fastapi-learning"
 version = "0.1.0"
-description = "Add your description here"
+description = "FastAPI Learning Project"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.11,<3.12"
 dependencies = [
-    "aiosqlite>=0.21.0",
-    "fastapi>=0.121.3",
-    "fastapi-users[sqlalchemy]>=15.0.1",
-    "imagekitio>=4.2.0",
-    "itsdangerous>=2.2.0",
-    "jinja2>=3.1.6",
-    "passlib[bcrypt]>=1.7.4",
-    "pip>=25.3",
-    "python-dotenv>=1.2.1",
-    "resend>=2.19.0",
-    "sqlmodel>=0.0.27",
-    "uvicorn[standard]>=0.38.0",
+    "fastapi",
+    "uvicorn[standard]",
+    "python-dotenv",
+    "imagekitio",
+    "aiosqlite",
+    "sqlmodel",
+    "pydantic",
+    "itsdangerous",
+    "jinja2",
+    "passlib[bcrypt]",
+    "python-multipart",
 ]
+
+[dependency-groups]
+dev = []

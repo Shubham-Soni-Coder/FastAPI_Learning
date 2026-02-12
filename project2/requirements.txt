@@ -6,4 +6,5 @@ aiosqlite
 sqlmodel
 pydantic
 itsdangerous
-passlib
+jinja2 
+python-multipart
