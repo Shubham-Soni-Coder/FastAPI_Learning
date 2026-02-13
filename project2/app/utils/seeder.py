@@ -9,6 +9,10 @@ from app.schemas import (
     BatchesCreate,
     StudentCreate,
     BatchesSubjectCreate,
+    FeesStructureCreate,
+    FeesComponentCreate,
+    FeesPaymentCreate,
+    StudentFeesDueCreate,
 )
 from app.models import (
     User,
@@ -17,6 +21,10 @@ from app.models import (
     Batches,
     Student,
     BatchSubject,
+    FeesStructure,
+    FeesComponent,
+    StudentFeesDue,
+    FeesPayment,
 )
 from app.core.security import hash_password
 from app.utils.json_loader import load_json
@@ -30,10 +38,10 @@ All table :
 3. subjects : complet
 11. batches : complet
 12. batch_subjects : complet
-5. student_fes_due
-6. fees_structure
-7. fees_components
-8. fee_payments
+5. student_fes_due :complet
+6. fees_structure : complet
+7. fees_components : complet
+8. fee_payments : complet
 9. class_scheddules
 10. class_instances
 13. attendance_session
@@ -357,7 +365,201 @@ class DataBaseCreate:
 
         db.commit()
 
-    def CreateStudentTable(self) -> None:
+    def CreateFeesStructure(self) -> None:
+        batches = db.query(Batches).all()
+        academic_year = "2025-26"
+        for cls in batches:
+            # Check if fees structure already exists
+            existing = (
+                db.query(FeesStructure)
+                .filter(
+                    FeesStructure.batch_id == cls.id,
+                    FeesStructure.academic_year == academic_year,
+                )
+                .first()
+            )
+
+            if not existing:
+                try:
+                    schesm = FeesStructureCreate(
+                        batch_id=cls.id, academic_year=academic_year, is_active=True
+                    )
+                    model = FeesStructure(**schesm.model_dump())
+                    db.add(model)
+                    print(f"Adding fees structure for batch {cls.batch_name}")
+                except Exception as e:
+                    print(
+                        f"Error creating fees structure for batch {cls.batch_name}: {e}"
+                    )
+            else:
+                print(f"Fees structure for batch {cls.batch_name} already exists.")
+        db.commit()
+
+    def CreateFeesComponent(self) -> None:
+        fees_json = self.JSON_DATA.get("fees_by_class", {})
+
+        for raw_key, components in fees_json.items():
+            parts = raw_key.split("_")
+            level_val = parts[0]
+            stream_val = parts[1] if len(parts) > 1 else None
+
+            # Robust matching: try with suffixes (1st, 2nd, etc.)
+            possible_names = [level_val]
+            if not level_val.endswith(("st", "nd", "rd", "th")):
+                if level_val == "1":
+                    possible_names.append("1st")
+                elif level_val == "2":
+                    possible_names.append("2nd")
+                elif level_val == "3":
+                    possible_names.append("3rd")
+                else:
+                    possible_names.append(f"{level_val}th")
+
+            batch = (
+                db.query(Batches)
+                .filter(
+                    Batches.batch_name.in_(possible_names), Batches.stream == stream_val
+                )
+                .first()
+            )
+
+            if not batch:
+                continue
+
+            structure = (
+                db.query(FeesStructure)
+                .filter(
+                    FeesStructure.batch_id == batch.id,
+                    FeesStructure.academic_year == "2025-26",
+                )
+                .first()
+            )
+
+            if not structure:
+                try:
+                    schema = FeesStructureCreate(
+                        batch_id=batch.id, academic_year="2025-26", is_active=True
+                    )
+                    structure = FeesStructure(**schema.model_dump())
+                    db.add(structure)
+                    db.flush()
+                except Exception as e:
+                    print(f"Error creating structure for {batch.batch_name}: {e}")
+                    continue
+
+            for comp in components:
+                name = comp["component_name"]
+                amount = comp["amount"]
+
+                existing = (
+                    db.query(FeesComponent)
+                    .filter(
+                        FeesComponent.fees_structure_id == structure.id,
+                        FeesComponent.component_name == name,
+                    )
+                    .first()
+                )
+
+                if not existing:
+                    try:
+                        schema = FeesComponentCreate(
+                            fees_structure_id=structure.id,
+                            component_name=name,
+                            amount=amount,
+                        )
+                        db.add(FeesComponent(**schema.model_dump()))
+                        print(f"Added component {name} to {batch.batch_name}")
+                    except Exception as e:
+                        print(f"Error adding component {name}: {e}")
+        db.commit()
+
+    def CreateStudentFeesDue(self) -> None:
+        from sqlalchemy import func
+
+        students = db.query(Student).all()
+        month = datetime.now().month
+        year = datetime.now().year
+
+        for student in students:
+            fee_structure = (
+                db.query(FeesStructure)
+                .filter(
+                    FeesStructure.batch_id == student.batch_id,
+                    FeesStructure.academic_year == "2025-26",
+                )
+                .first()
+            )
+
+            if not fee_structure:
+                continue
+
+            total_amount = (
+                db.query(func.sum(FeesComponent.amount))
+                .filter(FeesComponent.fees_structure_id == fee_structure.id)
+                .scalar()
+                or 0
+            )
+
+            existing = (
+                db.query(StudentFeesDue)
+                .filter(
+                    StudentFeesDue.student_id == student.id,
+                    StudentFeesDue.month == month,
+                    StudentFeesDue.year == year,
+                )
+                .first()
+            )
+
+            if not existing:
+                try:
+                    schema = StudentFeesDueCreate(
+                        student_id=student.id,
+                        month=month,
+                        year=year,
+                        total_amount=float(total_amount),
+                        status="pending",
+                    )
+                    db.add(StudentFeesDue(**schema.model_dump()))
+                    print(f"Created fee due for student {student.name}")
+                except Exception as e:
+                    print(f"Error creating fee due for student {student.id}: {e}")
+        db.commit()
+
+    def CreateFeesPayment(self) -> None:
+        # Note: Student IDs are logic-dependent.
+        # Using a safer approach: pay for any existing dues if needed,
+        # but here we follow the user's list idea.
+        student_ids = [21, 22, 23, 24, 25]
+
+        due_records = (
+            db.query(StudentFeesDue)
+            .filter(StudentFeesDue.student_id.in_(student_ids))
+            .all()
+        )
+
+        for due in due_records:
+            existing = (
+                db.query(FeesPayment).filter(FeesPayment.due_id == due.id).first()
+            )
+            if not existing:
+                try:
+                    schema = FeesPaymentCreate(
+                        due_id=due.id,
+                        amount_paid=4000.0,
+                        discount_amount=0.0,
+                        fine_amount=0.0,
+                        method="online",
+                        is_late=False,
+                    )
+                    db.add(FeesPayment(**schema.model_dump()))
+                    print(f"Recorded payment for Due ID {due.id}")
+                except Exception as e:
+                    print(f"Error recording payment for due {due.id}: {e}")
+            else:
+                print(f"Payment for Due ID {due.id} already exists.")
+        db.commit()
+
+    def CreateStudentFesDue(self) -> None:
         pass
 
     def Create(self) -> None:
@@ -367,5 +569,9 @@ class DataBaseCreate:
         self.CreateSubject()
         self.CreateBatch()
         self.CreateBatchSubjects()
+        self.CreateFeesStructure()
+        self.CreateFeesComponent()
         self.CreateStudent()
+        self.CreateStudentFeesDue()
+        self.CreateFeesPayment()
         print("Seeding Complete!")
