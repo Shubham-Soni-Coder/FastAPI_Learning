@@ -61,7 +61,15 @@ def permission_exception_handler(request: Request, exc: NotAuthorizedException):
 
 @app.on_event("startup")
 def startup():
+    from app.utils.seeder import seed_database
+    # Create tables if they don't exist
     Base.metadata.create_all(bind=engine)
+    # Automatically seed the database if it's empty
+    db = SessionLocal()
+    try:
+        seed_database(db)
+    finally:
+        db.close()
 
 
 @app.get("/favicon.ico", include_in_schema=False)
