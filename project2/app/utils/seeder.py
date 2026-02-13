@@ -2,8 +2,20 @@ from sqlalchemy.orm import Session
 from datetime import datetime, date, time
 from app.database.base import Base
 from app.database.session import SessionLocal, engine
-from app.schemas import UserCreate, TeacherCreate, SubjectCreate, BatchesCreate
-from app.models import User, Teacher, Subject, Batches
+from app.schemas import (
+    UserCreate,
+    TeacherCreate,
+    SubjectCreate,
+    BatchesCreate,
+    StudentCreate,
+)
+from app.models import (
+    User,
+    Teacher,
+    Subject,
+    Batches,
+    Student,
+)
 from app.core.security import hash_password
 from app.utils.json_loader import load_json
 from datetime import datetime
@@ -13,15 +25,14 @@ All table :
 1. User : complet
 2. Teachers : complet
 3. subjects : complet
-11. batches
-4. student_table
+11. batches : complet
+12. batch_subjects
 5. student_fes_due
 6. fees_structure
 7. fees_components
 8. fee_payments
 9. class_scheddules
 10. class_instances
-12. batch_subjects
 13. attendance_session
 14. attendance_records
 """
@@ -112,6 +123,48 @@ class DataBaseCreate:
 
         db.commit()
 
+    def CreateStudent(self) -> None:
+        student_data = self.JSON_DATA.get("students", [])
+        batches = db.query(Batches).all()
+
+        if not batches:
+            print("No batches found. Please create batches first.")
+            return
+
+        for i, user_info in enumerate(student_data):
+            batch_obj = batches[i % len(batches)]
+            email = user_info.get("gmail")
+
+            # Find user by email to get user_id
+            user_rec = db.query(User).filter(User.gmail_id == email).first()
+
+            if user_rec:
+                # Check if student profile already exists
+                existing_student = (
+                    db.query(Student).filter(Student.user_id == user_rec.id).first()
+                )
+                if not existing_student:
+                    try:
+                        schems = StudentCreate(
+                            user_id=user_rec.id,
+                            name=user_info["name"],
+                            father_name=user_info["father_name"],
+                            mother_name=user_info["mother_name"],
+                            roll_no=str(user_info["roll_no"]),
+                            batch_id=batch_obj.id,
+                        )
+                        model = Student(**schems.model_dump())
+                        db.add(model)
+                        print(f"Adding student: {user_info['name']}")
+                    except Exception as e:
+                        print(f"Error creating student {user_info['name']}: {e}")
+                else:
+                    print(f"Student {user_info['name']} already exists.")
+            else:
+                print(f"User with email {email} not found for student profiling.")
+
+        db.commit()
+
     @staticmethod
     def add_subject(name: str) -> None:
         # Check if subject already exists
@@ -185,3 +238,12 @@ class DataBaseCreate:
 
     def CreateStudentTable(self) -> None:
         pass
+
+    def Create(self) -> None:
+        print("Starting Database Seeding...")
+        self.CreateUser()
+        self.CreateTeacher()
+        self.CreateSubject()
+        self.CreateBatch()
+        self.CreateStudent()
+        print("Seeding Complete!")
