@@ -21,6 +21,12 @@ from .attendance import (
 
 from .teacher import TeacherCreate
 
+from .subjects import (
+    SubjectCreate,
+    BatchSubjectCreate,
+    StudentSubjectCreate,
+)
+
 from .classes import (
     ClassCreate,
     ClassScheduleCreate,

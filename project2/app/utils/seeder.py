@@ -158,9 +158,9 @@ class DataBaseCreate:
         batches = starting + after
 
         for batch_name_label in batches:
-            int_cl = int(batch_name_label[:-2])  # remove suffix
+            batch_level = int(batch_name_label[:-2])  # remove suffix
             # If <= 10, only one batch with stream=None, else multiple streams
-            for stream in [None] if int_cl <= 10 else streams:
+            for stream in [None] if batch_level <= 10 else streams:
                 # Check if batch already exists
                 existing_batch = (
                     db.query(Batches)
