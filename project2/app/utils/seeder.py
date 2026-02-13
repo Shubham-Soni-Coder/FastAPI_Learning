@@ -8,6 +8,7 @@ from app.schemas import (
     SubjectCreate,
     BatchesCreate,
     StudentCreate,
+    BatchesSubjectCreate,
 )
 from app.models import (
     User,
@@ -15,9 +16,11 @@ from app.models import (
     Subject,
     Batches,
     Student,
+    BatchSubject,
 )
 from app.core.security import hash_password
 from app.utils.json_loader import load_json
+from app.utils.helpers import normalize
 from datetime import datetime
 
 """
@@ -26,7 +29,7 @@ All table :
 2. Teachers : complet
 3. subjects : complet
 11. batches : complet
-12. batch_subjects
+12. batch_subjects : complet
 5. student_fes_due
 6. fees_structure
 7. fees_components
@@ -180,6 +183,51 @@ class DataBaseCreate:
         else:
             print(f"Subject {name} already exists.")
 
+    @staticmethod
+    def insert(
+        batch_id: int,
+        subject_name: str,
+        category: str,
+        stream: str | None,
+        compulsory: bool,
+        main: bool,
+        batch_name: str = None,
+    ) -> None:
+        # Get subject
+        subject = db.query(Subject).filter(Subject.name == subject_name).first()
+        if not subject:
+            # print(f"Subject '{subject_name}' not found. Skipping link.")
+            return
+
+        exists = (
+            db.query(BatchSubject)
+            .filter_by(batch_id=batch_id, subject_id=subject.id)
+            .first()
+        )
+
+        if exists:
+            print(
+                f"Subject '{subject_name}' already linked to batch {batch_name or batch_id}."
+            )
+            return
+
+        try:
+            schems = BatchesSubjectCreate(
+                batch_id=batch_id,
+                subject_id=subject.id,
+                category=category,
+                stream=stream,
+                is_compulsory=compulsory,
+                is_main=main,
+            )
+
+            db.add(BatchSubject(**schems.model_dump()))
+            print(
+                f"Linked subject {subject_name} to batch {batch_name or batch_id} ({category})"
+            )
+        except Exception as e:
+            print(f"Error linking {subject_name} to batch {batch_id}: {e}")
+
     def CreateSubject(self) -> None:
         Subject_data = self.JSON_DATA["Subjects"]
 
@@ -236,6 +284,79 @@ class DataBaseCreate:
 
         db.commit()
 
+    def CreateBatchSubjects(self) -> None:
+        subjects_json = self.JSON_DATA["Subjects"]
+        batches = db.query(Batches).all()
+
+        # Data mapping between data.json and our internal stream labels
+        stream_map = {
+            "medical": ("Science", "Medical"),
+            "non-medical": ("Science", "Non-Medical"),
+            "commerce": ("Commerce", "Core"),
+            "arts": ("Humanities", "Core"),
+        }
+
+        for cls in batches:
+            batch_label = f"{cls.batch_name} {cls.stream or ''}"
+
+            # 1. Common subjects for all classes (1 to 12)
+            for s in subjects_json.get("Common", []):
+                self.insert(
+                    cls.id, normalize(s), "common", cls.stream, True, True, batch_label
+                )
+
+            # 2. Optional Subjects for 6th to 12th
+            batch_level = int(cls.batch_name[:-2])
+            if batch_level >= 6:
+                for s in subjects_json.get("Optional", []):
+                    self.insert(
+                        cls.id,
+                        normalize(s),
+                        "optional",
+                        cls.stream,
+                        False,
+                        False,
+                        batch_label,
+                    )
+
+            # 3. Stream-specific subjects for 11th and 12th
+            if cls.stream and cls.stream in stream_map:
+                top_key, sub_key = stream_map[cls.stream]
+
+                # Add Main Stream Subjects
+                stream_subjects = (
+                    subjects_json.get("Streams", {}).get(top_key, {}).get(sub_key, [])
+                )
+                for s in stream_subjects:
+                    self.insert(
+                        cls.id,
+                        normalize(s),
+                        "stream",
+                        cls.stream,
+                        True,
+                        True,
+                        batch_label,
+                    )
+
+                # Add Stream-specific Optional Subjects (if any)
+                stream_optional = (
+                    subjects_json.get("Streams", {})
+                    .get(top_key, {})
+                    .get("Optional", [])
+                )
+                for s in stream_optional:
+                    self.insert(
+                        cls.id,
+                        normalize(s),
+                        "optional",
+                        cls.stream,
+                        False,
+                        False,
+                        batch_label,
+                    )
+
+        db.commit()
+
     def CreateStudentTable(self) -> None:
         pass
 
@@ -245,5 +366,6 @@ class DataBaseCreate:
         self.CreateTeacher()
         self.CreateSubject()
         self.CreateBatch()
+        self.CreateBatchSubjects()
         self.CreateStudent()
         print("Seeding Complete!")

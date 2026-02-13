@@ -27,3 +27,4 @@ project2/app/schemas/__pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+.vscode/
