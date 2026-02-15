@@ -45,9 +45,14 @@
         <!-- Main Content -->
         <section class="main-content">
             <header>
-                <div class="search-bar">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search classes...">
+                <div class="header-left" style="display: flex; align-items: center; gap: 20px;">
+                    <button id="sidebar-toggle" class="menu-toggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="search-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search classes...">
+                    </div>
                 </div>
 
                 <div class="user-profile">
@@ -216,6 +221,7 @@
         </section>
     </div>
 
+    <script src="{{ url_for('static', path='js/dashboard.js') }}"></script>
     <script src="{{ url_for('static', path='js/teacher_classes.js') }}?v=2"></script>
 </body>
 

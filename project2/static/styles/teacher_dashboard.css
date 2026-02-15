@@ -446,6 +446,7 @@ header {
 
     .logo span,
     .nav-links span,
+    .logout-btn span,
     .user-info {
         display: none;
     }
@@ -464,42 +465,111 @@ header {
     .logout-btn {
         justify-content: center;
     }
-
-    .logout-btn span {
-        display: none;
-    }
 }
 
 @media (max-width: 768px) {
     .dashboard-container {
         flex-direction: column;
+        height: auto;
+        /* Allow height to grow */
+        overflow-y: auto;
+        /* Enable scrolling for the whole page */
     }
 
     .sidebar {
-        width: 100%;
-        height: 70px;
-        flex-direction: row;
-        border-right: none;
-        border-bottom: 1px solid var(--glass-border);
-        padding: 0 20px;
-        justify-content: space-between;
+        position: fixed;
+        left: -280px;
+        /* Hide off-screen */
+        width: 280px;
+        height: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        border-right: 1px solid var(--glass-border);
+        border-bottom: none;
+        padding: 30px 20px;
+        justify-content: flex-start;
+        background: rgba(0, 0, 0, 0.9);
+        /* Darker bg for mobile sidebar */
+        z-index: 1000;
+        transition: left 0.3s ease;
     }
 
-    .nav-links {
-        display: none;
-        /* In real app, make this a hamburger menu */
+    .sidebar.sidebar-toggled {
+        left: 0;
+        /* Show on toggle */
+    }
+
+    /* Restore sidebar elements on mobile when toggled */
+    .logo span,
+    .nav-links span,
+    .logout-btn span {
+        display: inline;
     }
 
     .logo {
-        margin: 0;
+        justify-content: flex-start !important;
+        margin-bottom: 30px !important;
     }
 
+    .nav-links {
+        display: block;
+        /* Show links */
+    }
+
+    .nav-links a {
+        justify-content: flex-start;
+        /* Align left */
+        padding: 15px 20px;
+    }
+
+    .logout-btn {
+        justify-content: flex-start;
+    }
+
+    /* Header */
     header {
         padding: 0 20px;
     }
 
     .search-bar {
         display: none;
+        /* Hide search on mobile for now or make it a toggle */
+    }
+
+    .menu-toggle {
+        display: block;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    /* Content */
+    .content-wrapper {
+        padding: 20px;
+    }
+
+    /* Grids */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        /* Stack cards */
+    }
+
+    .classes-grid {
+        grid-template-columns: 1fr;
+        /* Stack classes */
+    }
+
+    .welcome-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .add-class-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
 

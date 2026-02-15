@@ -294,30 +294,125 @@ header {
     color: white;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 80px;
+        padding: 30px 10px;
+        align-items: center;
+    }
+
+    .logo span,
+    .nav-links span,
+    .logout-btn span,
+    .user-info {
+        display: none;
+    }
+
+    .sidebar .logo {
+        margin-bottom: 40px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .nav-links a {
+        justify-content: center;
+        padding: 15px;
+    }
+
+    .logout-btn {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+        height: auto;
+        /* Allow height to grow */
+        overflow-y: auto;
+        /* Enable scrolling for the whole page */
+    }
+
     .sidebar {
         position: fixed;
-        left: -300px;
-        margin-left: 0;
-        /* Reset margin so desktop hidden state doesn't persist if resized */
+        left: -280px;
+        /* Hide off-screen */
+        width: 280px;
+        height: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        border-right: 1px solid var(--glass-border);
+        border-bottom: none;
+        padding: 30px 20px;
+        justify-content: flex-start;
+        background: rgba(0, 0, 0, 0.9);
+        /* Darker bg for mobile sidebar */
+        z-index: 1000;
+        transition: left 0.3s ease;
     }
 
-    /* Mobile: When toggled, slide in */
     .sidebar.sidebar-toggled {
         left: 0;
-        margin-left: 0;
+        /* Show on toggle */
     }
 
-    .menu-toggle {
+    /* Restore sidebar elements on mobile when toggled */
+    .logo span,
+    .nav-links span,
+    .logout-btn span {
+        display: inline;
+    }
+
+    .logo {
+        justify-content: flex-start !important;
+        margin-bottom: 30px !important;
+    }
+
+    .nav-links {
         display: block;
+        /* Show links */
     }
 
+    .nav-links a {
+        justify-content: flex-start;
+        /* Align left */
+        padding: 15px 20px;
+    }
+
+    .logout-btn {
+        justify-content: flex-start;
+    }
+
+    /* Header */
     header {
         padding: 0 20px;
     }
 
+    #sidebar-toggle {
+        display: block !important;
+        /* Ensure toggle is visible */
+    }
+
+    .search-bar {
+        display: none;
+        /* Hide search on mobile for now or make it a toggle */
+    }
+
+    /* Content */
     .content-wrapper {
         padding: 20px;
+    }
+
+    /* Grids */
+    .cards-grid {
+        grid-template-columns: 1fr;
+        /* Stack cards */
+    }
+
+    .welcome-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
     }
 }

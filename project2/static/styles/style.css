@@ -24,7 +24,7 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
+  /* overflow: hidden; Removed to allow scrolling on mobile */
   /* Prevent scrolling if not needed */
 }
 

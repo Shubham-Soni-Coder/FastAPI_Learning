@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -50,6 +51,10 @@
             <header>
                 <!-- Breadcrumb style back button -->
                 <div class="header-left">
+                    <button id="sidebar-toggle" class="menu-toggle"
+                        style="margin-right: 15px; background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
                     <a href="/teacher/classes" class="back-link">
                         <i class="fa-solid fa-arrow-left"></i> Back to Classes
                     </a>
@@ -154,6 +159,7 @@
             is_present: false
         }));
     </script>
+    <script src="{{ url_for('static', path='js/dashboard.js') }}"></script>
     <script src="{{ url_for('static', path='js/teacher_class_details.js') }}"></script>
 </body>
 
