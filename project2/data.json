@@ -224,6 +224,15 @@
             "gmail": "Arjun25@gmail.com",
             "password": "Arjun@09082006",
             "is_active": true
+        },
+        {
+            "roll_no": "126",
+            "name": "Shubham",
+            "father_name": "Naveen",
+            "mother_name": "Archna",
+            "gmail": "slsitu1424@gmail.com",
+            "password": "Situ@09082006",
+            "is_active": true
         }
     ],
     "fees_by_class": {
@@ -526,6 +535,13 @@
         }
     },
     "teacher": [
+        {
+            "gmail": "sonishubham2888@gmail.com",
+            "password": "Shubham@09082006",
+            "is_active": true,
+            "name": "Shubham",
+            "department_name": "Mathematics"
+        },
         {
             "gmail": "Himanshi@gmail.com",
             "password": "Himanshi@09082006",

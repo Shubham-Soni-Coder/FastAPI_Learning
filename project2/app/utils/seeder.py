@@ -187,6 +187,7 @@ class DataBaseCreate:
 
     def add_subject(self, name: str) -> None:
         # Check if subject already exists
+        name = normalize(name)
         existing_subject = self.db.query(Subject).filter(Subject.name == name).first()
         if not existing_subject:
             try:
@@ -265,7 +266,7 @@ class DataBaseCreate:
 
         # Add at once
         for name in unique_subjects:
-            self.add_subject(name)
+            self.add_subject(normalize(name))
         self.db.commit()
 
     def CreateBatch(self) -> None:
