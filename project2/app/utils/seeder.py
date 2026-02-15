@@ -13,6 +13,7 @@ from app.schemas import (
     FeesComponentCreate,
     FeesPaymentCreate,
     StudentFeesDueCreate,
+    ClassScheduleCreate,
 )
 from app.models import (
     User,
@@ -25,6 +26,7 @@ from app.models import (
     FeesComponent,
     StudentFeesDue,
     FeesPayment,
+    ClassSchedule,
 )
 from app.core.security import hash_password
 from app.utils.json_loader import load_json
@@ -42,25 +44,26 @@ All table :
 6. fees_structure : complet
 7. fees_components : complet
 8. fee_payments : complet
-9. class_scheddules
-10. class_instances
+9. class_scheddules : complet
+10. class_instances : complet
 13. attendance_session
 14. attendance_records
 """
 
 # load the json data
-JSON_DATA = load_json()
+Data = load_json()
 
 # store in database
 Base.metadata.create_all(bind=engine)
 
-db = SessionLocal()
+database = SessionLocal()
 
 
 # create user table
 class DataBaseCreate:
-    def __init__(self, JSON_DATA: dict) -> None:
+    def __init__(self, db: Session = database, JSON_DATA=Data) -> None:
         self.JSON_DATA = JSON_DATA
+        self.db = db
 
     def CreateUser(self) -> None:
         data = {
@@ -81,7 +84,9 @@ class DataBaseCreate:
         for role, user in data.items():
             for email, password in user.items():
                 # Check if user already exists
-                existing_user = db.query(User).filter(User.gmail_id == email).first()
+                existing_user = (
+                    self.db.query(User).filter(User.gmail_id == email).first()
+                )
                 if not existing_user:
                     schems = UserCreate(
                         gmail_id=email,
@@ -90,11 +95,11 @@ class DataBaseCreate:
                         role=role,
                     )
                     model = User(**schems.model_dump())
-                    db.add(model)
+                    self.db.add(model)
                     print(f"Adding user: {email} ({role})")
                 else:
                     print(f"User {email} already exists.")
-            db.commit()
+            self.db.commit()
 
     def CreateTeacher(self) -> None:
         teachers_data = self.JSON_DATA.get("teacher", [])
@@ -108,11 +113,13 @@ class DataBaseCreate:
             department = teacher_info.get("department_name")
 
             # Find user by email to ensure correct mapping
-            user = db.query(User).filter(User.gmail_id == email).first()
+            user = self.db.query(User).filter(User.gmail_id == email).first()
 
             if user:
                 # Check if teacher profile already exists
-                existing = db.query(Teacher).filter(Teacher.user_id == user.id).first()
+                existing = (
+                    self.db.query(Teacher).filter(Teacher.user_id == user.id).first()
+                )
                 if not existing:
                     try:
                         schems = TeacherCreate(
@@ -123,7 +130,7 @@ class DataBaseCreate:
                             created_at=datetime.now(),
                         )
                         model = Teacher(**schems.model_dump())
-                        db.add(model)
+                        self.db.add(model)
                         print(f"Adding teacher: {name}")
                     except Exception as e:
                         print(f"Error creating teacher {name}: {e}")
@@ -132,11 +139,11 @@ class DataBaseCreate:
             else:
                 print(f"User with email {email} not found.")
 
-        db.commit()
+        self.db.commit()
 
     def CreateStudent(self) -> None:
         student_data = self.JSON_DATA.get("students", [])
-        batches = db.query(Batches).all()
+        batches = self.db.query(Batches).all()
 
         if not batches:
             print("No batches found. Please create batches first.")
@@ -147,12 +154,14 @@ class DataBaseCreate:
             email = user_info.get("gmail")
 
             # Find user by email to get user_id
-            user_rec = db.query(User).filter(User.gmail_id == email).first()
+            user_rec = self.db.query(User).filter(User.gmail_id == email).first()
 
             if user_rec:
                 # Check if student profile already exists
                 existing_student = (
-                    db.query(Student).filter(Student.user_id == user_rec.id).first()
+                    self.db.query(Student)
+                    .filter(Student.user_id == user_rec.id)
+                    .first()
                 )
                 if not existing_student:
                     try:
@@ -165,7 +174,7 @@ class DataBaseCreate:
                             batch_id=batch_obj.id,
                         )
                         model = Student(**schems.model_dump())
-                        db.add(model)
+                        self.db.add(model)
                         print(f"Adding student: {user_info['name']}")
                     except Exception as e:
                         print(f"Error creating student {user_info['name']}: {e}")
@@ -174,25 +183,24 @@ class DataBaseCreate:
             else:
                 print(f"User with email {email} not found for student profiling.")
 
-        db.commit()
+        self.db.commit()
 
-    @staticmethod
-    def add_subject(name: str) -> None:
+    def add_subject(self, name: str) -> None:
         # Check if subject already exists
-        existing_subject = db.query(Subject).filter(Subject.name == name).first()
+        existing_subject = self.db.query(Subject).filter(Subject.name == name).first()
         if not existing_subject:
             try:
                 schems = SubjectCreate(name=name)
                 model = Subject(**schems.model_dump())
-                db.add(model)
+                self.db.add(model)
                 print(f"Adding subject: {name}")
             except Exception as e:
                 print(f"Error creating subject {name}: {e}")
         else:
             print(f"Subject {name} already exists.")
 
-    @staticmethod
     def insert(
+        self,
         batch_id: int,
         subject_name: str,
         category: str,
@@ -202,13 +210,13 @@ class DataBaseCreate:
         batch_name: str = None,
     ) -> None:
         # Get subject
-        subject = db.query(Subject).filter(Subject.name == subject_name).first()
+        subject = self.db.query(Subject).filter(Subject.name == subject_name).first()
         if not subject:
             # print(f"Subject '{subject_name}' not found. Skipping link.")
             return
 
         exists = (
-            db.query(BatchSubject)
+            self.db.query(BatchSubject)
             .filter_by(batch_id=batch_id, subject_id=subject.id)
             .first()
         )
@@ -229,7 +237,8 @@ class DataBaseCreate:
                 is_main=main,
             )
 
-            db.add(BatchSubject(**schems.model_dump()))
+            self.db.add(BatchSubject(**schems.model_dump()))
+            self.db.flush()
             print(
                 f"Linked subject {subject_name} to batch {batch_name or batch_id} ({category})"
             )
@@ -257,7 +266,7 @@ class DataBaseCreate:
         # Add at once
         for name in unique_subjects:
             self.add_subject(name)
-        db.commit()
+        self.db.commit()
 
     def CreateBatch(self) -> None:
         starting = ["1st", "2nd", "3rd"]
@@ -272,7 +281,7 @@ class DataBaseCreate:
             for stream in [None] if batch_level <= 10 else streams:
                 # Check if batch already exists
                 existing_batch = (
-                    db.query(Batches)
+                    self.db.query(Batches)
                     .filter(
                         Batches.batch_name == batch_name_label, Batches.stream == stream
                     )
@@ -281,7 +290,7 @@ class DataBaseCreate:
 
                 if not existing_batch:
                     schema = BatchesCreate(batch_name=batch_name_label, stream=stream)
-                    db.add(Batches(**schema.model_dump()))
+                    self.db.add(Batches(**schema.model_dump()))
                     print(
                         f"Adding batch: {batch_name_label} ({stream if stream else 'No Stream'})"
                     )
@@ -290,11 +299,11 @@ class DataBaseCreate:
                         f"Batch {batch_name_label} ({stream if stream else 'No Stream'}) already exists."
                     )
 
-        db.commit()
+        self.db.commit()
 
     def CreateBatchSubjects(self) -> None:
         subjects_json = self.JSON_DATA["Subjects"]
-        batches = db.query(Batches).all()
+        batches = self.db.query(Batches).all()
 
         # Data mapping between data.json and our internal stream labels
         stream_map = {
@@ -363,15 +372,15 @@ class DataBaseCreate:
                         batch_label,
                     )
 
-        db.commit()
+        self.db.commit()
 
     def CreateFeesStructure(self) -> None:
-        batches = db.query(Batches).all()
+        batches = self.db.query(Batches).all()
         academic_year = "2025-26"
         for cls in batches:
             # Check if fees structure already exists
             existing = (
-                db.query(FeesStructure)
+                self.db.query(FeesStructure)
                 .filter(
                     FeesStructure.batch_id == cls.id,
                     FeesStructure.academic_year == academic_year,
@@ -385,7 +394,7 @@ class DataBaseCreate:
                         batch_id=cls.id, academic_year=academic_year, is_active=True
                     )
                     model = FeesStructure(**schesm.model_dump())
-                    db.add(model)
+                    self.db.add(model)
                     print(f"Adding fees structure for batch {cls.batch_name}")
                 except Exception as e:
                     print(
@@ -393,7 +402,7 @@ class DataBaseCreate:
                     )
             else:
                 print(f"Fees structure for batch {cls.batch_name} already exists.")
-        db.commit()
+        self.db.commit()
 
     def CreateFeesComponent(self) -> None:
         fees_json = self.JSON_DATA.get("fees_by_class", {})
@@ -416,7 +425,7 @@ class DataBaseCreate:
                     possible_names.append(f"{level_val}th")
 
             batch = (
-                db.query(Batches)
+                self.db.query(Batches)
                 .filter(
                     Batches.batch_name.in_(possible_names), Batches.stream == stream_val
                 )
@@ -427,7 +436,7 @@ class DataBaseCreate:
                 continue
 
             structure = (
-                db.query(FeesStructure)
+                self.db.query(FeesStructure)
                 .filter(
                     FeesStructure.batch_id == batch.id,
                     FeesStructure.academic_year == "2025-26",
@@ -441,8 +450,8 @@ class DataBaseCreate:
                         batch_id=batch.id, academic_year="2025-26", is_active=True
                     )
                     structure = FeesStructure(**schema.model_dump())
-                    db.add(structure)
-                    db.flush()
+                    self.db.add(structure)
+                    self.db.flush()
                 except Exception as e:
                     print(f"Error creating structure for {batch.batch_name}: {e}")
                     continue
@@ -452,7 +461,7 @@ class DataBaseCreate:
                 amount = comp["amount"]
 
                 existing = (
-                    db.query(FeesComponent)
+                    self.db.query(FeesComponent)
                     .filter(
                         FeesComponent.fees_structure_id == structure.id,
                         FeesComponent.component_name == name,
@@ -467,22 +476,22 @@ class DataBaseCreate:
                             component_name=name,
                             amount=amount,
                         )
-                        db.add(FeesComponent(**schema.model_dump()))
+                        self.db.add(FeesComponent(**schema.model_dump()))
                         print(f"Added component {name} to {batch.batch_name}")
                     except Exception as e:
                         print(f"Error adding component {name}: {e}")
-        db.commit()
+        self.db.commit()
 
     def CreateStudentFeesDue(self) -> None:
         from sqlalchemy import func
 
-        students = db.query(Student).all()
+        students = self.db.query(Student).all()
         month = datetime.now().month
         year = datetime.now().year
 
         for student in students:
             fee_structure = (
-                db.query(FeesStructure)
+                self.db.query(FeesStructure)
                 .filter(
                     FeesStructure.batch_id == student.batch_id,
                     FeesStructure.academic_year == "2025-26",
@@ -494,14 +503,14 @@ class DataBaseCreate:
                 continue
 
             total_amount = (
-                db.query(func.sum(FeesComponent.amount))
+                self.db.query(func.sum(FeesComponent.amount))
                 .filter(FeesComponent.fees_structure_id == fee_structure.id)
                 .scalar()
                 or 0
             )
 
             existing = (
-                db.query(StudentFeesDue)
+                self.db.query(StudentFeesDue)
                 .filter(
                     StudentFeesDue.student_id == student.id,
                     StudentFeesDue.month == month,
@@ -519,11 +528,11 @@ class DataBaseCreate:
                         total_amount=float(total_amount),
                         status="pending",
                     )
-                    db.add(StudentFeesDue(**schema.model_dump()))
+                    self.db.add(StudentFeesDue(**schema.model_dump()))
                     print(f"Created fee due for student {student.name}")
                 except Exception as e:
                     print(f"Error creating fee due for student {student.id}: {e}")
-        db.commit()
+        self.db.commit()
 
     def CreateFeesPayment(self) -> None:
         # Note: Student IDs are logic-dependent.
@@ -532,14 +541,14 @@ class DataBaseCreate:
         student_ids = [21, 22, 23, 24, 25]
 
         due_records = (
-            db.query(StudentFeesDue)
+            self.db.query(StudentFeesDue)
             .filter(StudentFeesDue.student_id.in_(student_ids))
             .all()
         )
 
         for due in due_records:
             existing = (
-                db.query(FeesPayment).filter(FeesPayment.due_id == due.id).first()
+                self.db.query(FeesPayment).filter(FeesPayment.due_id == due.id).first()
             )
             if not existing:
                 try:
@@ -551,16 +560,50 @@ class DataBaseCreate:
                         method="online",
                         is_late=False,
                     )
-                    db.add(FeesPayment(**schema.model_dump()))
+                    self.db.add(FeesPayment(**schema.model_dump()))
                     print(f"Recorded payment for Due ID {due.id}")
                 except Exception as e:
                     print(f"Error recording payment for due {due.id}: {e}")
             else:
                 print(f"Payment for Due ID {due.id} already exists.")
-        db.commit()
+        self.db.commit()
 
-    def CreateStudentFesDue(self) -> None:
-        pass
+    def CreateClassSchedule(self) -> None:
+        schedules_template = self.JSON_DATA["class_schedules"]
+
+        # Clear old schedules to prevent duplicates/overlaps from previous runs
+        self.db.query(ClassSchedule).delete()
+        self.db.commit()
+        print("Old class schedules cleared.")
+
+        for data in schedules_template:
+            # Loop for Monday (1) to Saturday (6)
+            for day in range(1, 7):
+                subject = (
+                    self.db.query(Subject)
+                    .filter(Subject.name == data["subject"])
+                    .first()
+                )
+
+                if subject is None:
+                    print(f"Subject '{data['subject']}' not found, skipping...")
+                    continue
+
+                start_t = datetime.strptime(data["start_time"], "%I:%M %p").time()
+                end_t = datetime.strptime(data["end_time"], "%I:%M %p").time()
+
+                schems = ClassScheduleCreate(
+                    batch_id=data["batch_id"],
+                    teacher_id=data["teacher_id"],
+                    subject_id=subject.id,
+                    day_of_week=day,
+                    name=data["name"],
+                    start_time=start_t,
+                    end_time=end_t,
+                )
+                model = ClassSchedule(**schems.model_dump())
+                self.db.add(model)
+            self.db.commit()
 
     def Create(self) -> None:
         print("Starting Database Seeding...")
@@ -574,4 +617,5 @@ class DataBaseCreate:
         self.CreateStudent()
         self.CreateStudentFeesDue()
         self.CreateFeesPayment()
+        self.CreateClassSchedule()
         print("Seeding Complete!")
