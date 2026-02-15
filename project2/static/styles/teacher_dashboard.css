@@ -436,6 +436,19 @@ header {
     border: none;
 }
 
+@media (min-width: 769px) {
+    .sidebar {
+        transform: none !important;
+        position: static;
+        width: var(--sidebar-width);
+        left: auto;
+        top: auto;
+        opacity: 1;
+        visibility: visible;
+        margin-left: 0;
+    }
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
     .sidebar {
@@ -478,10 +491,11 @@ header {
 
     .sidebar {
         position: fixed;
-        left: -280px;
-        /* Hide off-screen */
+        left: 0;
+        top: 0;
         width: 280px;
-        height: 100%;
+        height: 100vh;
+        /* Full viewport height */
         flex-direction: column;
         align-items: stretch;
         border-right: 1px solid var(--glass-border);
@@ -491,12 +505,15 @@ header {
         background: rgba(0, 0, 0, 0.9);
         /* Darker bg for mobile sidebar */
         z-index: 1000;
-        transition: left 0.3s ease;
+        transform: translateX(-100%);
+        /* Start off-screen */
+        transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        /* GPU friendly transition */
     }
 
     .sidebar.sidebar-toggled {
-        left: 0;
-        /* Show on toggle */
+        transform: translateX(0);
+        /* Slide in */
     }
 
     /* Restore sidebar elements on mobile when toggled */

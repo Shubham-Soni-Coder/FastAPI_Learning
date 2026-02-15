@@ -15,19 +15,29 @@ document.addEventListener('DOMContentLoaded', () => {
         body.appendChild(overlay);
     }
 
-    function closeSidebar() {
-        if (sidebar.classList.contains('sidebar-toggled')) {
+    // Mobile Resize Sync Logic (Critical)
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            // Reset to Desktop State
             sidebar.classList.remove('sidebar-toggled');
             overlay.classList.remove('active');
-            body.style.overflow = ''; // Restore scrolling
+            body.style.overflow = ''; // Allow scrolling
+            sidebar.style.transform = ''; // Clear inline styles if any
         }
+    });
+
+    function closeSidebar() {
+        sidebar.classList.remove('sidebar-toggled');
+        overlay.classList.remove('active');
+        body.style.overflow = '';
     }
 
     function openSidebar() {
         sidebar.classList.add('sidebar-toggled');
         overlay.classList.add('active');
+        // Only lock scroll on mobile
         if (window.innerWidth <= 768) {
-            body.style.overflow = 'hidden'; // Prevent background scrolling on mobile
+            body.style.overflow = 'hidden';
         }
     }
 
@@ -57,14 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 closeSidebar();
             }
         });
-    });
-
-    // Close on resize if returning to desktop
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
-            closeSidebar();
-            overlay.classList.remove('active'); // Ensure overlay is gone
-        }
     });
 
     // Prevent FOUC: Add class to body once loaded
