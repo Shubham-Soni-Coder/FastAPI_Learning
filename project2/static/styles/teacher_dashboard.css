@@ -437,6 +437,10 @@ header {
 }
 
 @media (min-width: 769px) {
+    .sidebar-overlay {
+        display: none !important;
+    }
+
     .sidebar {
         transform: none !important;
         position: static;
@@ -445,7 +449,18 @@ header {
         top: auto;
         opacity: 1;
         visibility: visible;
+        /* Allow margin-left to be overridden by .sidebar-toggled */
+        transition: margin-left 0.3s ease;
+    }
+
+    /* Ensure sidebar is visible by default unless toggled */
+    .sidebar:not(.sidebar-toggled) {
         margin-left: 0;
+    }
+
+    /* Desktop Toggle: Hide Sidebar */
+    .sidebar.sidebar-toggled {
+        margin-left: calc(var(--sidebar-width) * -1);
     }
 }
 

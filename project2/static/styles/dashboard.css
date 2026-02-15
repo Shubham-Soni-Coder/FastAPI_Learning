@@ -296,12 +296,22 @@ header {
 
 /* Responsive adjustments */
 @media (min-width: 769px) {
+    .sidebar-overlay {
+        display: none !important;
+    }
+
     .sidebar {
         transform: none !important;
         position: static !important;
         width: var(--sidebar-width);
-        margin-left: 0;
+        /* Allow margin-left to be overridden by .sidebar-toggled */
+        transition: margin-left 0.3s ease;
         visibility: visible;
+    }
+
+    /* Ensure sidebar is visible by default unless toggled */
+    .sidebar:not(.sidebar-toggled) {
+        margin-left: 0;
     }
 }
 

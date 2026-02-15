@@ -485,3 +485,35 @@
 .hidden {
     display: none !important;
 }
+
+/* Wrapper for Recent Homework Table Scrolling */
+.homework-table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+    /* Ensure scrollbar looks good on custom scrollbar systems */
+    padding-bottom: 0.5rem;
+}
+
+.homework-table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.homework-table-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.homework-table-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+.homework-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Ensure content has minimum width to trigger scroll on small screens */
+.homework-table-header,
+.homework-row {
+    min-width: 900px;
+}
