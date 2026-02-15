@@ -1,13 +1,74 @@
 document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.getElementById('sidebar-toggle');
     const sidebar = document.querySelector('.sidebar');
+    const body = document.body;
+    const container = document.querySelector('.dashboard-container');
+
+    // Create overlay element dynamically
+    const overlay = document.createElement('div');
+    overlay.className = 'sidebar-overlay';
+
+    // Append to container if it exists (for z-index context), otherwise body
+    if (container) {
+        container.appendChild(overlay);
+    } else {
+        body.appendChild(overlay);
+    }
+
+    function closeSidebar() {
+        if (sidebar.classList.contains('sidebar-toggled')) {
+            sidebar.classList.remove('sidebar-toggled');
+            overlay.classList.remove('active');
+            body.style.overflow = ''; // Restore scrolling
+        }
+    }
+
+    function openSidebar() {
+        sidebar.classList.add('sidebar-toggled');
+        overlay.classList.add('active');
+        if (window.innerWidth <= 768) {
+            body.style.overflow = 'hidden'; // Prevent background scrolling on mobile
+        }
+    }
+
+    function toggleSidebar() {
+        if (sidebar.classList.contains('sidebar-toggled')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    }
 
     if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            // Unified class for toggle state
-            sidebar.classList.toggle('sidebar-toggled');
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSidebar();
         });
     }
+
+    // Close when clicking overlay
+    overlay.addEventListener('click', closeSidebar);
+
+    // Close when clicking any nav link on mobile
+    const navLinks = document.querySelectorAll('.nav-links a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        });
+    });
+
+    // Close on resize if returning to desktop
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            closeSidebar();
+            overlay.classList.remove('active'); // Ensure overlay is gone
+        }
+    });
+
+    // Prevent FOUC: Add class to body once loaded
+    document.documentElement.classList.add('loaded');
     // Global Search Logic
     const searchInput = document.querySelector('.search-bar input');
     const searchResults = document.getElementById('searchResults');

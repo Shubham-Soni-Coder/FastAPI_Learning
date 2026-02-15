@@ -13,6 +13,19 @@
     <!-- Styles -->
     <link rel="stylesheet" href="{{ url_for('static', path='styles/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='styles/teacher_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='styles/teacher_dashboard.css') }}">
+    <style>
+        body {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        html.loaded body {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
 </head>
 
 <body>

@@ -178,3 +178,35 @@ button:active {
   font-size: 0.9rem;
   width: 100%;
 }
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 90;
+  /* Below sidebar (100) */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* FOUC Prevention */
+body {
+  opacity: 0;
+  /* Hidden by default until loaded */
+  transition: opacity 0.3s ease-in-out;
+}
+
+html.loaded body {
+  opacity: 1;
+}
