@@ -16,6 +16,7 @@ dependencies = [
     "jinja2",
     "passlib[bcrypt]",
     "python-multipart",
+    "tzdata>=2025.3",
 ]
 
 [dependency-groups]

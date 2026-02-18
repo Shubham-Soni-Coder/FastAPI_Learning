@@ -10,6 +10,7 @@ from app.database.session import get_db
 from app.models import Batches, Student, Teacher, ClassSchedule
 from app.services import teacher_service
 from app.utils.helpers import initials
+from app.utils.timezone import now_ist
 from app.core.config import Settings
 from app.core.dependencies import get_current_teacher
 
@@ -36,7 +37,7 @@ def show_teacher_dashboard(
     }
 
     # Use Service Layer for Data
-    now = datetime.now()
+    now = now_ist().now()
     upcoming_classes_data = teacher_service.get_formatted_upcoming_classes(
         db, teacher.id, now.weekday() + 1, now.time()
     )
