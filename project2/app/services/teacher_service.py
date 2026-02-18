@@ -262,10 +262,15 @@ def get_upcoming_classes(db: Session, teacher_id: int, day: int, current_time: t
         db.query(ClassSchedule)
         .filter(
             ClassSchedule.teacher_id == teacher_id,
-            ClassSchedule.day_of_week == day,
-            ClassSchedule.start_time > current_time,
+            or_(
+                ClassSchedule.day_of_week > day,
+                and_(
+                    ClassSchedule.day_of_week == day,
+                    ClassSchedule.start_time > current_time,
+                ),
+            ),
         )
-        .order_by(ClassSchedule.start_time.asc())
+        .order_by(ClassSchedule.day_of_week.asc(), ClassSchedule.start_time.asc())
         .all()
     )
 
