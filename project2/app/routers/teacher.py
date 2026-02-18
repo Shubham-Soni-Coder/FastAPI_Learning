@@ -37,7 +37,7 @@ def show_teacher_dashboard(
     }
 
     # Use Service Layer for Data
-    now = now_ist().now()
+    now = now_ist()
     upcoming_classes_data = teacher_service.get_formatted_upcoming_classes(
         db, teacher.id, now.weekday() + 1, now.time()
     )
@@ -147,7 +147,7 @@ def get_student_data(
         return []
 
     return teacher_service.get_students_for_batch(
-        db, batch_id, month_num, 2025, search=search
+        db, batch_id, month_num, now_ist().year, search=search
     )
 
 
@@ -173,8 +173,9 @@ def show_teacher_students(
         raise HTTPException(status_code=403, detail="Not authorized to view this batch")
 
     current_batch_name = teacher_batches.get(batch_id, "No Batch Selected")
+    now = now_ist()
     students_data = (
-        teacher_service.get_students_for_batch(db, batch_id, datetime.now().month, 2025)
+        teacher_service.get_students_for_batch(db, batch_id, now.month, now.year)
         if batch_id
         else []
     )
@@ -184,7 +185,7 @@ def show_teacher_students(
         {
             "request": request,
             "students": students_data,
-            "current_month_name": datetime.now().strftime("%B"),
+            "current_month_name": now.strftime("%B"),
             "teacher": {
                 "full_name": teacher.full_name,
                 "department": teacher.department,
