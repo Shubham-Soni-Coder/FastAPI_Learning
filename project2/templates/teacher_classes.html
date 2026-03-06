@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="{{ url_for('static', path='styles/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='styles/teacher_dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='styles/teacher_classes.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='styles/teacher_classes.css') }}">
     <style>
         body {
             opacity: 0;
@@ -97,6 +96,12 @@
                             <i class="fa-solid fa-list"></i>
                         </button>
                     </div>
+                </div>
+
+                <!-- Today's Overview Bar -->
+                <div class="today-overview-bar" id="todayOverview">
+                    <!-- Dynamically filled by JS -->
+                    <div class="overview-skeleton"></div>
                 </div>
 
                 <!-- Day Filter Tabs -->

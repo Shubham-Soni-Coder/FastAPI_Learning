@@ -1,6 +1,7 @@
 // Teacher Classes - Dynamic Data & Logic
 
 let classesData = [];
+let todayDayCode = 0; // Set on load
 // Colors to cycle through for cards
 const classColors = [
   "#8c7ae6", // Purple
@@ -39,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }));
 
       renderAll();
+      renderTodayOverview();
     } catch (error) {
       console.error("Error loading classes:", error);
       if (classesContainer) {
@@ -76,10 +78,93 @@ document.addEventListener("DOMContentLoaded", () => {
       const day = new Date().getDay();
       targetDay = day === 0 ? 7 : day;
     } else {
-      targetDay = parseInt(filter);
+      targetDay = parseInt(filter, 10);
     }
 
-    return data.filter(cls => cls.day_code === targetDay);
+    // BUG FIX: Use Number() on both sides to prevent string vs number mismatch
+    return data.filter(cls => Number(cls.day_code) === Number(targetDay));
+  }
+
+  // ----- Today's Overview Bar -----
+  function renderTodayOverview() {
+    const overviewEl = document.getElementById("todayOverview");
+    if (!overviewEl) return;
+
+    const day = new Date().getDay();
+    todayDayCode = day === 0 ? 7 : day;
+
+    const todayClasses = classesData.filter(
+      cls => Number(cls.day_code) === todayDayCode
+    );
+
+    if (todayClasses.length === 0) {
+      overviewEl.innerHTML = `
+        <div class="overview-item">
+          <i class="fa-solid fa-mug-hot"></i>
+          <div class="overview-label">Today</div>
+          <div class="overview-value">No classes scheduled</div>
+        </div>
+      `;
+      return;
+    }
+
+    const totalStudentsToday = todayClasses.reduce((sum, c) => sum + (c.students || 0), 0);
+
+    // Find next class by parsing time string (e.g. "Monday 10:00 AM")
+    const now = new Date();
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+    // Extract time from the "Day HH:MM AM/PM" format
+    function parseTimeToMinutes(timeStr) {
+      const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+      if (!match) return -1;
+      let hours = parseInt(match[1], 10);
+      const mins = parseInt(match[2], 10);
+      const period = match[3].toUpperCase();
+      if (period === "PM" && hours !== 12) hours += 12;
+      if (period === "AM" && hours === 12) hours = 0;
+      return hours * 60 + mins;
+    }
+
+    let nextClass = null;
+    let nextClassMins = Infinity;
+    for (const cls of todayClasses) {
+      const classMins = parseTimeToMinutes(cls.time);
+      if (classMins > nowMinutes && classMins < nextClassMins) {
+        nextClassMins = classMins;
+        nextClass = cls;
+      }
+    }
+
+    const nextClassHTML = nextClass
+      ? `<span class="overview-highlight">${nextClass.subject}</span> at <span class="overview-highlight">${nextClass.time.split(" ").slice(1).join(" ")}</span>`
+      : `<span style="color: rgba(255,255,255,0.5)">All classes done for today</span>`;
+
+    overviewEl.innerHTML = `
+      <div class="overview-item">
+        <div class="overview-icon-wrap purple-wrap"><i class="fa-solid fa-calendar-check"></i></div>
+        <div class="overview-text">
+          <div class="overview-label">Today's Classes</div>
+          <div class="overview-value">${todayClasses.length} class${todayClasses.length !== 1 ? "es" : ""}</div>
+        </div>
+      </div>
+      <div class="overview-divider"></div>
+      <div class="overview-item">
+        <div class="overview-icon-wrap teal-wrap"><i class="fa-solid fa-users"></i></div>
+        <div class="overview-text">
+          <div class="overview-label">Total Students</div>
+          <div class="overview-value">${totalStudentsToday}</div>
+        </div>
+      </div>
+      <div class="overview-divider"></div>
+      <div class="overview-item">
+        <div class="overview-icon-wrap orange-wrap"><i class="fa-solid fa-clock"></i></div>
+        <div class="overview-text">
+          <div class="overview-label">Next Class</div>
+          <div class="overview-value next-class-val">${nextClassHTML}</div>
+        </div>
+      </div>
+    `;
   }
 
   // Render Functions
